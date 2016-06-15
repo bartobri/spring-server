@@ -185,8 +185,8 @@ int main(int argc, char *argv[])
 						// Adding new connection to fd set
 						FD_SET(newsockfd, &active_fd_set);
 
-						// Send ACCEPT message
-						n = write(newsockfd, "ACCEPT", 6);
+						// Send accept message
+						n = write(newsockfd, "accept", 6);
 
 						// Print error messsage if couldn't write data
 						if (n < 0)

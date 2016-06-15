@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 		error("ERROR reading from socket");
 
 	// Confirm expected server response
-	if (strcmp(buffer, "ACCEPT") != 0)
+	if (strcmp(buffer, "accept") != 0)
 		error("Unknown response from connection request. Quitting.");
 
 	// Print server accept message
