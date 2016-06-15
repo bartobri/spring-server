@@ -36,7 +36,7 @@ struct cstate {
 void error(const char *);
 void drop_unresponsive_cons(struct cstate **, fd_set *);
 void shutdown_socket(struct cstate **, fd_set *, int);
-void ping_all_cons(fd_set *, int);
+void ping_all_sockets(fd_set *, int);
 void handle_sigint(int);
 void cleanup_mem(struct cstate **);
 
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 
 			// Send ping to all sockets. We can assume that PING_SECONDS has passed since
 			// it is used for the timeout.
-			ping_all_cons(&active_fd_set, sockfd);
+			ping_all_sockets(&active_fd_set, sockfd);
 			last_ping_time = (int)time(NULL);
 		} else {
 
@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
 
 			// Send ping to all sockets if we are past the PING_SECONDS time limit
 			if (last_ping_time <= (int)time(NULL) - PING_SECONDS) {
-				ping_all_cons(&active_fd_set, sockfd);
+				ping_all_sockets(&active_fd_set, sockfd);
 				last_ping_time = (int)time(NULL);
 			}
 
@@ -321,7 +321,7 @@ void shutdown_socket(struct cstate **cs_start, fd_set *active_fd_set, int socket
 /*
  * Ping all socket connnections except sockfd (main socket)
  */
-void ping_all_cons(fd_set *read_fd_set, int sockfd) {
+void ping_all_sockets(fd_set *read_fd_set, int sockfd) {
 	int i, n;
 
 	for (i = 0; i < FD_SETSIZE; ++i) {
