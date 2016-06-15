@@ -134,9 +134,11 @@ int main(int argc, char *argv[])
 			// Check for non-responsive connection and drop
 			drop_unresponsive_cons(&cs_start, &active_fd_set);
 
-			// Send ping to all sockets. We can assume that PING_SECONDS has passed since
-			// it is used for the timeout.
+			// Send heartbeat to all sockets. We can assume that the heartbeat is due since the 
+			// timeout used for select() is PING_SECONDS
 			ping_all_sockets(&active_fd_set, sockfd);
+
+			// Update last ping time
 			last_ping_time = (int)time(NULL);
 		} else {
 
@@ -206,7 +208,7 @@ int main(int argc, char *argv[])
 						else if (n == 0)
 							shutdown_socket(&cs_start, &active_fd_set, i);
 
-						// Evaluate data read from socket
+						// Read from socket and evaluate data
 						else {
 
 							// Check for ping response and update ping time
