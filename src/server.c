@@ -22,8 +22,6 @@
                                // client. Actual number may vary slightly depending on amount of
                                // chatter from other clients.
 
-// TODO - Investigate replacing select() with libevent (libevent.org)
-
 // TODO - call cleanup_mem on ctrl-c and error()
 
 struct cstate {
