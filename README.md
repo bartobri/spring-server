@@ -24,4 +24,7 @@ The Client
 The client component is programmed to connect to the server and respond to heartbeat requests as to
 not get disconnected.
 
+License
+-------
 
+This program is free software; you can redistribute it and/or modify it under the terms of the the MIT License (MIT). See [LICENSE](LICENSE) for more details.
