@@ -32,14 +32,15 @@ struct cstate {
 
 // Function Prototypes
 void error(const char *);
-void drop_unresponsive_cons(fd_set *);
-void shutdown_socket(fd_set *, int);
-void ping_all_sockets(fd_set *, int);
+void drop_unresponsive_cons(void);
+void shutdown_socket(int);
+void ping_all_sockets(int);
 void handle_sigint(int);
-void cleanup_mem(void);
+void cleanup(void);
 
 // Globals
 struct cstate *cs_start = NULL;
+fd_set active_fd_set;
 
 /*
  * main function
@@ -48,7 +49,7 @@ int main(int argc, char *argv[])
 {
 	int sockfd, newsockfd;
 	char *portno;
-	fd_set active_fd_set, read_fd_set;
+	fd_set read_fd_set;
 	char buffer[BUFFER_SIZE];
 	struct sockaddr cli_addr;
 	struct addrinfo hints;
@@ -134,11 +135,11 @@ int main(int argc, char *argv[])
 			// select() timeout
 
 			// Check for non-responsive connection and drop
-			drop_unresponsive_cons(&active_fd_set);
+			drop_unresponsive_cons();
 
 			// Send heartbeat to all sockets. We can assume that the heartbeat is due since the 
 			// timeout used for select() is PING_SECONDS
-			ping_all_sockets(&active_fd_set, sockfd);
+			ping_all_sockets(sockfd);
 
 			// Update last ping time
 			last_ping_time = (int)time(NULL);
@@ -208,7 +209,7 @@ int main(int argc, char *argv[])
 
 						// Shut down socket if we got EOF (other side terminated connetcion)
 						else if (n == 0)
-							shutdown_socket(&active_fd_set, i);
+							shutdown_socket(i);
 
 						// Read from socket and evaluate data
 						else {
@@ -226,29 +227,26 @@ int main(int argc, char *argv[])
 
 							// Client quit
 							if (strcmp(buffer, "quit") == 0)
-								shutdown_socket(&active_fd_set, i);
+								shutdown_socket(i);
 						}
 					}
 				}
 			}
 
 			// Check for non-responsive connection and drop
-			drop_unresponsive_cons(&active_fd_set);
+			drop_unresponsive_cons();
 
 			// Send ping to all sockets if we are past the PING_SECONDS time limit
 			if (last_ping_time <= (int)time(NULL) - PING_SECONDS) {
-				ping_all_sockets(&active_fd_set, sockfd);
+				ping_all_sockets(sockfd);
 				last_ping_time = (int)time(NULL);
 			}
 
 		}
 	}
 
-	// Close main socket
-	close(sockfd);
-
-	// Memory cleanup
-	cleanup_mem();
+	// Cleanup
+	cleanup();
 
 	return 0; 
 }
@@ -264,7 +262,7 @@ void error(const char *msg) {
 /*
  * Check for and drop connections that have not responded to a ping
  */
-void drop_unresponsive_cons(fd_set *active_fd_set) {
+void drop_unresponsive_cons() {
 	struct cstate *cs_pointer = NULL;
 	int droptime;
 
@@ -276,14 +274,14 @@ void drop_unresponsive_cons(fd_set *active_fd_set) {
 
 		// If hasn't responded to ping for DROP_SECONDS, kill it
 		if (cs_pointer->last_ping_time < droptime)
-			shutdown_socket(active_fd_set, cs_pointer->socket);
+			shutdown_socket(cs_pointer->socket);
 
 		// Next member
 		cs_pointer = cs_pointer->next;
 	}
 }
 
-void shutdown_socket(fd_set *active_fd_set, int socket) {
+void shutdown_socket(int socket) {
 	struct cstate *cs_pointer = NULL;
 	struct cstate *cs_temp = NULL;
 	struct cstate *cs_prev = NULL;
@@ -292,7 +290,7 @@ void shutdown_socket(fd_set *active_fd_set, int socket) {
 	close(socket);
 
 	// remove socket from fd_set
-	FD_CLR(socket, active_fd_set);
+	FD_CLR(socket, &active_fd_set);
 
 	cs_pointer = cs_start;
 	while (cs_pointer != NULL) {
@@ -323,11 +321,11 @@ void shutdown_socket(fd_set *active_fd_set, int socket) {
 /*
  * Ping all socket connnections except sockfd (main socket)
  */
-void ping_all_sockets(fd_set *read_fd_set, int sockfd) {
+void ping_all_sockets(int sockfd) {
 	int i, n;
 
 	for (i = 0; i < FD_SETSIZE; ++i) {
-		if (FD_ISSET(i, read_fd_set)) {
+		if (FD_ISSET(i, &active_fd_set)) {
 
 			// Skip the original socket
 			if (i == sockfd)
@@ -345,27 +343,26 @@ void ping_all_sockets(fd_set *read_fd_set, int sockfd) {
 }
 
 /*
- * SIGINT handler. Mainly exists to do memory cleanup before exiting.
+ * SIGINT handler. Mainly exists to disconnect all sockets before exiting.
  */
 void handle_sigint(int e) {
 	fprintf(stderr, "Caught sigint (%i). Exiting\n", e);
-	cleanup_mem();
+
+	cleanup();
+
 	exit(1);
 }
 
 /*
  * Memory cleanup
  */
-void cleanup_mem() {
+void cleanup() {
 	struct cstate *cs_pointer = NULL;
-	struct cstate *cs_temp = NULL;
 
+	// Itterate over all list members
 	cs_pointer = cs_start;
 	while (cs_pointer != NULL) {
-		cs_temp = cs_pointer;
+		shutdown_socket(cs_pointer->socket);
 		cs_pointer = cs_pointer->next;
-		free(cs_temp);
 	}
-
-	cs_start = NULL;
 }
