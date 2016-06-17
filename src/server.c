@@ -22,8 +22,6 @@
                                // client. Actual number may vary slightly depending on amount of
                                // chatter from other clients.
 
-// TODO - call cleanup_mem on ctrl-c and error()
-
 struct cstate {
 	int socket;
 	int last_ping_time;
@@ -34,11 +32,12 @@ struct cstate {
 void error(const char *);
 void drop_unresponsive_cons(void);
 void shutdown_socket(int);
-void ping_all_sockets(int);
+void ping_all_sockets();
 void handle_sigint(int);
 void cleanup(void);
 
 // Globals
+int mainsockfd;
 struct cstate *cs_start = NULL;
 fd_set active_fd_set;
 
@@ -47,7 +46,7 @@ fd_set active_fd_set;
  */
 int main(int argc, char *argv[])
 {
-	int sockfd, newsockfd;
+	int newsockfd;
 	char *portno;
 	fd_set read_fd_set;
 	char buffer[BUFFER_SIZE];
@@ -91,14 +90,14 @@ int main(int argc, char *argv[])
 
 	// Loop over results from getaddrinfo() and try to bind. Exit loop on first successful bind.
 	for (rp = result; rp != NULL; rp = rp->ai_next) {
-		sockfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-		if (sockfd == -1)
+		mainsockfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		if (mainsockfd == -1)
 			continue;
 
-		if (bind(sockfd, rp->ai_addr, rp->ai_addrlen) == 0)
+		if (bind(mainsockfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;                           // Successful binding
 
-		close(sockfd);
+		close(mainsockfd);
 	}
 
 	// Error if we didn't bind to any sockets
@@ -109,13 +108,13 @@ int main(int argc, char *argv[])
 	freeaddrinfo(result);
 
 	// Mark socket as accepting connections, up to 5 backlogged connections
-	listen(sockfd, 5);
+	listen(mainsockfd, 5);
 
 	// Initialize fd set
 	FD_ZERO (&active_fd_set);
 
 	// Add server address socket (main socket) to fd set
-	FD_SET (sockfd, &active_fd_set);
+	FD_SET (mainsockfd, &active_fd_set);
 
 	while (true) {
 		read_fd_set = active_fd_set;
@@ -139,7 +138,7 @@ int main(int argc, char *argv[])
 
 			// Send heartbeat to all sockets. We can assume that the heartbeat is due since the 
 			// timeout used for select() is PING_SECONDS
-			ping_all_sockets(sockfd);
+			ping_all_sockets();
 
 			// Update last ping time
 			last_ping_time = (int)time(NULL);
@@ -148,7 +147,7 @@ int main(int argc, char *argv[])
 			// Check all sockets and service those with input pending
 			for (i = 0; i < FD_SETSIZE; ++i) {
 				if (FD_ISSET(i, &read_fd_set)) {
-					if (i == sockfd) {
+					if (i == mainsockfd) {
 						// Connection request on original socket (main socket)
 
 						socklen_t clilen;
@@ -160,7 +159,7 @@ int main(int argc, char *argv[])
 						// cli_addr - is filled in with the address of the connecting entity
 						// http://www.linuxhowtos.org/data/6/accept.txt
 						clilen = sizeof(cli_addr);
-						newsockfd = accept(sockfd, &cli_addr, &clilen);
+						newsockfd = accept(mainsockfd, &cli_addr, &clilen);
 						if (newsockfd < 0) 
 							error("accept() error");
 
@@ -238,7 +237,7 @@ int main(int argc, char *argv[])
 
 			// Send ping to all sockets if we are past the PING_SECONDS time limit
 			if (last_ping_time <= (int)time(NULL) - PING_SECONDS) {
-				ping_all_sockets(sockfd);
+				ping_all_sockets();
 				last_ping_time = (int)time(NULL);
 			}
 
@@ -319,16 +318,16 @@ void shutdown_socket(int socket) {
 }
 
 /*
- * Ping all socket connnections except sockfd (main socket)
+ * Ping all socket connnections except mainsockfd (main socket)
  */
-void ping_all_sockets(int sockfd) {
+void ping_all_sockets() {
 	int i, n;
 
 	for (i = 0; i < FD_SETSIZE; ++i) {
 		if (FD_ISSET(i, &active_fd_set)) {
 
 			// Skip the original socket
-			if (i == sockfd)
+			if (i == mainsockfd)
 				continue;
 
 			// Send ping message
