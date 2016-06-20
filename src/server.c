@@ -25,7 +25,7 @@
 
 struct cstate {
 	int socket;
-	int last_ping_time;
+	time_t last_ping_time;
 	struct cstate *next;
 };
 
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	struct timeval timeout;
 	struct cstate *cs_pointer = NULL;
 	int o, n, i, r;
-	int last_ping_time = (int)time(NULL);
+	time_t last_ping_time = time(NULL);
 
 	signal(SIGINT, handle_sigint);
 
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 			ping_all_sockets();
 
 			// Update last ping time
-			last_ping_time = (int)time(NULL);
+			last_ping_time = time(NULL);
 		} else {
 
 			// Check all sockets and service those with input pending
@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
 
 						// Initialize connection state
 						cs_pointer->socket = newsockfd;
-						cs_pointer->last_ping_time = (int)time(NULL);
+						cs_pointer->last_ping_time = time(NULL);
 						cs_pointer->next = NULL;
 
 						// Adding new connection to fd set
@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
 									cs_pointer = cs_pointer->next;
 
 								if (cs_pointer != NULL)
-									cs_pointer->last_ping_time = (int)time(NULL);
+									cs_pointer->last_ping_time = time(NULL);
 							}
 
 							// Client quit
@@ -237,9 +237,9 @@ int main(int argc, char *argv[])
 			drop_unresponsive_cons();
 
 			// Send ping to all sockets if we are past the PING_SECONDS time limit
-			if (last_ping_time <= (int)time(NULL) - PING_SECONDS) {
+			if (last_ping_time <= time(NULL) - PING_SECONDS) {
 				ping_all_sockets();
-				last_ping_time = (int)time(NULL);
+				last_ping_time = time(NULL);
 			}
 
 		}
@@ -266,7 +266,7 @@ void drop_unresponsive_cons() {
 	struct cstate *cs_pointer = NULL;
 	int droptime;
 
-	droptime = (int)time(NULL) - DROP_SECONDS;
+	droptime = time(NULL) - DROP_SECONDS;
 
 	// Itterate over all list members
 	cs_pointer = cs_start;
