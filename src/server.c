@@ -207,7 +207,7 @@ int main(int argc, char *argv[])
 						if (n < 0)
 							error("read() error");
 
-						// Shut down socket if we got EOF (other side terminated connetcion)
+						// Shut down socket if we got EOF (other side terminated connection)
 						else if (n == 0)
 							shutdown_socket(i);
 
