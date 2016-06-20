@@ -309,7 +309,7 @@ void shutdown_socket(int socket) {
 			free(cs_temp);
 
 			// break from loop
-			cs_pointer = NULL;
+			break;
 		} else {
 			cs_prev = cs_pointer;
 			cs_pointer = cs_pointer->next;
