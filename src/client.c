@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 		error("ERROR, no such host");
 
 	// Initializing serv_addr memory footprint to all integer zeros ('\0')
-	bzero((char *) &serv_addr, sizeof(serv_addr));
+	memset(&serv_addr, 0, sizeof(serv_addr));
 
 	// Setting up our serv_addr structure
 	serv_addr.sin_family = AF_INET;            // Internet Protocol v4 addresses
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 		error("ERROR connecting");
 
 	// Set buffer to all integer zeros ('\0')
-	bzero(buffer, BUFFER_SIZE);
+	memset(buffer, 0, BUFFER_SIZE);
 
 	// Read accept message from server. Error if can't read.
 	n = read(sockfd, buffer, BUFFER_SIZE - 1);
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 			error("select error");
 
 		// Clear buffer for reading (all integer zeros ('\0'))
-		bzero(buffer, BUFFER_SIZE);
+		memset(buffer, 0, BUFFER_SIZE);
 
 		// Read from server.
 		n = read(sockfd, buffer, BUFFER_SIZE - 1);
