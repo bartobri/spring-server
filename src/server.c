@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Initializing serv_addr memory footprint to all integer zeros ('\0')
-	bzero((char *) &hints, sizeof(struct addrinfo));
+	memset((char *) &hints, 0, sizeof(struct addrinfo));
 
 	// Get one or moe arrdinfo structures that conforms with that provided by 'hints'
 	hints.ai_family = AF_UNSPEC;              // Return IPv4 and IPv6 choices
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
 						// Data arriving on already-connected socket
 					
 						// Initialize the buffer with all integer zeros ('\0')
-						bzero(buffer, BUFFER_SIZE);
+						memset(buffer, 0, BUFFER_SIZE);
 
 						// Read from connection
 						n = read(i, buffer, BUFFER_SIZE - 1);
