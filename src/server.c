@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 	struct addrinfo *result, *rp;
 	struct timeval timeout;
 	struct cstate *cs_pointer = NULL;
-	int o, n, i, r;
+	int o, n, r;
 	time_t last_ping_time = time(NULL);
 
 	signal(SIGINT, handle_sigint);
@@ -146,62 +146,65 @@ int main(int argc, char *argv[])
 		} else {
 
 			// Check all sockets and service those with input pending
-			for (i = 0; i < FD_SETSIZE; ++i) {
-				if (FD_ISSET(i, &read_fd_set)) {
-					if (i == mainsockfd) {
-						// Connection request on original socket (main socket)
 
-						socklen_t clilen;
+			if (FD_ISSET(mainsockfd, &read_fd_set)) {
+				// New connection request on main socket
 
-						// accept() causes the process to block (sleep) until a client connects.
-						// In this case we already know there is a new connection waiting (no wait).
-						// Get new connection from the socket queue and return a new file descriptor. 
-						//
-						// cli_addr - is filled in with the address of the connecting entity
-						// http://www.linuxhowtos.org/data/6/accept.txt
-						clilen = sizeof(cli_addr);
-						newsockfd = accept(mainsockfd, &cli_addr, &clilen);
-						if (newsockfd < 0) 
-							error("accept() error");
+				socklen_t clilen;
 
-						// Add new connection to linked list
-						cs_pointer = cs_start;
-						if (cs_pointer == NULL) {
-							cs_pointer = malloc(sizeof(struct cstate));
-							cs_start = cs_pointer;
-						} else {
-							// Set list pointer to last member in list
-							while (cs_pointer->next != NULL) {
-								cs_pointer = cs_pointer->next;
-							}
+				// accept() causes the process to block (sleep) until a client connects.
+				// In this case we already know there is a new connection waiting (no wait).
+				// Get new connection from the socket queue and return a new file descriptor. 
+				//
+				// cli_addr - is filled in with the address of the connecting entity
+				// http://www.linuxhowtos.org/data/6/accept.txt
+				clilen = sizeof(cli_addr);
+				newsockfd = accept(mainsockfd, &cli_addr, &clilen);
+				if (newsockfd < 0) 
+					error("accept() error");
 
-							// Add new member to end of list
-							cs_pointer->next = malloc(sizeof(struct cstate));
-							cs_pointer = cs_pointer->next;
-						}
+				// Add new connection to linked list
+				cs_pointer = cs_start;
+				if (cs_pointer == NULL) {
+					cs_pointer = malloc(sizeof(struct cstate));
+					cs_start = cs_pointer;
+				} else {
+					// Set list pointer to last member in list
+					while (cs_pointer->next != NULL) {
+						cs_pointer = cs_pointer->next;
+					}
 
-						// Initialize connection state
-						cs_pointer->socket = newsockfd;
-						cs_pointer->last_ping_time = time(NULL);
-						cs_pointer->next = NULL;
+					// Add new member to end of list
+					cs_pointer->next = malloc(sizeof(struct cstate));
+					cs_pointer = cs_pointer->next;
+				}
 
-						// Adding new connection to fd set
-						FD_SET(newsockfd, &active_fd_set);
+				// Initialize connection state
+				cs_pointer->socket = newsockfd;
+				cs_pointer->last_ping_time = time(NULL);
+				cs_pointer->next = NULL;
 
-						// Send accept message
-						n = write(newsockfd, "accept", 6);
+				// Adding new connection to fd set
+				FD_SET(newsockfd, &active_fd_set);
 
-						// Print error messsage if couldn't write data
-						if (n < 0)
-							error("write() error");
-					} else {
-						// Data arriving on already-connected socket
+				// Send accept message
+				n = write(newsockfd, "accept", 6);
+
+				// Print error messsage if couldn't write data
+				if (n < 0)
+					error("write() error");
+			} else {
+				// Data arriving on already-connected socket
+
+				cs_pointer = cs_start;
+				while (cs_pointer != NULL) {
+					if (FD_ISSET(cs_pointer->socket, &read_fd_set)) {
 					
 						// Initialize the buffer with all integer zeros ('\0')
 						memset(buffer, 0, BUFFER_SIZE);
 
 						// Read from connection
-						n = read(i, buffer, BUFFER_SIZE - 1);
+						n = read(cs_pointer->socket, buffer, BUFFER_SIZE - 1);
 
 						// Error if can't read socket
 						if (n < 0)
@@ -209,27 +212,21 @@ int main(int argc, char *argv[])
 
 						// Shut down socket if we got EOF (other side terminated connection)
 						else if (n == 0)
-							shutdown_socket(i);
+							shutdown_socket(cs_pointer->socket);
 
 						// Read from socket and evaluate data
 						else {
 
 							// Check for ping response and update ping time
-							if (strcmp(buffer, "ping") == 0) {
-								cs_pointer = cs_start;
-
-								while (cs_pointer != NULL && cs_pointer->socket != i)
-									cs_pointer = cs_pointer->next;
-
-								if (cs_pointer != NULL)
-									cs_pointer->last_ping_time = time(NULL);
-							}
+							if (strcmp(buffer, "ping") == 0)
+								cs_pointer->last_ping_time = time(NULL);
 
 							// Client quit
 							if (strcmp(buffer, "quit") == 0)
-								shutdown_socket(i);
+								shutdown_socket(cs_pointer->socket);
 						}
 					}
+					cs_pointer = cs_pointer->next;
 				}
 			}
 
@@ -319,26 +316,25 @@ void shutdown_socket(int socket) {
 }
 
 /*
- * Ping all socket connnections except mainsockfd (main socket)
+ * Ping all client connnections
  */
 void ping_all_sockets() {
-	int i, n;
+	struct cstate *cs_pointer = NULL;
+	int n;
 
-	for (i = 0; i < FD_SETSIZE; ++i) {
-		if (FD_ISSET(i, &active_fd_set)) {
-
-			// Skip the original socket
-			if (i == mainsockfd)
-				continue;
+	cs_pointer = cs_start;
+	while (cs_pointer != NULL) {
+		if (FD_ISSET(cs_pointer->socket, &active_fd_set)) {
 
 			// Send ping message
-			n = write(i, "ping", 4);
+			n = write(cs_pointer->socket, "ping", 4);
 
 			// Print error messsage if couldn't write data
 			if (n < 0)
 				error("write() error");
 
 		}
+		cs_pointer = cs_pointer->next;
 	}
 }
 
@@ -365,4 +361,6 @@ void cleanup() {
 		shutdown_socket(cs_pointer->socket);
 		cs_pointer = cs_pointer->next;
 	}
+
+	// TODO close mainsockfd
 }
