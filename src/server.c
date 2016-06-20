@@ -38,7 +38,7 @@ void handle_sigint(int);
 void cleanup(void);
 
 // Globals
-int mainsockfd;
+int mainsockfd = 0;
 struct cstate *cs_start = NULL;
 fd_set active_fd_set;
 
@@ -362,5 +362,7 @@ void cleanup() {
 		cs_pointer = cs_pointer->next;
 	}
 
-	// TODO close mainsockfd
+	// Close main socket if it was established
+	if (mainsockfd > 0)
+		close(mainsockfd);
 }
