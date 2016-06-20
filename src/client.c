@@ -49,9 +49,7 @@ int main(int argc, char *argv[])
 
 	// Setting up our serv_addr structure
 	serv_addr.sin_family = AF_INET;            // Internet Protocol v4 addresses
-	bcopy((char *)server->h_addr,              // Copy server IP address to struct
-		(char *)&serv_addr.sin_addr.s_addr,
-		server->h_length);
+	memcpy(&serv_addr.sin_addr.s_addr, server->h_addr, server->h_length); // Copy address
 	serv_addr.sin_port = htons(portno);         // Convert port byte order to 'network byte order'
 
 	// Connect to server. Error if can't connect.
