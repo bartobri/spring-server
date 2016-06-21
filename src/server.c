@@ -193,41 +193,41 @@ int main(int argc, char *argv[])
 				// Print error messsage if couldn't write data
 				if (n < 0)
 					error("write() error");
-			} else {
-				// Data arriving on already-connected socket
+			}
 
-				cs_pointer = cs_start;
-				while (cs_pointer != NULL) {
-					if (FD_ISSET(cs_pointer->socket, &read_fd_set)) {
+			// Check for data arriving on already-connected socket
+
+			cs_pointer = cs_start;
+			while (cs_pointer != NULL) {
+				if (FD_ISSET(cs_pointer->socket, &read_fd_set)) {
 					
-						// Initialize the buffer with all integer zeros ('\0')
-						memset(buffer, 0, BUFFER_SIZE);
+					// Initialize the buffer with all integer zeros ('\0')
+					memset(buffer, 0, BUFFER_SIZE);
 
-						// Read from connection
-						n = read(cs_pointer->socket, buffer, BUFFER_SIZE - 1);
+					// Read from connection
+					n = read(cs_pointer->socket, buffer, BUFFER_SIZE - 1);
 
-						// Error if can't read socket
-						if (n < 0)
-							error("read() error");
+					// Error if can't read socket
+					if (n < 0)
+						error("read() error");
 
-						// Shut down socket if we got EOF (other side terminated connection)
-						else if (n == 0)
+					// Shut down socket if we got EOF (other side terminated connection)
+					else if (n == 0)
+						shutdown_socket(cs_pointer->socket);
+
+					// Read from socket and evaluate data
+					else {
+
+						// Check for ping response and update ping time
+						if (strcmp(buffer, "ping") == 0)
+							cs_pointer->last_ping_time = time(NULL);
+
+						// Client quit
+						if (strcmp(buffer, "quit") == 0)
 							shutdown_socket(cs_pointer->socket);
-
-						// Read from socket and evaluate data
-						else {
-
-							// Check for ping response and update ping time
-							if (strcmp(buffer, "ping") == 0)
-								cs_pointer->last_ping_time = time(NULL);
-
-							// Client quit
-							if (strcmp(buffer, "quit") == 0)
-								shutdown_socket(cs_pointer->socket);
-						}
 					}
-					cs_pointer = cs_pointer->next;
 				}
+				cs_pointer = cs_pointer->next;
 			}
 
 			// Check for non-responsive connection and drop
