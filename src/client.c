@@ -19,7 +19,11 @@
 void error(const char *msg);
 
 /*
- * main function
+ * int main(int, char *)
+ *
+ * DESCR:
+ * Main program function. Connects to server and sends heartbeats.
+ *
  */
 int main(int argc, char *argv[])
 {
@@ -122,7 +126,14 @@ int main(int argc, char *argv[])
 }
 
 /*
- * Print error message and exit
+ * void error(const char *)
+ *
+ * DESCR:
+ * Print passed error string and exit
+ *
+ * ARGS:
+ * const char *msg - Error string
+ *
  */
 void error(const char *msg) {
 	fprintf(stderr, "%s\n", msg);
