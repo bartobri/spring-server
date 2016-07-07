@@ -15,7 +15,7 @@
 #include <netinet/in.h>
 
 #define DEFAULT_PORT     "51717"
-#define BUFFER_SIZE	     256
+#define BUFFER_SIZE      256
 
 #define DROP_SECONDS     10    // Number of seconds to wait for ping response before dropping conn.
 
