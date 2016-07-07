@@ -23,6 +23,8 @@
                                // client. Actual number may vary slightly depending on amount of
                                // chatter from other clients.
 
+// Client state structure. Linked list. Keeps track of each client
+// socket and time of last ping response.
 struct cstate {
 	int socket;
 	time_t last_ping_time;
@@ -43,10 +45,13 @@ struct cstate *cs_start = NULL;
 fd_set active_fd_set;
 
 /*
- * main function
+ * int main(int, char *)
+ *
+ * DESCR:
+ * Main program function. Watches and accepts new conections. 
+ *
  */
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	int newsockfd;
 	char *portno;
 	fd_set read_fd_set;
@@ -249,7 +254,14 @@ int main(int argc, char *argv[])
 }
 
 /*
- * Print error message and exit
+ * void error(const char *)
+ *
+ * DESCR:
+ * Print passed error string and exit
+ *
+ * ARGS:
+ * const char *msg - Error string
+ *
  */
 void error(const char *msg) {
 	fprintf(stderr, "%s, errno: %i\n", msg, errno);
@@ -257,9 +269,13 @@ void error(const char *msg) {
 }
 
 /*
- * Check for and drop connections that have not responded to a ping
+ * void drop_unresponsive_cons(void)
+ *
+ * DECSR:
+ * Check for and drop connections that have not responded to a ping.
+ *
  */
-void drop_unresponsive_cons() {
+void drop_unresponsive_cons(void) {
 	struct cstate *cs_pointer = NULL;
 	int droptime;
 
@@ -278,6 +294,15 @@ void drop_unresponsive_cons() {
 	}
 }
 
+/*
+ * void shutdown_socket(int)
+ *
+ * DECSR:
+ * Shut down a socket. Includes removing it from linked list, removing it from
+ * the fd set, and closing the socket. Must also free up memory used for list 
+ * element.
+ *
+ */
 void shutdown_socket(int socket) {
 	struct cstate *cs_pointer = NULL;
 	struct cstate *cs_temp = NULL;
@@ -316,9 +341,13 @@ void shutdown_socket(int socket) {
 }
 
 /*
- * Ping all client connnections
+ * void ping_all_sockets(void)
+ *
+ * DESCR:
+ * Ping all client connnections. NOTE: does not handle responses.
+ *
  */
-void ping_all_sockets() {
+void ping_all_sockets(void) {
 	struct cstate *cs_pointer = NULL;
 	int n;
 
@@ -339,7 +368,12 @@ void ping_all_sockets() {
 }
 
 /*
- * SIGINT handler. Mainly exists to disconnect all sockets before exiting.
+ * void handle_sigint(int)
+ *
+ * DESCR:
+ * Overrides SIGINT (CTR-C) signal and executes block of code before exiting.
+ * This mainly exists to run cleanup tasks.
+ *
  */
 void handle_sigint(int e) {
 	fprintf(stderr, "Caught sigint (%i). Exiting\n", e);
@@ -350,9 +384,16 @@ void handle_sigint(int e) {
 }
 
 /*
- * Memory cleanup
+ * void cleanup(void)
+ *
+ * DESCR:
+ * Perform cleanup tasks prior to terminating program:
+ *    1. Close all client sockets.
+ *    2. Free up memory used by linked list.
+ *    3. Close primary socket (for new connections).
+ *
  */
-void cleanup() {
+void cleanup(void) {
 	struct cstate *cs_pointer = NULL;
 
 	// Itterate over all list members
