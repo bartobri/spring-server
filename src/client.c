@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
 	// Check arguments
 	if (argc < 3) {
-		fprintf(stderr,"usage %s hostname port\n", argv[0]);
+		printf("Usage: %s <hostname> <port>\n", argv[0]);
 		exit(0);
 	}
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 	// Error if invalid host
 	server = gethostbyname(argv[1]);
 	if (server == NULL)
-		error("ERROR, no such host");
+		error("ERROR, no such host.");
 
 	// Initializing serv_addr memory footprint to all integer zeros ('\0')
 	memset(&serv_addr, 0, sizeof(serv_addr));
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 
 	// Connect to server. Error if can't connect.
 	if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
-		error("ERROR connecting");
+		error("ERROR connecting.");
 
 	// Set buffer to all integer zeros ('\0')
 	memset(buffer, 0, BUFFER_SIZE);
@@ -71,14 +71,14 @@ int main(int argc, char *argv[])
 	// Read accept message from server. Error if can't read.
 	n = read(sockfd, buffer, BUFFER_SIZE - 1);
 	if (n < 0) 
-		error("ERROR reading from socket");
+		error("ERROR reading from socket.");
 
 	// Confirm expected server response
 	if (strcmp(buffer, "accept") != 0)
 		error("Unknown response from connection request. Quitting.");
 
 	// Print server accept message
-	printf("Connected Successfully\n");
+	printf("Connected Successfully!\n");
 
 	// Initialize fd set
 	FD_ZERO (&server_fd_set);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 
 		// Block until input arrives on server socket
 		if (select(FD_SETSIZE, &server_fd_set, NULL, NULL, NULL) < 0)
-			error("select error");
+			error("select error.");
 
 		// Clear buffer for reading (all integer zeros ('\0'))
 		memset(buffer, 0, BUFFER_SIZE);
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 
 		// Error if can't read from socket
 		if (n < 0) 
-			error("ERROR reading from socket");
+			error("ERROR reading from socket.");
 
 		// Print msg and exit if we got EOF (server terminated connection)
 		else if (n == 0) {
