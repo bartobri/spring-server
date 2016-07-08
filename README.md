@@ -1,27 +1,22 @@
 SPCServer
 =========
 
-This project provides a pair of applications that can be used for bootstrapping your client/server
-application. To be explicit, two binaries are provided with this project: a server and a client.
+This project provides a pair of applications, client and server, that are meant to provide the basic
+functionality necessary to establish a connection and reliably exchange data between the two. This
+includes an initial handshake mechanism and ongoing connection monitoring via heartbeat polling.
 
-Out of the box, these applications are meant to provide the minimal functionality required to
-establish a connection and reliably exchange data between the two. This amounts to nothing more than
-a simple handshake and ongoing heartbeat monitoring throughout the life of the connection.
+Up to 1028 client instances can connect to the server and communicate independently.
 
-This basic functionality provides a starting point for you to build upon by creating a set of
-commands and other kinds of data that can be exchanged between the two.
+This basic framework provides a simple starting point for you to build upon. With minimal
+effort, you can create a command/response protocol to exchange information between the client and
+server. This is ideal for applications requiring multiple deployed agents that need to send data
+about their environment to a central server where a potential action can be taken, which potentially
+includes the server invoking a command on the agent itself.
 
 The server component of this project is known as a "single process concurrent server", which means
 it can handle up to 1028 concurrent client connections while running as a single process. It is not
 a multi-threaded server. It is not ideal to use for applications that are meant to handle thousands
 of simultaneous connections.
-
-The client component is a simple binary that can connect with the server, execute the handshake, and
-respond to heartbeat polling from the server.
-
-This project is an ideal starting point for other projects that wish to have a client application
-running on multiple machines, all communicating with a central server via a set of commands that you
-develop.
 
 Installation
 ------------
@@ -74,4 +69,5 @@ bin/client <hostname> <port>
 License
 -------
 
-This program is free software; you can redistribute it and/or modify it under the terms of the the MIT License (MIT). See [LICENSE](LICENSE) for more details.
+This program is free software; you can redistribute it and/or modify it under the terms of the the
+MIT License (MIT). See [LICENSE](LICENSE) for more details.
