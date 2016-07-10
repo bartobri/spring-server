@@ -40,7 +40,7 @@ struct cstate {
 void error(const char *);
 void drop_unresponsive_cons(void);
 void shutdown_socket(int);
-void ping_all_sockets();
+void ping_all_sockets(void);
 void handle_sigint(int);
 void cleanup(void);
 
@@ -58,17 +58,18 @@ fd_set active_fd_set;
  */
 int main(int argc, char *argv[]) {
 	int newsockfd;
+	int o, n, r;
 	char *portno;
-	fd_set read_fd_set;
 	char buffer[BUFFER_SIZE];
 	struct sockaddr cli_addr;
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
 	struct timeval timeout;
 	struct cstate *cs_pointer = NULL;
-	int o, n, r;
 	time_t last_ping_time = time(NULL);
+	fd_set read_fd_set;
 
+	// Set SIGINT handler
 	signal(SIGINT, handle_sigint);
 
 	// Set port
