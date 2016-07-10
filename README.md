@@ -1,5 +1,5 @@
-SPCServer
-=========
+Spring Server
+=============
 
 This project provides a pair of applications, client and server, that are meant to provide the basic
 functionality necessary to establish a connection and reliably exchange data between the two. This
@@ -23,26 +23,26 @@ Installation
 
 To build both the server and client apps:
 ```
-git clone https://github.com/bartobri/SPCServer.git
-cd SPCServer
+git clone https://github.com/bartobri/spring-server.git
+cd spring-server
 make
 ```
 
 To build just the server app:
 ```
-git clone https://github.com/bartobri/SPCServer.git
-cd SPCServer
+git clone https://github.com/bartobri/spring-server.git
+cd spring-server
 make server
 ```
 
 To build just the client app:
 ```
-git clone https://github.com/bartobri/SPCServer.git
-cd SPCServer
+git clone https://github.com/bartobri/spring-server.git
+cd spring-server
 make client
 ```
 
-The resulting binaries will be located in the SPCServer/bin directory. From there you can copy them
+The resulting binaries will be located in the spring-server/bin directory. From there you can copy them
 to your preferred bin directory.
 
 Usage
