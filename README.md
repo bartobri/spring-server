@@ -57,13 +57,13 @@ bin/server
 The server listens on port 51717 by default. To override the port, use the `-p` option:
 
 ```
-bin/server -p 51718
+bin/server -p <port> 
 ```
 
 To run the client:
 
 ```
-bin/client <hostname> <port>
+bin/client -h <hostname> -p <port>
 ```
 
 License
