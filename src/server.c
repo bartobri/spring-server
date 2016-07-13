@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
 		} else if (r == 0) {
 			// select() timeout
 
-			// Check for non-responsive connection and drop
+			// Check for unresponsive connections and drop
 			drop_unresponsive_cons();
 
 			// Send heartbeat to all sockets. We can assume that the heartbeat is due since the 
@@ -264,7 +264,7 @@ int main(int argc, char *argv[]) {
 				cs_pointer = cs_pointer->next;
 			}
 
-			// Check for non-responsive connection and drop
+			// Check for unresponsive connections and drop
 			drop_unresponsive_cons();
 
 			// Send ping to all sockets if we are past the PING_SECONDS time limit
