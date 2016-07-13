@@ -14,7 +14,8 @@
 #include <netinet/in.h>
 #include <netdb.h> 
 
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE      256
+#define COMMAND_SIZE     4
 
 // Function Prototypes
 void error(const char *msg);
@@ -126,11 +127,16 @@ int main(int argc, char *argv[])
 			exit(0);
 		}
 
-		// Evaluate commands and respond
+		// Evaluate command and respond
 		else {
 
+			// Get incoming command
+			char command[COMMAND_SIZE + 1];
+			memset(command, 0, COMMAND_SIZE + 1);
+			strncpy(command, buffer, COMMAND_SIZE);
+
 			// Check for ping command
-			if (strcmp(buffer, "ping") == 0)
+			if (strcmp(command, "ping") == 0)
 				n = write(sockfd, "ping", 4);
 
 		}

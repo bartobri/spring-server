@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
 					else if (n == 0)
 						shutdown_socket(cs_pointer->socket);
 
-					// Read from socket and evaluate data
+					// Evaluate command and respond
 					else {
 
 						// Get incoming command
