@@ -63,6 +63,12 @@ The server listens on port 51717 by default. To override the port, use the `-p` 
 bin/server -p <port> 
 ```
 
+To suppress server output, use the `-q` option:
+
+```
+bin/server -q
+```
+
 To run the client:
 
 ```
