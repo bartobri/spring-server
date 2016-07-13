@@ -18,9 +18,11 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 #define DEFAULT_PORT     "51717"
 #define BUFFER_SIZE      256
+#define COMMAND_SIZE     4
 
 #define DROP_SECONDS     10    // Number of seconds to wait for ping response before dropping conn.
 
@@ -32,6 +34,7 @@
 // socket and time of last ping response.
 struct cstate {
 	int socket;
+	char ip[16];
 	time_t last_ping_time;
 	struct cstate *next;
 };
@@ -122,6 +125,9 @@ int main(int argc, char *argv[]) {
 	// Mark socket as accepting connections, up to 5 backlogged connections
 	listen(mainsockfd, 5);
 
+	// Print "listening" message
+	printf("Listening on port %s\n", portno);
+
 	// Initialize fd set
 	FD_ZERO (&active_fd_set);
 
@@ -162,6 +168,7 @@ int main(int argc, char *argv[]) {
 				// New connection request on main socket
 
 				socklen_t clilen;
+				char *ip;
 
 				// accept() causes the process to block (sleep) until a client connects.
 				// In this case we already know there is a new connection waiting (no wait).
@@ -173,6 +180,13 @@ int main(int argc, char *argv[]) {
 				newsockfd = accept(mainsockfd, &cli_addr, &clilen);
 				if (newsockfd < 0) 
 					error("accept() error");
+
+				// Get IP address
+				struct sockaddr_in *addr_in = (struct sockaddr_in *)&cli_addr;
+				ip =  inet_ntoa(addr_in->sin_addr);
+
+				// Print "accept" message
+				printf("[IP %s] [Socket %i] Connection Accepted\n", ip, newsockfd);
 
 				// Add new connection to linked list
 				cs_pointer = cs_start;
@@ -192,6 +206,7 @@ int main(int argc, char *argv[]) {
 
 				// Initialize connection state
 				cs_pointer->socket = newsockfd;
+				strcpy(cs_pointer->ip, ip);
 				cs_pointer->last_ping_time = time(NULL);
 				cs_pointer->next = NULL;
 
@@ -211,7 +226,7 @@ int main(int argc, char *argv[]) {
 			cs_pointer = cs_start;
 			while (cs_pointer != NULL) {
 				if (FD_ISSET(cs_pointer->socket, &read_fd_set)) {
-					
+
 					// Initialize the buffer with all integer zeros ('\0')
 					memset(buffer, 0, BUFFER_SIZE);
 
@@ -229,12 +244,20 @@ int main(int argc, char *argv[]) {
 					// Read from socket and evaluate data
 					else {
 
+						// Get incoming command
+						char command[COMMAND_SIZE + 1];
+						memset(command, 0, COMMAND_SIZE + 1);
+						strncpy(command, buffer, COMMAND_SIZE);
+
+						// Print incoming command message
+						printf("[IP %s] [Socket %i] <- %s\n", cs_pointer->ip, cs_pointer->socket, command);
+
 						// Check for ping response and update ping time
-						if (strcmp(buffer, "ping") == 0)
+						if (strcmp(command, "ping") == 0)
 							cs_pointer->last_ping_time = time(NULL);
 
 						// Client quit
-						if (strcmp(buffer, "quit") == 0)
+						if (strcmp(command, "quit") == 0)
 							shutdown_socket(cs_pointer->socket);
 					}
 				}
@@ -324,6 +347,9 @@ void shutdown_socket(int socket) {
 	while (cs_pointer != NULL) {
 		if (cs_pointer->socket == socket) {
 
+			// Print "closing" message
+			printf("[IP %s] [Socket %i] Connection Closed\n", cs_pointer->ip, socket);
+
 			// Copy to temp pointer
 			cs_temp = cs_pointer;
 
@@ -363,6 +389,9 @@ void ping_all_sockets(void) {
 
 			// Send ping message
 			n = write(cs_pointer->socket, "ping", 4);
+
+			// Print outgoing command message
+			printf("[IP %s] [Socket %i] -> %s\n", cs_pointer->ip, cs_pointer->socket, "ping");
 
 			// Print error messsage if couldn't write data
 			if (n < 0)
