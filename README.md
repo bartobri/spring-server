@@ -2,21 +2,24 @@ Spring Server
 =============
 
 This project provides a pair of applications, client and server, that are meant to provide the basic
-functionality necessary to establish a connection and reliably exchange data between the two. This
-includes an initial handshake mechanism and ongoing connection monitoring via heartbeat polling.
+functionality necessary to establish a connection and reliably exchange data between the two.
+The server component can handle over one thousand simultaneous client connections. Both components
+execute a simple handshake mechanism and utilize two-way heartbeat polling to ensure that any
+unexpected disconnections are handled gracefully.
 
-Up to 1028 client instances can connect to the server and communicate independently.
-
-This basic framework provides a simple starting point for you to build upon. With minimal
-effort, you can create a command/response protocol to exchange information between the client and
-server. This is ideal for applications requiring multiple deployed agents that need to send data
-about their environment to a central server where a potential action can be taken, which potentially
-includes the server invoking a command on the agent itself.
+The aim of this project is to act as a springboard for network application projects ranging from a
+simple poker game, to an infrastructure monitoring solution, to a Napster clone. This basic framework
+provides a simple starting point to build upon. The existing command-response protocol, which
+contains a command for heartbeat polling and a command for disconnecting, can easily be
+expanded with a specialized protocol that suits your requirements.
 
 The server component of this project is known as a "single process concurrent server", which means
-it can handle up to 1028 concurrent client connections while running as a single process. It is not
-a multi-threaded server. It is not ideal to use for applications that are meant to handle thousands
-of simultaneous connections.
+it can handle up to 1028 concurrent client connections while running as a single process. It can, in
+theory, scale beyond 1028 connections when deployed in a two-tier design, with a top tier
+server instance coordinating with up to 1028 tier-two server instances, which in turn coordinate with
+up to 1028 cient instances, accommodating up to 1056784 simultaneous connections.
+
+Since this project is coded in C, some knowledge of C is required.
 
 Installation
 ------------
@@ -65,6 +68,12 @@ To run the client:
 ```
 bin/client -h <hostname> -p <port>
 ```
+
+Customizing
+-----------
+
+These applications already use a simple protocol for heartbeat polling and disconnecting. The easiest way to customize these programs is to expand on this protocol.
+
 
 License
 -------
