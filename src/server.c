@@ -48,6 +48,7 @@ void handle_sigint(int);
 void cleanup(void);
 
 // Globals
+bool verbose = true;
 int mainsockfd = 0;
 struct cstate *cs_start = NULL;
 fd_set active_fd_set;
@@ -79,10 +80,13 @@ int main(int argc, char *argv[]) {
 	portno = DEFAULT_PORT;
 
 	// Check arguments
-	while ((o = getopt(argc, argv, "p:")) != -1) {
+	while ((o = getopt(argc, argv, "p:q")) != -1) {
 		switch (o) {
 			case 'p':
 				portno = optarg;
+				break;
+			case 'q':
+				verbose = false;
 				break;
 			case '?':
 				if (isprint(optopt))
@@ -126,7 +130,8 @@ int main(int argc, char *argv[]) {
 	listen(mainsockfd, 5);
 
 	// Print "listening" message
-	printf("Listening on port %s\n", portno);
+	if (verbose)
+		printf("Listening on port %s\n", portno);
 
 	// Initialize fd set
 	FD_ZERO (&active_fd_set);
@@ -186,7 +191,8 @@ int main(int argc, char *argv[]) {
 				ip =  inet_ntoa(addr_in->sin_addr);
 
 				// Print "accept" message
-				printf("[IP %s] [Socket %i] Connection Accepted\n", ip, newsockfd);
+				if (verbose)
+					printf("[IP %s] [Socket %i] Connection Accepted\n", ip, newsockfd);
 
 				// Add new connection to linked list
 				cs_pointer = cs_start;
@@ -250,7 +256,8 @@ int main(int argc, char *argv[]) {
 						strncpy(command, buffer, COMMAND_SIZE);
 
 						// Print incoming command message
-						printf("[IP %s] [Socket %i] <- %s\n", cs_pointer->ip, cs_pointer->socket, command);
+						if (verbose)
+							printf("[IP %s] [Socket %i] <- %s\n", cs_pointer->ip, cs_pointer->socket, command);
 
 						// Check for ping response and update ping time
 						if (strcmp(command, "ping") == 0)
@@ -348,7 +355,8 @@ void shutdown_socket(int socket) {
 		if (cs_pointer->socket == socket) {
 
 			// Print "closing" message
-			printf("[IP %s] [Socket %i] Connection Closed\n", cs_pointer->ip, socket);
+			if (verbose)
+				printf("[IP %s] [Socket %i] Connection Closed\n", cs_pointer->ip, socket);
 
 			// Copy to temp pointer
 			cs_temp = cs_pointer;
@@ -391,7 +399,8 @@ void ping_all_sockets(void) {
 			n = write(cs_pointer->socket, "ping", 4);
 
 			// Print outgoing command message
-			printf("[IP %s] [Socket %i] -> %s\n", cs_pointer->ip, cs_pointer->socket, "ping");
+			if (verbose)
+				printf("[IP %s] [Socket %i] -> %s\n", cs_pointer->ip, cs_pointer->socket, "ping");
 
 			// Print error messsage if couldn't write data
 			if (n < 0)
