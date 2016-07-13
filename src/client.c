@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -27,20 +28,37 @@ void error(const char *msg);
  */
 int main(int argc, char *argv[])
 {
-	int sockfd, portno, n;
+	int sockfd, n, o;
+	char *portno = NULL;
+	char *hostname = NULL;
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
 	char buffer[BUFFER_SIZE];
 	fd_set server_fd_set;
 
-	// Check arguments
-	if (argc < 3) {
-		printf("Usage: %s <hostname> <port>\n", argv[0]);
-		exit(0);
+    // Check arguments
+	while ((o = getopt(argc, argv, "h:p:")) != -1) {
+		switch (o) {
+			case 'p':
+				portno = optarg;
+				break;
+			case 'h':
+				hostname = optarg;
+				break;
+			case '?':
+				if (isprint(optopt))
+					fprintf (stderr, "Unknown option '-%c'.\n", optopt);
+				else
+					fprintf (stderr, "Unknown option character '\\x%x'.\n", optopt);
+				exit(1);
+		}
 	}
 
-	// Convert port argument to int
-	portno = atoi(argv[2]);
+	// Require hostname and port
+	if (hostname == NULL || portno == NULL) {
+		printf("Usage: %s -h <hostname> -p <port>\n", argv[0]);
+		exit(0);
+	}
 
 	// Set up a socket in the AF_INET domain (Internet Protocol v4 addresses)
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -49,7 +67,7 @@ int main(int argc, char *argv[])
 
 	// Get a pointer to 'hostent' containing info about host.
 	// Error if invalid host
-	server = gethostbyname(argv[1]);
+	server = gethostbyname(hostname);
 	if (server == NULL)
 		error("ERROR, no such host.");
 
@@ -59,7 +77,7 @@ int main(int argc, char *argv[])
 	// Setting up our serv_addr structure
 	serv_addr.sin_family = AF_INET;            // Internet Protocol v4 addresses
 	memcpy(&serv_addr.sin_addr.s_addr, server->h_addr, server->h_length); // Copy address
-	serv_addr.sin_port = htons(portno);         // Convert port byte order to 'network byte order'
+	serv_addr.sin_port = htons(atoi(portno));  // Convert port byte order to 'network byte order'
 
 	// Connect to server. Error if can't connect.
 	if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
