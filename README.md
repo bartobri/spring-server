@@ -77,19 +77,29 @@ bin/client -h <hostname> -p <port>
 Customizing
 -----------
 
-These applications already use a command-response protocol for heartbeat polling and disconnecting. The easiest way to customize these programs to exchange the specific data you want is to build on top of this protocol.
+##### The Command-Response Protocol
 
-In both the client and server source code there is a block of code labeled 'Evaluate command and respond'. This is where you will begin your customizations.
+The client and server programs both use a simple command-response protocol to communicate with each other. Each communication contains a command and an optional payload. Upon receipt of a command on either end, it can be evaluated and a response can be programmed (see 'Programming Command Responses').
 
-The first 3 lines of code in this section extract the *command* from the first 4 bytes of the input buffer.
+It is expected that the first 4 bytes of any communication to contain the *command*. The command denotes the purpose of the communication and tells the recipient what response to take. It is up to you to create commands and program the response to them according to the needs of your application.
 
-Both the client and the server expect the first 4 bytes of any communication to contain the *command*. The command denotes the purpose of the communication. It is up to you to create commands and program the response to them.
-
-If you need more than 4 bytes for the command, that can be changed by editing the following macro:
+If you require more than 4 bytes for the command, that can be changed by editing the following macro in both the server and client source code:
 
 ```
 #define COMMAND_SIZE     4
 ```
+
+To summarize, any communication between the client and server should contain within the first 4 bytes (or as defined by COMMAND_SIZE) a command, followed by an optional payload containing ancillary data of arbitrary length.
+
+This is the general structure of the communications between these two components.
+
+##### The Kick-off
+
+##### Programming Command Responses
+
+In both the client and server source code there is a block of code labeled 'Evaluate command and respond'. This is where you will begin your customizations.
+
+The first 3 lines of code in this section extract the *command* from the first 4 bytes of the input buffer.
 
 Once data is received, the *command* is stored in the a character array called `command`. Using 'fooo' as an example, you can program a response like so:
 
