@@ -18,6 +18,8 @@ poker game, to an infrastructure monitoring solution, to a Napster clone.
 
 Since this project is coded in C, knowledge of C is required.
 
+See 'Customizing' for information about how to customize these programs for your specific needs.
+
 Installation
 ------------
 
@@ -75,7 +77,44 @@ bin/client -h <hostname> -p <port>
 Customizing
 -----------
 
-These applications already use a simple communication protocol for heartbeat polling and disconnecting. The easiest way to customize these programs is to build on this protocol.
+These applications already use a command-response protocol for heartbeat polling and disconnecting. The easiest way to customize these programs to exchange the specific data you want is to build on top of this protocol.
+
+In both the client and server source code there is a block of code labeled 'Evaluate command and respond'. This is where you will begin your customizations.
+
+The first 3 lines of code in this section extract the *command* from the first 4 bytes of the input buffer.
+
+Both the client and the server expect the first 4 bytes of any communication to contain the *command*. The command denotes the purpose of the communication. It is up to you to create commands and program the response to them.
+
+If you need more than 4 bytes for the command, that can be changed by editing the following macro:
+
+```
+#define COMMAND_SIZE     4
+```
+
+Once data is received, the *command* is stored in the a character array called `command`. Using 'fooo' as an example, you can program a response like so:
+
+```
+if (strcmp(command, "fooo") == 0) {
+	// Program response to command 'fooo' here.
+}
+```
+
+You can use the existing command 'ping' as an example. When the server sends the heartbeat command 'ping' to the client, the client is programmed to response to the server with the same command, thus telling the server it is still alive.
+
+```
+if (strcmp(command, "ping") == 0)
+	n = write(sockfd, "ping", 4);
+```
+
+Upon receipt of the ping command, the server stores the time so that it can keep track of how long it has been since it last received a heartbeat.
+
+```
+if (strcmp(command, "ping") == 0)
+	cs_pointer->last_ping_time = time(NULL);
+```
+
+All data after the first 4 bytes can be used in any way you like. This data will be stored in the character array called `buffer`.
+
 
 
 License
