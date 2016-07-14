@@ -20,7 +20,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define DEFAULT_PORT     "51717"
+#define DEFAULT_PORT     51717
 #define BUFFER_SIZE      256
 #define COMMAND_SIZE     4
 
@@ -76,8 +76,9 @@ int main(int argc, char *argv[]) {
 	// Set SIGINT handler
 	signal(SIGINT, handle_sigint);
 
-	// Set port
-	portno = DEFAULT_PORT;
+	// Set default port
+	portno = malloc(6)
+	sprintf(portno, "%i", DEFAULT_PORT);
 
 	// Check arguments
 	while ((o = getopt(argc, argv, "p:q")) != -1) {
