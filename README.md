@@ -1,25 +1,22 @@
 Spring Server
 =============
 
-This project provides a pair of applications, client and server, that are meant to provide the basic
-functionality necessary to establish a connection and reliably exchange data between the two.
-The server component can handle over one thousand simultaneous client connections. Both components
-execute a simple handshake mechanism and utilize two-way heartbeat polling to ensure that any
-unexpected disconnections are handled gracefully.
+The goal of this project is to act as a springboard for applications that require the exchange of
+data between a server and one or more clients over a TCP/IP network. Two programs are provided, client
+and server, that together act as a communication framework upon which you can easily exchange data.
 
-The aim of this project is to act as a springboard for network application projects ranging from a
-simple poker game, to an infrastructure monitoring solution, to a Napster clone. This basic framework
-provides a simple starting point to build upon. The existing command-response protocol, which
-contains a command for heartbeat polling and a command for disconnecting, can easily be
-expanded with a specialized protocol that suits your requirements.
+The server component can manage up to 1028 concurrent client connections.
 
-The server component of this project is known as a "single process concurrent server", which means
-it can handle up to 1028 concurrent client connections while running as a single process. It can, in
-theory, scale beyond 1028 connections when deployed in a two-tier design, with a top tier
-server instance coordinating with up to 1028 tier-two server instances, which in turn coordinate with
-up to 1028 cient instances, accommodating up to 1056784 simultaneous connections.
+Both the server and client components execute a simple handshake and utilize two-way heartbeat
+polling to ensure that any unexpected disconnections are handled gracefully.
 
-Since this project is coded in C, some knowledge of C is required.
+The heartbeat polling feature makes use of a simple command-response protocol that can be
+customized and expanded upon.
+
+Potential projects that may wish to use this repository as a jumping-off point range from a simple
+poker game, to an infrastructure monitoring solution, to a Napster clone.
+
+Since this project is coded in C, knowledge of C is required.
 
 Installation
 ------------
@@ -78,7 +75,7 @@ bin/client -h <hostname> -p <port>
 Customizing
 -----------
 
-These applications already use a simple protocol for heartbeat polling and disconnecting. The easiest way to customize these programs is to expand on this protocol.
+These applications already use a simple communication protocol for heartbeat polling and disconnecting. The easiest way to customize these programs is to build on this protocol.
 
 
 License
