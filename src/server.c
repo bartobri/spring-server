@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 	signal(SIGINT, handle_sigint);
 
 	// Set default port
-	portno = malloc(6)
+	portno = malloc(6);
 	sprintf(portno, "%i", DEFAULT_PORT);
 
 	// Check arguments
