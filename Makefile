@@ -21,11 +21,11 @@ EXES = server client
 
 all: $(EXES)
 
-server: $(OBJ)/server.o | $(BIN)
+server: $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 
-client: $(OBJ)/client.o | $(BIN)
+client: $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
