@@ -15,7 +15,7 @@ struct commandTable {
 // Function prototypes defined in server.c and client.c
 int startup(char *, char *);
 void initCommands(struct commandTable *);
-void periodic(void);
+int periodic(int, fd_set *);
 void comp_cleanup(void);
 int comp_type(void);
 

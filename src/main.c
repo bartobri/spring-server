@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
 		
 		// Run periodic function if PERIODIC_SECONDS has elapsed
 		if (last_periodic_time <= time(NULL) - PERIODIC_SECONDS) {
-			periodic();
+			periodic(mainsockfd, &active_fd_set);
 			last_periodic_time = time(NULL);
 		}
 	}

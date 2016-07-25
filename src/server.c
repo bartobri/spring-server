@@ -79,8 +79,25 @@ void initCommands(struct commandTable *commands) {
 	commands[2].functionPtr = &command_test;
 }
 
-void periodic(void) {
-	printf("server periodic code\n");
+int periodic(int mainsockfd,  fd_set *active_fd_set) {
+	int i, n;
+
+	// send ping command to all sockets
+	for (i = 0; i < FD_SETSIZE; ++i) {
+		if (i != mainsockfd && FD_ISSET(i, active_fd_set)) {
+
+			// Send ping message
+			n = write(i, "ping", 4);
+			
+			// Print error messsage if couldn't write data
+			if (n < 0)
+				return 1;
+		}
+	}
+	
+	// Check ping responses
+	
+	return 0;
 }
 
 void comp_cleanup(void) {
@@ -98,7 +115,6 @@ int command_ping(int socket, char *payload, fd_set *active_fd_set) {
 }
 
 int command_quit(int socket, char *payload, fd_set *active_fd_set) {
-	//printf("command_quit socket: %i, payload: %s\n", socket, payload);
 	
 	// Close socket
 	close(socket);
