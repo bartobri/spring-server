@@ -12,8 +12,8 @@
 #include <netdb.h>
 #include "main.h"
 
-int commandPing(char *);
-int commandTest(char *);
+int commandPing(int, char *);
+int commandTest(int, char *);
 
 int startup(char *hostname, char *portno) {
 	int mainsockfd;
@@ -88,14 +88,14 @@ int comp_type(void) {
 	return SERVER;
 }
 
-int commandPing(char *payload) {
-	printf("commandPing payload: %s\n", payload);
+int commandPing(int socket, char *payload) {
+	printf("commandPing socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;
 }
 
-int commandTest(char *payload) {
-	printf("commandTest payload: %s\n", payload);
+int commandTest(int socket, char *payload) {
+	printf("commandTest socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;
 }

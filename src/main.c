@@ -165,12 +165,13 @@ int main(int argc, char *argv[]) {
 						memset(payload, 0, sizeof(payload));
 						strncpy(payload, buffer + COMMAND_SIZE, BUFFER_SIZE - COMMAND_SIZE);
 
+						// Loop over registered commands and execute the matching one
 						for (c = 0; c < COMMAND_LIMIT; ++c) {
 							if (commands[c].command == NULL)
 								continue;
 
 							if (strcmp(commands[c].command, command) == 0) {
-								commands[c].functionPtr(payload);
+								commands[c].functionPtr(i, payload);
 								break;
 							} 
 						}
