@@ -9,7 +9,7 @@
 
 struct commandTable {
 	const char *command;
-	int (*functionPtr)(int, char *);
+	int (*functionPtr)(int, char *, fd_set *);
 };
 
 // Function prototypes defined in server.c and client.c

@@ -12,8 +12,9 @@
 #include <netdb.h>
 #include "main.h"
 
-int commandPing(int, char *);
-int commandTest(int, char *);
+int command_ping(int, char *, fd_set *);
+int command_quit(int, char *, fd_set *);
+int command_test(int, char *, fd_set *);
 
 int startup(char *hostname, char *portno) {
 	int mainsockfd;
@@ -71,9 +72,11 @@ void initCommands(struct commandTable *commands) {
 	
 	// Populate commands
 	commands[0].command = "ping";
-	commands[0].functionPtr = &commandPing;
-	commands[1].command = "test";
-	commands[1].functionPtr = &commandTest;
+	commands[0].functionPtr = &command_ping;
+	commands[1].command = "quit";
+	commands[1].functionPtr = &command_quit;
+	commands[2].command = "test";
+	commands[2].functionPtr = &command_test;
 }
 
 void periodic(void) {
@@ -88,14 +91,26 @@ int comp_type(void) {
 	return SERVER;
 }
 
-int commandPing(int socket, char *payload) {
-	printf("commandPing socket: %i, payload: %s\n", socket, payload);
+int command_ping(int socket, char *payload, fd_set *active_fd_set) {
+	printf("command_ping socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;
 }
 
-int commandTest(int socket, char *payload) {
-	printf("commandTest socket: %i, payload: %s\n", socket, payload);
+int command_quit(int socket, char *payload, fd_set *active_fd_set) {
+	//printf("command_quit socket: %i, payload: %s\n", socket, payload);
+	
+	// Close socket
+	close(socket);
+
+	// remove socket from fd_set
+	FD_CLR(socket, active_fd_set);
+	
+	return 0;
+}
+
+int command_test(int socket, char *payload, fd_set *active_fd_set) {
+	printf("command_test socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;
 }

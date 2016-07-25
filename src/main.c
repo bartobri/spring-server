@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
 								continue;
 
 							if (strcmp(commands[c].command, command) == 0) {
-								commands[c].functionPtr(i, payload);
+								commands[c].functionPtr(i, payload, &active_fd_set);
 								break;
 							} 
 						}
