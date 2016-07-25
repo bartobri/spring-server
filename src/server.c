@@ -12,6 +12,9 @@
 #include <netdb.h>
 #include "main.h"
 
+int commandPing(char *);
+int commandTest(char *);
+
 int startup(char *hostname, char *portno) {
 	int mainsockfd;
 	struct addrinfo hints;
@@ -57,6 +60,22 @@ int startup(char *hostname, char *portno) {
 
 }
 
+void initCommands(struct commandTable *commands) {
+	int i;
+	
+	// Initialize all data to NULL
+	for (i = 0; i < COMMAND_LIMIT; ++i) {
+		commands[i].command = NULL;
+		commands[i].functionPtr = NULL;
+	}
+	
+	// Populate commands
+	commands[0].command = "ping";
+	commands[0].functionPtr = &commandPing;
+	commands[1].command = "test";
+	commands[1].functionPtr = &commandTest;
+}
+
 void periodic(void) {
 	printf("server periodic code\n");
 }
@@ -67,4 +86,16 @@ void comp_cleanup(void) {
 
 int comp_type(void) {
 	return SERVER;
+}
+
+int commandPing(char *payload) {
+	printf("commandPing payload: %s\n", payload);
+	
+	return 0;
+}
+
+int commandTest(char *payload) {
+	printf("commandTest payload: %s\n", payload);
+	
+	return 0;
 }

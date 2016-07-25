@@ -36,11 +36,15 @@ int mainsockfd;
  *
  */
 int main(int argc, char *argv[]) {
-	int o, r, i;
+	int o, r, i, c;
 	char *hostname, *portno;
 	fd_set active_fd_set, read_fd_set;
 	struct timeval timeout;
 	time_t last_periodic_time = time(NULL);
+	
+	// Create and initialize command table
+	struct commandTable commands[COMMAND_LIMIT];
+	initCommands(commands);
 	
 	// Set SIGINT handler
 	signal(SIGINT, handle_sigint);
@@ -160,13 +164,17 @@ int main(int argc, char *argv[]) {
 						// Get incoming payload
 						memset(payload, 0, sizeof(payload));
 						strncpy(payload, buffer + COMMAND_SIZE, BUFFER_SIZE - COMMAND_SIZE);
-						
-						printf("Incoming command: %s\n", command);
-						printf("Incoming payload: %s\n", payload);
-						
-						//parse_data(&command, &payload);
-					}
 
+						for (c = 0; c < COMMAND_LIMIT; ++c) {
+							if (commands[c].command == NULL)
+								continue;
+
+							if (strcmp(commands[c].command, command) == 0) {
+								commands[c].functionPtr(payload);
+								break;
+							} 
+						}
+					}
 				}
 			}
 		}
