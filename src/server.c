@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -80,22 +81,34 @@ void initCommands(struct commandTable *commands) {
 }
 
 int periodic(int mainsockfd,  fd_set *active_fd_set) {
-	int i, n;
-
-	// send ping command to all sockets
-	for (i = 0; i < FD_SETSIZE; ++i) {
-		if (i != mainsockfd && FD_ISSET(i, active_fd_set)) {
-
-			// Send ping message
-			n = write(i, "ping", 4);
-			
-			// Print error messsage if couldn't write data
-			if (n < 0)
-				return 1;
-		}
-	}
+	printf("running periodic code\n");
 	
-	// Check ping responses
+	// close sockets that have not communicated for (PERIODIC_SECONDS * 2)
+	struct lastseen *ls_pointer = NULL;
+	struct lastseen *ls_prev = NULL;
+	struct lastseen *ls_temp = NULL;
+	int droptime = time(NULL) - (PERIODIC_SECONDS * 2);
+	ls_pointer = ls_start;
+	while (ls_pointer != NULL) {
+		
+		printf("Checking socket %i\n", ls_pointer->socket);
+		if (ls_pointer->socket != mainsockfd) {
+			if (ls_pointer->last_time < droptime) {
+				close(ls_pointer->socket);
+				FD_CLR(ls_pointer->socket, active_fd_set);
+
+				ls_temp = ls_pointer;
+				if (ls_prev == NULL)
+					ls_start = ls_pointer->next;
+				else
+					ls_prev->next = ls_pointer->next;
+				free(ls_temp);
+			}
+		}
+		
+		ls_prev = ls_pointer;
+		ls_pointer = ls_pointer->next;
+	}
 	
 	return 0;
 }

@@ -16,16 +16,6 @@
 #include <netinet/in.h>
 #include "main.h"
 
-#define DEFAULT_PORT        51717
-#define DEFAULT_HOST        NULL
-#define PERIODIC_SECONDS    5
-
-struct lastseen {
-	int socket;
-	time_t last_time;
-	struct lastseen *next;
-};
-
 // Function prototypes
 void set_last_seen(int);
 void error(const char *);
@@ -34,7 +24,6 @@ void cleanup(void);
 
 // Globals
 int mainsockfd;
-struct lastseen *ls_start = NULL;
 
 /*
  * int main(int, char *)
@@ -82,6 +71,9 @@ int main(int argc, char *argv[]) {
 				exit(1);
 		}
 	}
+	
+	// Initialize our lastseen table pointer
+	ls_start = NULL;
 
 	// Execute startup proceedure
 	mainsockfd = startup(hostname, portno);
