@@ -61,16 +61,7 @@ int startup(char *hostname, char *portno) {
 
 }
 
-void initCommands(struct commandTable *commands) {
-	int i;
-	
-	// Initialize all data to NULL
-	// TODO - move to main.c
-	for (i = 0; i < COMMAND_LIMIT; ++i) {
-		commands[i].command = NULL;
-		commands[i].functionPtr = NULL;
-	}
-	
+void populate_commands(struct commandTable *commands) {
 	// Populate commands
 	commands[0].command = "quit";
 	commands[0].functionPtr = &command_quit;

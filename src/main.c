@@ -38,10 +38,7 @@ int main(int argc, char *argv[]) {
 	fd_set active_fd_set, read_fd_set;
 	struct timeval timeout;
 	time_t last_periodic_time = time(NULL);
-	
-	// Create and initialize command table
 	struct commandTable commands[COMMAND_LIMIT];
-	initCommands(commands);
 	
 	// Set SIGINT handler
 	signal(SIGINT, handle_sigint);
@@ -72,6 +69,13 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
+	// Initialize and populate command table
+	for (i = 0; i < COMMAND_LIMIT; ++i) {
+		commands[i].command = NULL;
+		commands[i].functionPtr = NULL;
+	}
+	populate_commands(commands);
+
 	// Initialize our lastseen table pointer
 	ls_start = NULL;
 
