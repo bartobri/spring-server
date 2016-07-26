@@ -13,9 +13,8 @@
 #include <netdb.h>
 #include "main.h"
 
-int command_ping(int, char *, fd_set *);
 int command_quit(int, char *, fd_set *);
-int command_test(int, char *, fd_set *);
+int command_beat(int, char *, fd_set *);
 
 int startup(char *hostname, char *portno) {
 	int mainsockfd;
@@ -66,22 +65,20 @@ void initCommands(struct commandTable *commands) {
 	int i;
 	
 	// Initialize all data to NULL
+	// TODO - move to main.c
 	for (i = 0; i < COMMAND_LIMIT; ++i) {
 		commands[i].command = NULL;
 		commands[i].functionPtr = NULL;
 	}
 	
 	// Populate commands
-	commands[0].command = "ping";
-	commands[0].functionPtr = &command_ping;
-	commands[1].command = "quit";
-	commands[1].functionPtr = &command_quit;
-	commands[2].command = "test";
-	commands[2].functionPtr = &command_test;
+	commands[0].command = "quit";
+	commands[0].functionPtr = &command_quit;
+	commands[1].command = "beat";
+	commands[1].functionPtr = &command_beat;
 }
 
 int periodic(int mainsockfd,  fd_set *active_fd_set) {
-	printf("running periodic code\n");
 	
 	// close sockets that have not communicated for (PERIODIC_SECONDS * 2)
 	struct lastseen *ls_pointer = NULL;
@@ -90,8 +87,6 @@ int periodic(int mainsockfd,  fd_set *active_fd_set) {
 	int droptime = time(NULL) - (PERIODIC_SECONDS * 2);
 	ls_pointer = ls_start;
 	while (ls_pointer != NULL) {
-		
-		printf("Checking socket %i\n", ls_pointer->socket);
 		if (ls_pointer->socket != mainsockfd) {
 			if (ls_pointer->last_time < droptime) {
 				close(ls_pointer->socket);
@@ -105,7 +100,6 @@ int periodic(int mainsockfd,  fd_set *active_fd_set) {
 				free(ls_temp);
 			}
 		}
-		
 		ls_prev = ls_pointer;
 		ls_pointer = ls_pointer->next;
 	}
@@ -121,12 +115,6 @@ int comp_type(void) {
 	return SERVER;
 }
 
-int command_ping(int socket, char *payload, fd_set *active_fd_set) {
-	printf("command_ping socket: %i, payload: %s\n", socket, payload);
-	
-	return 0;
-}
-
 int command_quit(int socket, char *payload, fd_set *active_fd_set) {
 	
 	// Close socket
@@ -138,8 +126,8 @@ int command_quit(int socket, char *payload, fd_set *active_fd_set) {
 	return 0;
 }
 
-int command_test(int socket, char *payload, fd_set *active_fd_set) {
-	printf("command_test socket: %i, payload: %s\n", socket, payload);
+int command_beat(int socket, char *payload, fd_set *active_fd_set) {
+	printf("command_beat socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;
 }

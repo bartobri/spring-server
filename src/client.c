@@ -53,8 +53,23 @@ int startup(char *hostname, char *portno) {
 	return mainsockfd;
 }
 
-void periodic(void) {
-	printf("server periodic code\n");
+void initCommands(struct commandTable *commands) {
+	int i;
+	
+	// Initialize all data to NULL
+	// TODO - move to main.c
+	for (i = 0; i < COMMAND_LIMIT; ++i) {
+		commands[i].command = NULL;
+		commands[i].functionPtr = NULL;
+	}
+}
+
+int periodic(int mainsockfd,  fd_set *active_fd_set) {
+
+	if (write(mainsockfd, "beat", 4) < 0)
+		return -1;
+	
+	return 0;
 }
 
 

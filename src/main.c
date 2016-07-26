@@ -156,6 +156,7 @@ int main(int argc, char *argv[]) {
 							if (comp_type() == SERVER) {
 								close(i);
 								FD_CLR(i, &active_fd_set);
+								// TODO - remove from socket_state list
 							} else {
 								error("Server terminated connection.");
 							}
@@ -189,6 +190,7 @@ int main(int argc, char *argv[]) {
 		// Run periodic function if PERIODIC_SECONDS has elapsed
 		if (last_periodic_time <= time(NULL) - PERIODIC_SECONDS) {
 			periodic(mainsockfd, &active_fd_set);
+			// TODO - evaluate return value of periodic
 			last_periodic_time = time(NULL);
 		}
 	}
