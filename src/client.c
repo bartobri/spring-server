@@ -57,7 +57,7 @@ void populate_commands(struct commandTable *commands) {
 	// Populate commands
 }
 
-int periodic(int mainsockfd,  fd_set *active_fd_set) {
+int periodic(void) {
 
 	if (write(mainsockfd, "beat", 4) < 0)
 		return -1;

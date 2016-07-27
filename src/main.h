@@ -12,13 +12,17 @@
 
 struct commandTable {
 	const char *command;
-	int (*functionPtr)(int, char *, fd_set *);
+	int (*functionPtr)(int, char *);
 };
 
 // Function prototypes defined in server.c and client.c
 int startup(char *, char *);
 void populate_commands(struct commandTable *);
-int periodic(int, fd_set *);
+int periodic(void);
 int comp_type(void);
+
+// Globals
+int mainsockfd;
+fd_set active_fd_set;
 
 #endif

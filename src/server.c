@@ -14,8 +14,8 @@
 #include "main.h"
 #include "sockstate.h"
 
-int command_quit(int, char *, fd_set *);
-int command_beat(int, char *, fd_set *);
+int command_quit(int, char *);
+int command_beat(int, char *);
 
 int startup(char *hostname, char *portno) {
 	int mainsockfd;
@@ -70,15 +70,15 @@ void populate_commands(struct commandTable *commands) {
 	commands[1].functionPtr = &command_beat;
 }
 
-int periodic(int mainsockfd,  fd_set *active_fd_set) {
+int periodic(void) {
 	
 	// Check time for all sockets and close unresponsive ones
 	int i;
 	for (i = 0; i < FD_SETSIZE; ++i) {
-		if (FD_ISSET (i, active_fd_set) && i != mainsockfd) {
+		if (FD_ISSET (i, &active_fd_set) && i != mainsockfd) {
 			if (get_sockstate_last_time(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
 				close(i);
-				FD_CLR(i, active_fd_set);
+				FD_CLR(i, &active_fd_set);
 				del_sockstate_record(i);
 			}
 		}
@@ -91,18 +91,18 @@ int comp_type(void) {
 	return SERVER;
 }
 
-int command_quit(int socket, char *payload, fd_set *active_fd_set) {
+int command_quit(int socket, char *payload) {
 	
 	// Close socket
 	close(socket);
 
 	// remove socket from fd_set
-	FD_CLR(socket, active_fd_set);
+	FD_CLR(socket, &active_fd_set);
 	
 	return 0;
 }
 
-int command_beat(int socket, char *payload, fd_set *active_fd_set) {
+int command_beat(int socket, char *payload) {
 	printf("command_beat socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;

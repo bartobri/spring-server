@@ -22,9 +22,6 @@ void error(const char *);
 void handle_sigint(int);
 void cleanup(void);
 
-// Globals
-int mainsockfd;
-
 /*
  * int main(int, char *)
  *
@@ -35,7 +32,7 @@ int mainsockfd;
 int main(int argc, char *argv[]) {
 	int o, r, i, c;
 	char *hostname, *portno;
-	fd_set active_fd_set, read_fd_set;
+	fd_set read_fd_set;
 	struct timeval timeout;
 	time_t last_periodic_time = time(NULL);
 	struct commandTable commands[COMMAND_LIMIT];
@@ -179,7 +176,7 @@ int main(int argc, char *argv[]) {
 								continue;
 
 							if (strcmp(commands[c].command, command) == 0) {
-								commands[c].functionPtr(i, payload, &active_fd_set);
+								commands[c].functionPtr(i, payload);
 								break;
 							} 
 						}
@@ -190,7 +187,7 @@ int main(int argc, char *argv[]) {
 		
 		// Run periodic function if PERIODIC_SECONDS has elapsed
 		if (last_periodic_time <= time(NULL) - PERIODIC_SECONDS) {
-			periodic(mainsockfd, &active_fd_set);
+			periodic();
 			// TODO - evaluate return value of periodic
 			last_periodic_time = time(NULL);
 		}
