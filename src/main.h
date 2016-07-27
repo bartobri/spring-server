@@ -19,7 +19,6 @@ struct commandTable {
 int startup(char *, char *);
 void populate_commands(struct commandTable *);
 int periodic(int, fd_set *);
-void comp_cleanup(void);
 int comp_type(void);
 
 #endif

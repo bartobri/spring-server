@@ -234,8 +234,6 @@ void handle_sigint(int e) {
  *
  */
 void cleanup(void) {
-	// Execute component cleanup routine
-	comp_cleanup();
 
 	// main cleanup
 	close(mainsockfd);

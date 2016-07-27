@@ -65,11 +65,6 @@ int periodic(int mainsockfd,  fd_set *active_fd_set) {
 	return 0;
 }
 
-
-void comp_cleanup(void) {
-	// component cleanup here
-}
-
 int comp_type(void) {
 	return CLIENT;
 }
