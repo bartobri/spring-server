@@ -108,8 +108,8 @@ int main(int argc, char *argv[]) {
 			for (i = 0; i < FD_SETSIZE; ++i) {
 				if (FD_ISSET (i, &read_fd_set)) {
 					
-					// Update lastseen table
-					set_last_seen(i);
+					// Update last_time in sockstate table
+					set_sockstate_last_time(i);
 
 					// Handle new server connections here in main.c
 					if (i == mainsockfd && comp_type() == SERVER) {
@@ -128,8 +128,8 @@ int main(int argc, char *argv[]) {
 						// Adding new connection to fd set
 						FD_SET(newsockfd, &active_fd_set);
 						
-						// Update lastseen table
-						set_last_seen(newsockfd);
+						// Update last_time in sockstate table
+						set_sockstate_last_time(newsockfd);
 						
 						// TODO - handshake here?
 					
@@ -157,7 +157,7 @@ int main(int argc, char *argv[]) {
 							if (comp_type() == SERVER) {
 								close(i);
 								FD_CLR(i, &active_fd_set);
-								// TODO - remove from socket_state list
+								del_sockstate_record(i);
 							} else {
 								error("Server terminated connection.");
 							}

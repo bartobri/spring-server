@@ -72,14 +72,14 @@ void populate_commands(struct commandTable *commands) {
 
 int periodic(int mainsockfd,  fd_set *active_fd_set) {
 	
-	// Check "lastseen" times for all sockets and close unresponsive ones
+	// Check time for all sockets and close unresponsive ones
 	int i;
 	for (i = 0; i < FD_SETSIZE; ++i) {
 		if (FD_ISSET (i, active_fd_set) && i != mainsockfd) {
-			if (get_last_seen(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
+			if (get_sockstate_last_time(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
 				close(i);
 				FD_CLR(i, active_fd_set);
-				del_last_seen(i);
+				del_sockstate_record(i);
 			}
 		}
 	}

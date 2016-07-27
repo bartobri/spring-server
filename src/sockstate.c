@@ -6,14 +6,14 @@
 #include "main.h"
 #include "sockstate.h"
 
-struct lastseen {
+struct sockstate {
 	int socket;
 	time_t last_time;
-	struct lastseen *next;
+	struct sockstate *next;
 };
 
-// Globals
-struct lastseen *ls_start = NULL;
+// Static vars
+static struct sockstate *ss_start = NULL;
 
 /*
  * void set_last_seen(int)
@@ -27,82 +27,82 @@ struct lastseen *ls_start = NULL;
  *
  */
  // TODO - remove printf statements in this function
-void set_last_seen(int socket) {
-	struct lastseen *ls_pointer;
+void set_sockstate_last_time(int socket) {
+	struct sockstate *ss_pointer;
 	
 	// If list is empty, create first record.
-	if (ls_start == NULL) {
-		ls_start = malloc(sizeof(struct lastseen));
-		ls_start->socket = socket;
-		ls_start->last_time = time(NULL);
-		ls_start->next = NULL;
-		printf("updated lastseen for socket %i (first entry)\n", ls_start->socket);
+	if (ss_start == NULL) {
+		ss_start = malloc(sizeof(struct sockstate));
+		ss_start->socket = socket;
+		ss_start->last_time = time(NULL);
+		ss_start->next = NULL;
+		printf("updated lastseen for socket %i (first entry)\n", ss_start->socket);
 		return;
 	}
 	
 	// Loop over list and either update existing record of create new
-	ls_pointer = ls_start;
+	ss_pointer = ss_start;
 	while (true) {
 		
 		//Update record if exists
-		if (ls_pointer->socket == socket) {
-			ls_pointer->last_time = time(NULL);
-			printf("updated lastseen for socket %i (existing entry)\n", ls_pointer->socket);
-			break;
+		if (ss_pointer->socket == socket) {
+			ss_pointer->last_time = time(NULL);
+			printf("updated lastseen for socket %i (existing entry)\n", ss_pointer->socket);
+			return;
 		}
 		
 		// Append new record for socket
-		if (ls_pointer->next == NULL) {
-			ls_pointer->next = malloc(sizeof(struct lastseen));
-			ls_pointer = ls_pointer->next;
-			ls_pointer->socket = socket;
-			ls_pointer->last_time = time(NULL);
-			ls_pointer->next = NULL;
-			printf("updated lastseen for socket %i (new entry)\n", ls_pointer->socket);
-			break;
+		if (ss_pointer->next == NULL) {
+			ss_pointer->next = malloc(sizeof(struct sockstate));
+			ss_pointer = ss_pointer->next;
+			ss_pointer->socket = socket;
+			ss_pointer->last_time = time(NULL);
+			ss_pointer->next = NULL;
+			printf("updated lastseen for socket %i (new entry)\n", ss_pointer->socket);
+			return;
 		}
 
 		// Get next record
-		printf("Slipping record for socket %i\n", ls_pointer->socket);
-		ls_pointer = ls_pointer->next;
+		printf("Slipping record for socket %i\n", ss_pointer->socket);
+		ss_pointer = ss_pointer->next;
 	}
 }
 
-int get_last_seen(int socket) {
-	struct lastseen *ls_pointer = NULL;
+int get_sockstate_last_time(int socket) {
+	struct sockstate *ss_pointer = NULL;
 
 	printf("get lastseen %i\n", socket);
-	ls_pointer = ls_start;
-	while (ls_pointer != NULL) {
+	ss_pointer = ss_start;
+	while (ss_pointer != NULL) {
 		
-		if (ls_pointer->socket == socket)
-			return ls_pointer->last_time;
+		if (ss_pointer->socket == socket)
+			return ss_pointer->last_time;
 			
-		ls_pointer = ls_pointer->next;
+		ss_pointer = ss_pointer->next;
 	}
 	
 	return 0;
 }
 
-void del_last_seen(int socket) {
-	struct lastseen *ls_pointer = NULL;
-	struct lastseen *ls_prev = NULL;
-	struct lastseen *ls_temp = NULL;
+void del_sockstate_record(int socket) {
+	struct sockstate *ss_pointer = NULL;
+	struct sockstate *ss_prev    = NULL;
+	struct sockstate *ss_temp    = NULL;
 	
 	printf("del lastseen %i\n", socket);
 	
-	ls_pointer = ls_start;
-	while (ls_pointer != NULL) {
-		if (ls_pointer->socket == socket) {
-			ls_temp = ls_pointer;
-			if (ls_prev == NULL)
-				ls_start = ls_pointer->next;
+	ss_pointer = ss_start;
+	while (ss_pointer != NULL) {
+		if (ss_pointer->socket == socket) {
+			ss_temp = ss_pointer;
+			if (ss_prev == NULL)
+				ss_start = ss_pointer->next;
 			else
-				ls_prev->next = ls_pointer->next;
-			free(ls_temp);
-			break;
+				ss_prev->next = ss_pointer->next;
+			free(ss_temp);
+			return;
 		}
-		ls_prev = ls_pointer;
-		ls_pointer = ls_pointer->next;
+		ss_prev = ss_pointer;
+		ss_pointer = ss_pointer->next;
 	}
 }

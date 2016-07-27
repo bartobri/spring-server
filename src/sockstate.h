@@ -2,8 +2,8 @@
 #define SOCKSTATE_H 1
 
 // Function prototypes
-void set_last_seen(int);
-int get_last_seen(int);
-void del_last_seen(int);
+void set_sockstate_last_time(int);
+int  get_sockstate_last_time(int);
+void del_sockstate_record(int);
 
 #endif
