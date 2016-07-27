@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "main.h"
+#include "sockstate.h"
 
 int command_quit(int, char *, fd_set *);
 int command_beat(int, char *, fd_set *);
@@ -71,28 +72,16 @@ void populate_commands(struct commandTable *commands) {
 
 int periodic(int mainsockfd,  fd_set *active_fd_set) {
 	
-	// close sockets that have not communicated for (PERIODIC_SECONDS * 2)
-	struct lastseen *ls_pointer = NULL;
-	struct lastseen *ls_prev = NULL;
-	struct lastseen *ls_temp = NULL;
-	int droptime = time(NULL) - (PERIODIC_SECONDS * 2);
-	ls_pointer = ls_start;
-	while (ls_pointer != NULL) {
-		if (ls_pointer->socket != mainsockfd) {
-			if (ls_pointer->last_time < droptime) {
-				close(ls_pointer->socket);
-				FD_CLR(ls_pointer->socket, active_fd_set);
-
-				ls_temp = ls_pointer;
-				if (ls_prev == NULL)
-					ls_start = ls_pointer->next;
-				else
-					ls_prev->next = ls_pointer->next;
-				free(ls_temp);
+	// Check "lastseen" times for all sockets and close unresponsive ones
+	int i;
+	for (i = 0; i < FD_SETSIZE; ++i) {
+		if (FD_ISSET (i, active_fd_set) && i != mainsockfd) {
+			if (get_last_seen(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
+				close(i);
+				FD_CLR(i, active_fd_set);
+				del_last_seen(i);
 			}
 		}
-		ls_prev = ls_pointer;
-		ls_pointer = ls_pointer->next;
 	}
 	
 	return 0;
