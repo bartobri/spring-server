@@ -26,7 +26,6 @@ static struct sockstate *ss_start = NULL;
  * int socket - socket to be updated
  *
  */
- // TODO - remove printf statements in this function
 void set_sockstate_last_time(int socket) {
 	struct sockstate *ss_pointer;
 	
@@ -36,7 +35,6 @@ void set_sockstate_last_time(int socket) {
 		ss_start->socket = socket;
 		ss_start->last_time = time(NULL);
 		ss_start->next = NULL;
-		printf("updated lastseen for socket %i (first entry)\n", ss_start->socket);
 		return;
 	}
 	
@@ -47,7 +45,6 @@ void set_sockstate_last_time(int socket) {
 		//Update record if exists
 		if (ss_pointer->socket == socket) {
 			ss_pointer->last_time = time(NULL);
-			printf("updated lastseen for socket %i (existing entry)\n", ss_pointer->socket);
 			return;
 		}
 		
@@ -58,12 +55,10 @@ void set_sockstate_last_time(int socket) {
 			ss_pointer->socket = socket;
 			ss_pointer->last_time = time(NULL);
 			ss_pointer->next = NULL;
-			printf("updated lastseen for socket %i (new entry)\n", ss_pointer->socket);
 			return;
 		}
 
 		// Get next record
-		printf("Slipping record for socket %i\n", ss_pointer->socket);
 		ss_pointer = ss_pointer->next;
 	}
 }
@@ -71,7 +66,6 @@ void set_sockstate_last_time(int socket) {
 int get_sockstate_last_time(int socket) {
 	struct sockstate *ss_pointer = NULL;
 
-	printf("get lastseen %i\n", socket);
 	ss_pointer = ss_start;
 	while (ss_pointer != NULL) {
 		
@@ -88,8 +82,6 @@ void del_sockstate_record(int socket) {
 	struct sockstate *ss_pointer = NULL;
 	struct sockstate *ss_prev    = NULL;
 	struct sockstate *ss_temp    = NULL;
-	
-	printf("del lastseen %i\n", socket);
 	
 	ss_pointer = ss_start;
 	while (ss_pointer != NULL) {
