@@ -72,10 +72,9 @@ int main(int argc, char *argv[]) {
 
 	// Execute startup proceedure
 	mainsockfd = startup(hostname, portno);
-	if (mainsockfd > 0)
-		printf("Connected on port %s\n", portno);
-	else
-		error("Unsuccessful startup.");
+	
+	// Print connection message
+	printf("Connected on port %s\n", portno);
 		
 	// Initialize fd set and add main socket
 	FD_ZERO (&active_fd_set);
@@ -216,7 +215,7 @@ int startup(char *hostname, char *portno) {
 		hints.ai_flags = AI_PASSIVE;              // All interfaces
 		if (getaddrinfo(hostname, portno, &hints, &result) != 0) {
 			fprintf(stderr, "server: Could not obtain internet address info.\n");
-			return -1;
+			error("Unsuccessful startup.");
 		}
 	
 		// Loop over results from getaddrinfo() and try to bind. Exit loop on first successful bind.
@@ -234,7 +233,7 @@ int startup(char *hostname, char *portno) {
 		// Error if we didn't bind to any sockets
 		if (rp == NULL) {
 			fprintf(stderr, "server: Could not bind to socket %i\n", startsockfd);
-			return -1;
+			error("Unsuccessful startup.");
 		}
 	
 		// Free the result structure we don't need anymore
@@ -249,21 +248,21 @@ int startup(char *hostname, char *portno) {
 		// Require hostname and port
 		if (hostname == NULL) {
 			fprintf(stderr, "client: hostname can not be NULL.\n");
-			return -1;
+			error("Unsuccessful startup.");
 		}
 		
 		// Set up a socket in the AF_INET domain (Internet Protocol v4 addresses)
 		startsockfd = socket(AF_INET, SOCK_STREAM, 0);
 		if (startsockfd < 0) {
 			fprintf(stderr, "client: Could not create socket\n");
-			return -1;
+			error("Unsuccessful startup.");
 		}
 		
 		// Get a pointer to 'hostent' containing info about host.
 		server = gethostbyname(hostname);
 		if (server == NULL) {
 			fprintf(stderr, "client: no such host: %s\n", hostname);
-			return -1;
+			error("Unsuccessful startup.");
 		}
 		
 		// Initializing serv_addr memory footprint to all integer zeros ('\0')
@@ -277,8 +276,10 @@ int startup(char *hostname, char *portno) {
 		// Connect to server. Error if can't connect.
 		if (connect(startsockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) {
 			fprintf(stderr, "client: error conecting to host %s port %s\n", hostname, portno);
-			return -1;
+			error("Unsuccessful startup.");
 		}
+	} else {
+		error("Unknown component type.");
 	}
 	
 	return startsockfd;
