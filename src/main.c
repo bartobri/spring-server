@@ -22,6 +22,7 @@
 
 // Function prototypes
 int startup(char *, char *);
+void accept_new_connection(void);
 void error(const char *);
 void handle_sigint(int);
 void cleanup(void);
@@ -111,30 +112,14 @@ int main(int argc, char *argv[]) {
 					// Update last_time in sockstate table
 					set_sockstate_last_time(i);
 
-					// Handle new server connections here in main.c
+					// Check iof this is a new connection request on the
+					// server's main socket and accept it.
 					if (i == mainsockfd && comp_type() == SERVER) {
-						int newsockfd;
-						struct sockaddr cliaddr;
-						socklen_t clilen;
-						
-						clilen = sizeof(cliaddr);
-						newsockfd = accept(mainsockfd, &cliaddr, &clilen);
-
-						if (newsockfd < 0) {
-							fprintf(stderr, "server: Could not accept new connection.\n");
-							error("accept() error.");
-						}
-						
-						// Adding new connection to fd set
-						FD_SET(newsockfd, &active_fd_set);
-						
-						// Update last_time in sockstate table
-						set_sockstate_last_time(newsockfd);
-						
-						// TODO - handshake here?
+						accept_new_connection();
 					
-					// Parse incoming data
+					// Otherwise, parse and evaluate incoming data
 					} else {
+						
 						int n;
 						char buffer[BUFFER_SIZE];
 						char command[COMMAND_SIZE + 1];
@@ -283,6 +268,28 @@ int startup(char *hostname, char *portno) {
 	}
 	
 	return startsockfd;
+}
+
+void accept_new_connection(void) {
+	int newsockfd;
+	struct sockaddr cliaddr;
+	socklen_t clilen;
+	
+	clilen = sizeof(cliaddr);
+	newsockfd = accept(mainsockfd, &cliaddr, &clilen);
+
+	if (newsockfd < 0) {
+		fprintf(stderr, "server: Could not accept new connection.\n");
+		error("accept() error.");
+	}
+	
+	// Adding new connection to fd set
+	FD_SET(newsockfd, &active_fd_set);
+	
+	// Update last_time in sockstate table
+	set_sockstate_last_time(newsockfd);
+	
+	// TODO - handshake here?
 }
 
 /*
