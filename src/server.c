@@ -15,8 +15,7 @@
 /*
  * Define commands here
  */
-// TODO - standardize arguments in a macro? i.e. int command_quit(COMMAND_ARGS)
-int command_quit(int socket, char *payload) {
+int command_quit(COMMAND_ARGS) {
 	
 	// Suppress "unused parameter" warning for payload
 	(void)payload;
@@ -30,7 +29,7 @@ int command_quit(int socket, char *payload) {
 	return 0;
 }
 
-int command_beat(int socket, char *payload) {
+int command_beat(COMMAND_ARGS) {
 	printf("command_beat socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;
