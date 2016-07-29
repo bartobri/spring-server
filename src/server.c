@@ -14,7 +14,7 @@
 int command_quit(int, char *);
 int command_beat(int, char *);
 
-void populate_commands(struct commandTable *commands) {
+void load_commands(struct commandTable *commands) {
 	// Populate commands
 	commands[0].command = "quit";
 	commands[0].functionPtr = &command_quit;

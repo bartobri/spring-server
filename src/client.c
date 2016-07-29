@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "main.h"
 
-void populate_commands(struct commandTable *commands) {
+void load_commands(struct commandTable *commands) {
 	// Populate commands
 }
 

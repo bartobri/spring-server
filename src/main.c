@@ -42,6 +42,12 @@ int main(int argc, char *argv[]) {
 	time_t last_periodic_time = time(NULL);
 	struct commandTable commands[COMMAND_LIMIT];
 	
+	// Initialize command table
+	for (i = 0; i < COMMAND_LIMIT; ++i) {
+		commands[i].command = NULL;
+		commands[i].functionPtr = NULL;
+	}
+	
 	// Set SIGINT handler
 	signal(SIGINT, handle_sigint);
 
@@ -80,13 +86,8 @@ int main(int argc, char *argv[]) {
 	// Initialize fd set and add main socket
 	FD_ZERO (&active_fd_set);
 	FD_SET (mainsockfd, &active_fd_set);
-	
-	// Initialize and populate command table
-	for (i = 0; i < COMMAND_LIMIT; ++i) {
-		commands[i].command = NULL;
-		commands[i].functionPtr = NULL;
-	}
-	populate_commands(commands);
+
+	load_commands(commands);
 
 	// Main connection handling loop
 	while (true) {
