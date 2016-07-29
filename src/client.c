@@ -10,6 +10,10 @@
 #include "main.h"
 
 void load_commands(struct commandTable *commands) {
+	
+	// Suppress "unused parameter" warning for commands
+	(void)commands;
+
 	// Populate commands
 }
 

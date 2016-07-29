@@ -11,9 +11,33 @@
 #include "main.h"
 #include "sockstate.h"
 
-int command_quit(int, char *);
-int command_beat(int, char *);
+/*
+ * Define commands here
+ */
 
+int command_quit(int socket, char *payload) {
+	
+	// Suppress "unused parameter" warning for payload
+	(void)payload;
+	
+	// Close socket
+	close(socket);
+
+	// remove socket from fd_set
+	FD_CLR(socket, &active_fd_set);
+	
+	return 0;
+}
+
+int command_beat(int socket, char *payload) {
+	printf("command_beat socket: %i, payload: %s\n", socket, payload);
+	
+	return 0;
+}
+
+/*
+ * Load commands here
+ */
 void load_commands(struct commandTable *commands) {
 	// Populate commands
 	commands[0].command = "quit";
@@ -21,6 +45,7 @@ void load_commands(struct commandTable *commands) {
 	commands[1].command = "beat";
 	commands[1].functionPtr = &command_beat;
 }
+
 
 int periodic(void) {
 	
@@ -41,21 +66,4 @@ int periodic(void) {
 
 int comp_type(void) {
 	return SERVER;
-}
-
-int command_quit(int socket, char *payload) {
-	
-	// Close socket
-	close(socket);
-
-	// remove socket from fd_set
-	FD_CLR(socket, &active_fd_set);
-	
-	return 0;
-}
-
-int command_beat(int socket, char *payload) {
-	printf("command_beat socket: %i, payload: %s\n", socket, payload);
-	
-	return 0;
 }
