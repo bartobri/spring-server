@@ -317,9 +317,14 @@ void handle_sigint(int e) {
  *
  */
 void cleanup(void) {
-
-	// main cleanup
-	close(mainsockfd);
+	int i;
 	
-	// TODO - close and free sockstate table
+	for (i = 0; i < FD_SETSIZE; ++i) {
+		if (FD_ISSET (i, &active_fd_set)) {
+			printf("Closing %i\n", i);
+			close(i);
+			FD_CLR(i, &active_fd_set);
+			del_sockstate_record(i);
+		}
+	}
 }
