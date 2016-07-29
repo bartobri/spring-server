@@ -8,11 +8,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "main.h"
+#include "commands.h"
 
-void load_commands(struct commandTable *commands) {
-	
-	// Suppress "unused parameter" warning for commands
-	(void)commands;
+void load_commands(void) {
 
 	// Populate commands
 }

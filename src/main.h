@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H 1
 
+#include <sys/select.h>
+
 #define DEFAULT_PORT        51717
 #define DEFAULT_HOST        NULL
 #define BUFFER_SIZE         1024
@@ -10,13 +12,8 @@
 #define SERVER              1
 #define CLIENT              2
 
-struct commandTable {
-	const char *command;
-	int (*functionPtr)(int, char *);
-};
-
 // Function prototypes defined in server.c and client.c
-void load_commands(struct commandTable *);
+void load_commands(void);
 int periodic(void);
 int comp_type(void);
 

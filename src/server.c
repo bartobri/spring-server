@@ -10,11 +10,12 @@
 #include <time.h>
 #include "main.h"
 #include "sockstate.h"
+#include "commands.h"
 
 /*
  * Define commands here
  */
-
+// TODO - standardize arguments in a macro? i.e. int command_quit(COMMAND_ARGS)
 int command_quit(int socket, char *payload) {
 	
 	// Suppress "unused parameter" warning for payload
@@ -38,15 +39,13 @@ int command_beat(int socket, char *payload) {
 /*
  * Load commands here
  */
-void load_commands(struct commandTable *commands) {
-	// Populate commands
-	commands[0].command = "quit";
-	commands[0].functionPtr = &command_quit;
-	commands[1].command = "beat";
-	commands[1].functionPtr = &command_beat;
+void load_commands(void) {
+	load_command("beat", &command_beat);
+	load_command("quit", &command_quit);
 }
 
-
+// TODO - Do we need periodic() to be user configurable? Maybe not...
+//        Maybe just have it check for inactive sockets and that's it...
 int periodic(void) {
 	
 	// Check time for all sockets and close unresponsive ones
@@ -64,6 +63,7 @@ int periodic(void) {
 	return 0;
 }
 
+// TODO - eliminate this with macro?
 int comp_type(void) {
 	return SERVER;
 }

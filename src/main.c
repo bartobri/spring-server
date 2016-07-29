@@ -19,6 +19,7 @@
 #include <netdb.h>
 #include "main.h"
 #include "sockstate.h"
+#include "commands.h"
 
 // Function prototypes
 int startup(char *, char *);
@@ -35,18 +36,11 @@ void cleanup(void);
  *
  */
 int main(int argc, char *argv[]) {
-	int o, r, i, c;
+	int o, r, i;
 	char *hostname, *portno;
 	fd_set read_fd_set;
 	struct timeval timeout;
 	time_t last_periodic_time = time(NULL);
-	struct commandTable commands[COMMAND_LIMIT];
-	
-	// Initialize command table
-	for (i = 0; i < COMMAND_LIMIT; ++i) {
-		commands[i].command = NULL;
-		commands[i].functionPtr = NULL;
-	}
 	
 	// Set SIGINT handler
 	signal(SIGINT, handle_sigint);
@@ -87,7 +81,8 @@ int main(int argc, char *argv[]) {
 	FD_ZERO (&active_fd_set);
 	FD_SET (mainsockfd, &active_fd_set);
 
-	load_commands(commands);
+	// Load client/server commands
+	load_commands();
 
 	// Main connection handling loop
 	while (true) {
@@ -113,7 +108,7 @@ int main(int argc, char *argv[]) {
 					// Update last_time in sockstate table
 					set_sockstate_last_time(i);
 
-					// Check iof this is a new connection request on the
+					// Check if this is a new connection request on the
 					// server's main socket and accept it.
 					if (i == mainsockfd && comp_type() == SERVER) {
 						accept_new_connection();
@@ -159,15 +154,9 @@ int main(int argc, char *argv[]) {
 						memset(payload, 0, sizeof(payload));
 						strncpy(payload, buffer + COMMAND_SIZE, BUFFER_SIZE - COMMAND_SIZE);
 
-						// Loop over registered commands and execute the matching one
-						for (c = 0; c < COMMAND_LIMIT; ++c) {
-							if (commands[c].command == NULL)
-								continue;
-
-							if (strcmp(commands[c].command, command) == 0) {
-								commands[c].functionPtr(i, payload);
-								break;
-							} 
+						// Validate and execute command
+						if (valid_command(command) == true) {
+							execute_command(command, payload, i);
 						}
 					}
 				}
@@ -331,4 +320,6 @@ void cleanup(void) {
 
 	// main cleanup
 	close(mainsockfd);
+	
+	// TODO - close and free sockstate table
 }
