@@ -321,7 +321,6 @@ void cleanup(void) {
 	
 	for (i = 0; i < FD_SETSIZE; ++i) {
 		if (FD_ISSET (i, &active_fd_set)) {
-			printf("Closing %i\n", i);
 			close(i);
 			FD_CLR(i, &active_fd_set);
 			del_sockstate_record(i);
