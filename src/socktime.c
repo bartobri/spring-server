@@ -11,22 +11,22 @@
 #include "main.h"
 #include "socktime.h"
 
-struct timetbl {
+struct timeTbl {
 	int socket;
 	time_t last_active;
-	struct timetbl *next;
+	struct timeTbl *next;
 };
 
 // Static vars
-static struct timetbl *tt_start = NULL;
+static struct timeTbl *tt_start = NULL;
 
 
 void socktime_set(int socket) {
-	struct timetbl *tt_pointer;
+	struct timeTbl *tt_pointer;
 	
 	// If list is empty, create first record.
 	if (tt_start == NULL) {
-		tt_start = malloc(sizeof(struct timetbl));
+		tt_start = malloc(sizeof(struct timeTbl));
 		tt_start->socket = socket;
 		tt_start->last_active = time(NULL);
 		tt_start->next = NULL;
@@ -45,7 +45,7 @@ void socktime_set(int socket) {
 		
 		// Append new record for socket
 		if (tt_pointer->next == NULL) {
-			tt_pointer->next = malloc(sizeof(struct timetbl));
+			tt_pointer->next = malloc(sizeof(struct timeTbl));
 			tt_pointer = tt_pointer->next;
 			tt_pointer->socket = socket;
 			tt_pointer->last_active = time(NULL);
@@ -59,7 +59,7 @@ void socktime_set(int socket) {
 }
 
 int socktime_get(int socket) {
-	struct timetbl *tt_pointer = NULL;
+	struct timeTbl *tt_pointer = NULL;
 
 	tt_pointer = tt_start;
 	while (tt_pointer != NULL) {
@@ -74,9 +74,9 @@ int socktime_get(int socket) {
 }
 
 void socktime_unset(int socket) {
-	struct timetbl *tt_pointer = NULL;
-	struct timetbl *tt_prev    = NULL;
-	struct timetbl *tt_temp    = NULL;
+	struct timeTbl *tt_pointer = NULL;
+	struct timeTbl *tt_prev    = NULL;
+	struct timeTbl *tt_temp    = NULL;
 	
 	tt_pointer = tt_start;
 	while (tt_pointer != NULL) {
