@@ -20,6 +20,5 @@ int comp_type(void);
 
 // Globals
 int mainsockfd;
-fd_set active_fd_set;
 
 #endif

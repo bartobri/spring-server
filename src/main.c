@@ -20,6 +20,7 @@
 #include "main.h"
 #include "sockstate.h"
 #include "commands.h"
+#include "socklist.h"
 
 // Function prototypes
 int startup(char *, char *);
@@ -77,16 +78,16 @@ int main(int argc, char *argv[]) {
 	// Print connection message
 	printf("Connected on port %s\n", portno);
 		
-	// Initialize fd set and add main socket
-	FD_ZERO (&active_fd_set);
-	FD_SET (mainsockfd, &active_fd_set);
+	// Initialize socket list and add main socket
+	socklist_init();
+	socklist_add(mainsockfd);
 
 	// Load client/server commands
 	load_commands();
 
 	// Main connection handling loop
 	while (true) {
-		read_fd_set = active_fd_set;
+		read_fd_set = socklist_get();
 		
 		// Set select() timeout value.
 		// This needs to be inside the loop so it is reset for each loop interation.
@@ -137,7 +138,7 @@ int main(int argc, char *argv[]) {
 						if (n == 0) {
 							if (comp_type() == SERVER) {
 								close(i);
-								FD_CLR(i, &active_fd_set);
+								socklist_remove(i);
 								del_sockstate_record(i);
 							} else {
 								error("Server terminated connection.");
@@ -274,7 +275,7 @@ void accept_new_connection(void) {
 	}
 	
 	// Adding new connection to fd set
-	FD_SET(newsockfd, &active_fd_set);
+	socklist_add(newsockfd);
 	
 	// Update last_time in sockstate table
 	set_sockstate_last_time(newsockfd);
@@ -318,12 +319,10 @@ void handle_sigint(int e) {
  */
 void cleanup(void) {
 	int i;
-	
-	for (i = 0; i < FD_SETSIZE; ++i) {
-		if (FD_ISSET (i, &active_fd_set)) {
-			close(i);
-			FD_CLR(i, &active_fd_set);
-			del_sockstate_record(i);
-		}
+
+	while ((i = socklist_next()) > 0) {
+		close(i);
+		socklist_remove(i);
+		del_sockstate_record(i);
 	}
 }

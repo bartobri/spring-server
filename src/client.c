@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "main.h"
 #include "commands.h"
+#include "socklist.h"
 
 void load_commands(void) {
 

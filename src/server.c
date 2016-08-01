@@ -11,6 +11,7 @@
 #include "main.h"
 #include "sockstate.h"
 #include "commands.h"
+#include "socklist.h"
 
 /*
  * Define commands here
@@ -24,7 +25,7 @@ int command_quit(COMMAND_ARGS) {
 	close(socket);
 
 	// remove socket from fd_set
-	FD_CLR(socket, &active_fd_set);
+	socklist_remove(socket);
 	
 	return 0;
 }
@@ -46,23 +47,22 @@ void load_commands(void) {
 // TODO - Do we need periodic() to be user configurable? Maybe not...
 //        Maybe just have it check for inactive sockets and that's it...
 int periodic(void) {
+	int i;
 	
 	// Check time for all sockets and close unresponsive ones
-	int i;
-	for (i = 0; i < FD_SETSIZE; ++i) {
-		if (FD_ISSET (i, &active_fd_set) && i != mainsockfd) {
-			if (get_sockstate_last_time(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
-				close(i);
-				FD_CLR(i, &active_fd_set);
-				del_sockstate_record(i);
-			}
+	while ((i = socklist_next()) > 0) {
+		if (i == mainsockfd)
+			continue;
+		if (get_sockstate_last_time(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
+			close(i);
+			socklist_remove(i);
+			del_sockstate_record(i);
 		}
 	}
 	
 	return 0;
 }
 
-// TODO - eliminate this with macro?
 int comp_type(void) {
 	return SERVER;
 }
