@@ -8,11 +8,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "main.h"
-#include "commands.h"
+#include "command.h"
 #include "socklist.h"
 
 void load_commands(void) {
-
 	// Populate commands
 }
 

@@ -1,8 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H 1
 
-#include <sys/select.h>
-
 #define DEFAULT_PORT        51717
 #define DEFAULT_HOST        NULL
 #define BUFFER_SIZE         1024

@@ -6,18 +6,18 @@
 #include <stdbool.h>
 #include <string.h>
 #include "main.h"
-#include "commands.h"
+#include "command.h"
 
-struct commandTable {
+struct commandTbl {
 	const char *command;
 	int (*functionPtr)(int, char *);
 };
 
 // Static variables
-static struct commandTable commands[COMMAND_LIMIT];
+static struct commandTbl commands[COMMAND_LIMIT];
 static bool init_completed = false;
 
-void load_command(char *command, int (*functionPtr)(int, char *)) {
+void command_load(char *command, int (*functionPtr)(int, char *)) {
 	int i;
 
 	// Initialize commands table if not done yet
@@ -41,7 +41,7 @@ void load_command(char *command, int (*functionPtr)(int, char *)) {
 	// TODO - print some kind of error message when we reach COMMAND_LIMIT
 }
 
-bool valid_command(char *command) {
+bool command_valid(char *command) {
 	int i;
 	
 	for (i = 0; i < COMMAND_LIMIT; ++i) {
@@ -59,7 +59,7 @@ bool valid_command(char *command) {
 	return false;
 }
 
-void execute_command(char *command, char *payload, int socket) {
+void command_execute(char *command, char *payload, int socket) {
 	int i;
 	
 	for (i = 0; i < COMMAND_LIMIT; ++i) {

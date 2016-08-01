@@ -19,7 +19,7 @@
 #include <netdb.h>
 #include "main.h"
 #include "socktime.h"
-#include "commands.h"
+#include "command.h"
 #include "socklist.h"
 
 // Function prototypes
@@ -156,8 +156,8 @@ int main(int argc, char *argv[]) {
 						strncpy(payload, buffer + COMMAND_SIZE, BUFFER_SIZE - COMMAND_SIZE);
 
 						// Validate and execute command
-						if (valid_command(command) == true) {
-							execute_command(command, payload, i);
+						if (command_valid(command) == true) {
+							command_execute(command, payload, i);
 						}
 					}
 				}
