@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 	mainsockfd = startup(hostname, portno);
 	
 	// Print connection message
-	printf("Connected on port %s\n", portno);
+	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
 		
 	// Initialize socket list and add main socket
 	socklist_init();

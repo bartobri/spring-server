@@ -7,6 +7,7 @@
 #define COMMAND_SIZE        4
 #define COMMAND_LIMIT       10
 #define COMMAND_ARGS        int socket, char *payload
+#define COMMAND_RETURN      int
 #define PERIODIC_SECONDS    5
 #define SERVER              1
 #define CLIENT              2

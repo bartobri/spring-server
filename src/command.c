@@ -10,14 +10,14 @@
 
 struct commandTbl {
 	const char *command;
-	int (*functionPtr)(int, char *);
+	COMMAND_RETURN (*functionPtr)(COMMAND_ARGS);
 };
 
 // Static variables
 static struct commandTbl commands[COMMAND_LIMIT];
 static bool init_completed = false;
 
-void command_load(char *command, int (*functionPtr)(int, char *)) {
+void command_load(char *command, COMMAND_RETURN (*functionPtr)(COMMAND_ARGS)) {
 	int i;
 
 	// Initialize commands table if not done yet
@@ -74,4 +74,6 @@ void command_execute(char *command, char *payload, int socket) {
 			break;
 		}
 	}
+	
+	// TODO - return output (int) from command??
 }
