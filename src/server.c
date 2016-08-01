@@ -23,9 +23,8 @@ COMMAND_RETURN command_quit(COMMAND_ARGS) {
 	
 	// Close socket
 	close(socket);
-
-	// remove socket from fd_set
 	socklist_remove(socket);
+	socktime_unset(socket);
 	
 	return 0;
 }
