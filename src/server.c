@@ -9,7 +9,7 @@
 #include <string.h>
 #include <time.h>
 #include "main.h"
-#include "sockstate.h"
+#include "socktime.h"
 #include "commands.h"
 #include "socklist.h"
 
@@ -53,10 +53,10 @@ int periodic(void) {
 	while ((i = socklist_next()) > 0) {
 		if (i == mainsockfd)
 			continue;
-		if (get_sockstate_last_time(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
+		if (socktime_get(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
 			close(i);
 			socklist_remove(i);
-			del_sockstate_record(i);
+			socktime_unset(i);
 		}
 	}
 	

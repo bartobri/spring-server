@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "main.h"
-#include "sockstate.h"
+#include "socktime.h"
 #include "commands.h"
 #include "socklist.h"
 
@@ -106,8 +106,8 @@ int main(int argc, char *argv[]) {
 			for (i = 0; i < FD_SETSIZE; ++i) {
 				if (FD_ISSET (i, &read_fd_set)) {
 					
-					// Update last_time in sockstate table
-					set_sockstate_last_time(i);
+					// Set socket activity time
+					socktime_set(i);
 
 					// Check if this is a new connection request on the
 					// server's main socket and accept it.
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
 							if (comp_type() == SERVER) {
 								close(i);
 								socklist_remove(i);
-								del_sockstate_record(i);
+								socktime_unset(i);
 							} else {
 								error("Server terminated connection.");
 							}
@@ -277,8 +277,8 @@ void accept_new_connection(void) {
 	// Adding new connection to fd set
 	socklist_add(newsockfd);
 	
-	// Update last_time in sockstate table
-	set_sockstate_last_time(newsockfd);
+	// Set socket activity time
+	socktime_set(newsockfd);
 	
 	// TODO - handshake here?
 }
@@ -323,6 +323,6 @@ void cleanup(void) {
 	while ((i = socklist_next()) > 0) {
 		close(i);
 		socklist_remove(i);
-		del_sockstate_record(i);
+		socktime_unset(i);
 	}
 }
