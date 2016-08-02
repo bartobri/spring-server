@@ -21,11 +21,11 @@ EXES = server client
 
 all: $(EXES)
 
-server: $(OBJ)/server.o $(OBJ)/socktime.o $(OBJ)/command.o $(OBJ)/socklist.o $(OBJ)/main.o | $(BIN)
+server: $(OBJ)/server.o $(OBJ)/socktime.o $(OBJ)/command.o $(OBJ)/socklist.o $(OBJ)/core.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 
-client: $(OBJ)/client.o $(OBJ)/socktime.o $(OBJ)/command.o $(OBJ)/socklist.o $(OBJ)/main.o | $(BIN)
+client: $(OBJ)/client.o $(OBJ)/socktime.o $(OBJ)/command.o $(OBJ)/socklist.o $(OBJ)/core.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
