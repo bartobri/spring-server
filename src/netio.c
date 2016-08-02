@@ -16,7 +16,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "main.h"
-#include "core.h"
+#include "netio.h"
 #include "command.h"
 #include "socktime.h"
 #include "socklist.h"
@@ -24,7 +24,7 @@
 // Static vars
 static fd_set read_fd_set;
 
-int core_startup(char *hostname, char *portno) {
+int netio_startup(char *hostname, char *portno) {
 	int startsockfd = 0;
 	
 	if (comp_type() == SERVER) {
@@ -112,7 +112,7 @@ int core_startup(char *hostname, char *portno) {
 	return startsockfd;
 }
 
-int core_wait(void) {
+int netio_wait(void) {
 	int r;
 	struct timeval timeout;
 	
@@ -129,7 +129,7 @@ int core_wait(void) {
 	return r;
 }
 
-int core_accept(int socket) {
+int netio_accept(int socket) {
 	int newsockfd;
 	struct sockaddr cliaddr;
 	socklen_t clilen;
@@ -150,7 +150,7 @@ int core_accept(int socket) {
 	// TODO - handshake here? Or somewhere else?
 }
 
-int core_read(void) {
+int netio_read(void) {
 	int i, n;
 	char buffer[BUFFER_SIZE];
 	char command[COMMAND_SIZE + 1];

@@ -12,7 +12,7 @@
 #include <time.h>
 #include <signal.h>
 #include "main.h"
-#include "core.h"
+#include "netio.h"
 #include "socktime.h"
 #include "command.h"
 #include "socklist.h"
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 	// Execute startup proceedure
 	// TODO - Remove return val after error module implemented.
 	//        Have core module throw errors. Remove error checking from main.
-	mainsockfd = core_startup(hostname, portno);
+	mainsockfd = netio_startup(hostname, portno);
 	
 	// Ensure we have a valid socket
 	if (mainsockfd < 0)
@@ -85,19 +85,19 @@ int main(int argc, char *argv[]) {
 	load_commands();
 	
 	while (true) {
-		waitVal = core_wait();
+		waitVal = netio_wait();
 
 		if (waitVal < 0)
-			error("core_wait() error.");
+			error("netio_wait() error.");
 		
 		if (waitVal > 0) {
 			if (comp_type() == SERVER)
-				if (core_accept(mainsockfd) < 0)
-					error("core_accept() error.");
+				if (netio_accept(mainsockfd) < 0)
+					error("netio_accept() error.");
 
-			if (core_read() < 0) {
+			if (netio_read() < 0) {
 				// TODO - When server closes socket on client, this msg displays.
-				error("core_read() error.");
+				error("netio_read() error.");
 			}
 		}
 		
