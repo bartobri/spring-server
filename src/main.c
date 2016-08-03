@@ -19,7 +19,6 @@
 #include "sockmain.h"
 
 // Function prototypes
-void error(const char *);
 void handle_sigint(int);
 
 /*
@@ -66,8 +65,6 @@ int main(int argc, char *argv[]) {
 	// Execute startup proceedure
 	netio_startup(hostname, portno);
 	
-	// TODO - check for startup error once error module implemented
-	
 	// Print connection message
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
 		
@@ -98,21 +95,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	return 0;
-}
-
-/*
- * void error(const char *)
- *
- * DESCR:
- * Print passed error string and exit
- *
- * ARGS:
- * const char *msg - Error string
- *
- */
-void error(const char *msg) {
-	printf("%s Shutting down.\n", msg);
-	netio_shutdown();
 }
 
 /*
