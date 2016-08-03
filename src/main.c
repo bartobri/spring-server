@@ -31,7 +31,6 @@ void handle_sigint(int);
  */
 int main(int argc, char *argv[]) {
 	int o;
-	int waitVal;
 	char *hostname, *portno;
 	time_t last_periodic_time = time(NULL);
 	
@@ -80,20 +79,13 @@ int main(int argc, char *argv[]) {
 	load_commands();
 	
 	while (true) {
-		waitVal = netio_wait();
-
-		if (waitVal < 0)
-			error("netio_wait() error.");
 		
-		if (waitVal > 0) {
-			if (comp_type() == SERVER)
-				if (netio_accept() < 0)
-					error("netio_accept() error.");
+		if (netio_wait() > 0) {
 
-			if (netio_read() < 0) {
-				// TODO - When server closes socket on client, this msg displays.
-				error("netio_read() error.");
-			}
+			if (comp_type() == SERVER)
+				netio_accept();
+
+			netio_read();
 		}
 		
 		// Run periodic function if PERIODIC_SECONDS has elapsed

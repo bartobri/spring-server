@@ -40,9 +40,8 @@ void netio_startup(char *hostname, char *portno) {
 		hints.ai_socktype = SOCK_STREAM;          // We want a TCP socket
 		hints.ai_flags = AI_PASSIVE;              // All interfaces
 		if (getaddrinfo(hostname, portno, &hints, &result) != 0) {
-			return;
-			// TODO - error module to handle printing error messages and setting global error code
-			//fprintf(stderr, "server: Could not obtain internet address info.\n");
+			fprintf(stderr, "Could not obtain internet address info.\n");
+			netio_shutdown();
 		}
 	
 		// Loop over results from getaddrinfo() and try to bind. Exit loop on first successful bind.
@@ -59,8 +58,8 @@ void netio_startup(char *hostname, char *portno) {
 		
 		// Error if we didn't bind to any sockets
 		if (rp == NULL) {
-			//fprintf(stderr, "server: Could not bind to socket %i\n", startsockfd);
-			return;
+			fprintf(stderr, "server: Could not bind to socket %i\n", startsockfd);
+			netio_shutdown();
 		}
 	
 		// Free the result structure we don't need anymore
@@ -68,28 +67,29 @@ void netio_startup(char *hostname, char *portno) {
 		
 		// Mark socket as accepting connections, up to 5 backlogged connections
 		listen(startsockfd, 5);
+
 	} else if (comp_type() == CLIENT) {
 		struct hostent *server;
 		struct sockaddr_in serv_addr;
 		
 		// Require hostname and port
 		if (hostname == NULL) {
-			//fprintf(stderr, "client: hostname can not be NULL.\n");
-			return;
+			fprintf(stderr, "client: hostname can not be NULL.\n");
+			netio_shutdown();
 		}
 		
 		// Set up a socket in the AF_INET domain (Internet Protocol v4 addresses)
 		startsockfd = socket(AF_INET, SOCK_STREAM, 0);
 		if (startsockfd < 0) {
-			//fprintf(stderr, "client: Could not create socket\n");
-			return;
+			fprintf(stderr, "client: Could not create socket\n");
+			netio_shutdown();
 		}
 		
 		// Get a pointer to 'hostent' containing info about host.
 		server = gethostbyname(hostname);
 		if (server == NULL) {
-			//fprintf(stderr, "client: no such host: %s\n", hostname);
-			return;
+			fprintf(stderr, "client: no such host: %s\n", hostname);
+			netio_shutdown();
 		}
 		
 		// Initializing serv_addr memory footprint to all integer zeros ('\0')
@@ -102,8 +102,8 @@ void netio_startup(char *hostname, char *portno) {
 		
 		// Connect to server. Error if can't connect.
 		if (connect(startsockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) {
-			//fprintf(stderr, "client: error conecting to host %s port %s\n", hostname, portno);
-			return;
+			fprintf(stderr, "client: error conecting to host %s port %s\n", hostname, portno);
+			netio_shutdown();
 		}
 	}
 	
@@ -124,10 +124,15 @@ int netio_wait(void) {
 	// Block until input arrives on one or more active sockets
 	r = select(FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout);
 	
+	if (r < 0) {
+		fprintf(stderr, "select() error.\n");
+		netio_shutdown();
+	}
+	
 	return r;
 }
 
-int netio_accept(void) {
+void netio_accept(void) {
 	int mainsockfd, newsockfd;
 	struct sockaddr cliaddr;
 	socklen_t clilen;
@@ -141,16 +146,15 @@ int netio_accept(void) {
 			socklist_add(newsockfd);
 			socktime_set(newsockfd);
 			FD_CLR(mainsockfd, &read_fd_set);
+		} else if (newsockfd < 0) {
+			fprintf(stderr, "accept() error.\n");
+			netio_shutdown();
 		}
-		return newsockfd;
 	}
-	
-	return 0;
-	
 	// TODO - handshake here? Or somewhere else?
 }
 
-int netio_read(void) {
+void netio_read(void) {
 	int i, n;
 	char buffer[BUFFER_SIZE];
 	char command[COMMAND_SIZE + 1];
@@ -167,8 +171,10 @@ int netio_read(void) {
 			n = read(i, buffer, BUFFER_SIZE - 1);
 			
 			// Return error code if can't read socket
-			if (n < 0)
-				return -1;
+			if (n < 0) {
+				fprintf(stderr, "read() error.\n");
+				netio_shutdown();
+			}
 			
 			// EOF (0) means the other side terminated connection. Handle apropriately.
 			if (n == 0) {
@@ -177,13 +183,14 @@ int netio_read(void) {
 					socklist_remove(i);
 					socktime_clear(i);
 				} else {
-					return -1;
+					fprintf(stderr, "Server terminated connection.\n");
+					netio_shutdown();
 				}
 
 				continue;
 			}
 			
-			// TODO - Do we want to parse and execute commands in core??
+			// TODO - Do we want to parse and execute commands in netio??
 			//        Maybe create a command list/execution module.
 
 			// Get incoming command
@@ -200,8 +207,6 @@ int netio_read(void) {
 			}
 		}
 	}
-	
-	return 0;
 }
 
 void netio_shutdown(void) {
