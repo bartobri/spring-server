@@ -21,7 +21,6 @@
 // Function prototypes
 void error(const char *);
 void handle_sigint(int);
-void cleanup(void);
 
 /*
  * int main(int, char *)
@@ -121,8 +120,7 @@ int main(int argc, char *argv[]) {
  */
 void error(const char *msg) {
 	printf("%s Shutting down.\n", msg);
-	cleanup();
-	exit(1);
+	netio_shutdown();
 }
 
 /*
@@ -132,23 +130,7 @@ void error(const char *msg) {
  *
  */
 void handle_sigint(int e) {
-	printf("Caught sigint (%i). Shutting down.\n", e);
-	cleanup();
-	exit(1);
+       printf("Caught sigint (%i).\n", e);
+       netio_shutdown();
 }
 
-/*
- * void cleanup(void)
- *
- * DESCR:
- *
- */
-void cleanup(void) {
-	int i;
-
-	while ((i = socklist_next()) > 0) {
-		close(i);
-		socklist_remove(i);
-		socktime_clear(i);
-	}
-}

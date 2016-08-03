@@ -203,3 +203,21 @@ int netio_read(void) {
 	
 	return 0;
 }
+
+void netio_shutdown(void) {
+	int i;
+	
+	fprintf(stderr, "Shutting down... ");
+
+	// Cleanup tasks
+	while ((i = socklist_next()) > 0) {
+		close(i);
+		socklist_remove(i);
+		socktime_clear(i);
+	}
+
+	fprintf(stderr, "Done\n");
+	
+	// Shutdown
+	exit(1);
+}
