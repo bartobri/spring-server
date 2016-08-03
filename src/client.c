@@ -10,6 +10,7 @@
 #include "main.h"
 #include "command.h"
 #include "socklist.h"
+#include "sockmain.h"
 
 void load_commands(void) {
 	// Populate commands
@@ -17,7 +18,7 @@ void load_commands(void) {
 
 int periodic(void) {
 
-	if (write(mainsockfd, "beat", 4) < 0)
+	if (write(sockmain_get(), "beat", 4) < 0)
 		return -1;
 	
 	return 0;

@@ -16,9 +16,9 @@
 #include "socktime.h"
 #include "command.h"
 #include "socklist.h"
+#include "sockmain.h"
 
 // Function prototypes
-void accept_new_connection(void);
 void error(const char *);
 void handle_sigint(int);
 void cleanup(void);
@@ -66,20 +66,16 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Execute startup proceedure
-	// TODO - Remove return val after error module implemented.
-	//        Have core module throw errors. Remove error checking from main.
-	mainsockfd = netio_startup(hostname, portno);
+	netio_startup(hostname, portno);
 	
-	// Ensure we have a valid socket
-	if (mainsockfd < 0)
-		error("Unsuccessful startup.");
+	// TODO - check for startup error once error module implemented
 	
 	// Print connection message
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
 		
 	// Initialize socket list and add main socket
 	socklist_init();
-	socklist_add(mainsockfd);
+	socklist_add(sockmain_get());
 
 	// Load client/server commands
 	load_commands();
@@ -92,7 +88,7 @@ int main(int argc, char *argv[]) {
 		
 		if (waitVal > 0) {
 			if (comp_type() == SERVER)
-				if (netio_accept(mainsockfd) < 0)
+				if (netio_accept() < 0)
 					error("netio_accept() error.");
 
 			if (netio_read() < 0) {

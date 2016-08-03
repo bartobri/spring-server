@@ -17,7 +17,4 @@ void load_commands(void);
 int periodic(void);
 int comp_type(void);
 
-// Globals
-int mainsockfd;
-
 #endif

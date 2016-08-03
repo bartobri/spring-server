@@ -17,6 +17,8 @@ struct commandTbl {
 static struct commandTbl commands[COMMAND_LIMIT];
 static bool init_completed = false;
 
+// TODO - Conform to data module naming standards
+
 void command_load(char *command, COMMAND_RETURN (*functionPtr)(COMMAND_ARGS)) {
 	int i;
 

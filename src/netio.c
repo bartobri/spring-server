@@ -20,11 +20,12 @@
 #include "command.h"
 #include "socktime.h"
 #include "socklist.h"
+#include "sockmain.h"
 
 // Static vars
 static fd_set read_fd_set;
 
-int netio_startup(char *hostname, char *portno) {
+void netio_startup(char *hostname, char *portno) {
 	int startsockfd = 0;
 	
 	if (comp_type() == SERVER) {
@@ -39,7 +40,7 @@ int netio_startup(char *hostname, char *portno) {
 		hints.ai_socktype = SOCK_STREAM;          // We want a TCP socket
 		hints.ai_flags = AI_PASSIVE;              // All interfaces
 		if (getaddrinfo(hostname, portno, &hints, &result) != 0) {
-			return -1;
+			return;
 			// TODO - error module to handle printing error messages and setting global error code
 			//fprintf(stderr, "server: Could not obtain internet address info.\n");
 		}
@@ -59,7 +60,7 @@ int netio_startup(char *hostname, char *portno) {
 		// Error if we didn't bind to any sockets
 		if (rp == NULL) {
 			//fprintf(stderr, "server: Could not bind to socket %i\n", startsockfd);
-			return -1;
+			return;
 		}
 	
 		// Free the result structure we don't need anymore
@@ -74,21 +75,21 @@ int netio_startup(char *hostname, char *portno) {
 		// Require hostname and port
 		if (hostname == NULL) {
 			//fprintf(stderr, "client: hostname can not be NULL.\n");
-			return -1;
+			return;
 		}
 		
 		// Set up a socket in the AF_INET domain (Internet Protocol v4 addresses)
 		startsockfd = socket(AF_INET, SOCK_STREAM, 0);
 		if (startsockfd < 0) {
 			//fprintf(stderr, "client: Could not create socket\n");
-			return -1;
+			return;
 		}
 		
 		// Get a pointer to 'hostent' containing info about host.
 		server = gethostbyname(hostname);
 		if (server == NULL) {
 			//fprintf(stderr, "client: no such host: %s\n", hostname);
-			return -1;
+			return;
 		}
 		
 		// Initializing serv_addr memory footprint to all integer zeros ('\0')
@@ -102,14 +103,11 @@ int netio_startup(char *hostname, char *portno) {
 		// Connect to server. Error if can't connect.
 		if (connect(startsockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) {
 			//fprintf(stderr, "client: error conecting to host %s port %s\n", hostname, portno);
-			return -1;
+			return;
 		}
-	} else {
-		return -1;
-		//error("Unknown component type.");
 	}
 	
-	return startsockfd;
+	sockmain_set(startsockfd);
 }
 
 int netio_wait(void) {
@@ -129,18 +127,20 @@ int netio_wait(void) {
 	return r;
 }
 
-int netio_accept(int socket) {
-	int newsockfd;
+int netio_accept(void) {
+	int mainsockfd, newsockfd;
 	struct sockaddr cliaddr;
 	socklen_t clilen;
 	
-	if (FD_ISSET(socket, &read_fd_set)) {
+	mainsockfd = sockmain_get();
+	
+	if (FD_ISSET(mainsockfd, &read_fd_set)) {
 		clilen = sizeof(cliaddr);
-		newsockfd = accept(socket, &cliaddr, &clilen);
+		newsockfd = accept(mainsockfd, &cliaddr, &clilen);
 		if (newsockfd > 0) {
 			socklist_add(newsockfd);
 			socktime_set(newsockfd);
-			FD_CLR(socket, &read_fd_set);
+			FD_CLR(mainsockfd, &read_fd_set);
 		}
 		return newsockfd;
 	}

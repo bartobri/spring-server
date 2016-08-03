@@ -12,6 +12,7 @@
 #include "socktime.h"
 #include "command.h"
 #include "socklist.h"
+#include "sockmain.h"
 
 /*
  * Define commands here
@@ -50,7 +51,7 @@ int periodic(void) {
 	
 	// Check time for all sockets and close unresponsive ones
 	while ((i = socklist_next()) > 0) {
-		if (i == mainsockfd)
+		if (i == sockmain_get())
 			continue;
 		if (socktime_get(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
 			close(i);
