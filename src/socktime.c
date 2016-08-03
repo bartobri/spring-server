@@ -73,7 +73,7 @@ int socktime_get(int socket) {
 	return 0;
 }
 
-void socktime_unset(int socket) {
+void socktime_clear(int socket) {
 	struct timeTbl *tt_pointer = NULL;
 	struct timeTbl *tt_prev    = NULL;
 	struct timeTbl *tt_temp    = NULL;

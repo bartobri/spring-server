@@ -153,6 +153,6 @@ void cleanup(void) {
 	while ((i = socklist_next()) > 0) {
 		close(i);
 		socklist_remove(i);
-		socktime_unset(i);
+		socktime_clear(i);
 	}
 }

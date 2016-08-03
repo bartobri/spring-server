@@ -175,7 +175,7 @@ int netio_read(void) {
 				if (comp_type() == SERVER) {
 					close(i);
 					socklist_remove(i);
-					socktime_unset(i);
+					socktime_clear(i);
 				} else {
 					return -1;
 				}

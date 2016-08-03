@@ -24,7 +24,7 @@ COMMAND_RETURN command_quit(COMMAND_ARGS) {
 	// Close socket
 	close(socket);
 	socklist_remove(socket);
-	socktime_unset(socket);
+	socktime_clear(socket);
 	
 	return 0;
 }
@@ -55,7 +55,7 @@ int periodic(void) {
 		if (socktime_get(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
 			close(i);
 			socklist_remove(i);
-			socktime_unset(i);
+			socktime_clear(i);
 		}
 	}
 	

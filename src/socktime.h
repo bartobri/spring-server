@@ -4,6 +4,6 @@
 // Function prototypes
 void socktime_set(int);
 int  socktime_get(int);
-void socktime_unset(int);
+void socktime_clear(int);
 
 #endif

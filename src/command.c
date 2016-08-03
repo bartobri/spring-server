@@ -38,7 +38,7 @@ void command_load(char *command, COMMAND_RETURN (*functionPtr)(COMMAND_ARGS)) {
 		}
 	}
 	
-	// TODO - print some kind of error message when we reach COMMAND_LIMIT
+	// TODO - what to do if we reach COMMAND_LIMIT?
 }
 
 bool command_valid(char *command) {
