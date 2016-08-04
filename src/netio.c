@@ -21,9 +21,7 @@
 #include "socktime.h"
 #include "socklist.h"
 #include "sockmain.h"
-
-// Static vars
-static fd_set read_fd_set;
+#include "readlist.h"
 
 void netio_startup(char *hostname, char *portno) {
 	int startsockfd = 0;
@@ -114,7 +112,7 @@ int netio_wait(void) {
 	int r;
 	struct timeval timeout;
 	
-	read_fd_set = socklist_get();
+	readlist_set(socklist_get());
 		
 	// Set select() timeout value.
 	// This needs to be inside the loop so it is reset for each loop interation.
@@ -122,7 +120,7 @@ int netio_wait(void) {
 	timeout.tv_usec = 0;
 		
 	// Block until input arrives on one or more active sockets
-	r = select(FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout);
+	r = select(FD_SETSIZE, readlist_getptr(), NULL, NULL, &timeout);
 	
 	if (r < 0) {
 		fprintf(stderr, "select() error.\n");
@@ -133,19 +131,17 @@ int netio_wait(void) {
 }
 
 void netio_accept(void) {
-	int mainsockfd, newsockfd;
+	int newsockfd;
 	struct sockaddr cliaddr;
 	socklen_t clilen;
 	
-	mainsockfd = sockmain_get();
-	
-	if (FD_ISSET(mainsockfd, &read_fd_set)) {
+	if (readlist_check(sockmain_get())) {
 		clilen = sizeof(cliaddr);
-		newsockfd = accept(mainsockfd, &cliaddr, &clilen);
+		newsockfd = accept(sockmain_get(), &cliaddr, &clilen);
 		if (newsockfd > 0) {
 			socklist_add(newsockfd);
 			socktime_set(newsockfd);
-			FD_CLR(mainsockfd, &read_fd_set);
+			readlist_remove(sockmain_get());
 		} else if (newsockfd < 0) {
 			fprintf(stderr, "accept() error.\n");
 			netio_shutdown();
@@ -160,51 +156,49 @@ void netio_read(void) {
 	char command[COMMAND_SIZE + 1];
 	char payload[BUFFER_SIZE - COMMAND_SIZE + 1];
 	
-	for (i = 0; i < FD_SETSIZE; ++i) {
-		if (FD_ISSET (i, &read_fd_set)) {
-			socktime_set(i);
-			
-			// Initialize the buffer with all integer zeros ('\0')
-			memset(buffer, 0, BUFFER_SIZE);
-			
-			// Read from socket
-			n = read(i, buffer, BUFFER_SIZE - 1);
-			
-			// Return error code if can't read socket
-			if (n < 0) {
-				fprintf(stderr, "read() error.\n");
+	while ((i = readlist_next()) > 0) {
+		socktime_set(i);
+		
+		// Initialize the buffer with all integer zeros ('\0')
+		memset(buffer, 0, BUFFER_SIZE);
+		
+		// Read from socket
+		n = read(i, buffer, BUFFER_SIZE - 1);
+		
+		// Return error code if can't read socket
+		if (n < 0) {
+			fprintf(stderr, "read() error.\n");
+			netio_shutdown();
+		}
+		
+		// EOF (0) means the other side terminated connection. Handle apropriately.
+		if (n == 0) {
+			if (comp_type() == SERVER) {
+				close(i);
+				socklist_remove(i);
+				socktime_clear(i);
+			} else {
+				fprintf(stderr, "Server terminated connection.\n");
 				netio_shutdown();
 			}
-			
-			// EOF (0) means the other side terminated connection. Handle apropriately.
-			if (n == 0) {
-				if (comp_type() == SERVER) {
-					close(i);
-					socklist_remove(i);
-					socktime_clear(i);
-				} else {
-					fprintf(stderr, "Server terminated connection.\n");
-					netio_shutdown();
-				}
 
-				continue;
-			}
-			
-			// TODO - Do we want to parse and execute commands in netio??
-			//        Maybe create a command list/execution module.
+			continue;
+		}
+		
+		// TODO - Do we want to parse and execute commands in netio??
+		//        Maybe create a command list/execution module.
 
-			// Get incoming command
-			memset(command, 0, sizeof(command));
-			strncpy(command, buffer, COMMAND_SIZE);
+		// Get incoming command
+		memset(command, 0, sizeof(command));
+		strncpy(command, buffer, COMMAND_SIZE);
 
-			// Get incoming payload
-			memset(payload, 0, sizeof(payload));
-			strncpy(payload, buffer + COMMAND_SIZE, BUFFER_SIZE - COMMAND_SIZE);
+		// Get incoming payload
+		memset(payload, 0, sizeof(payload));
+		strncpy(payload, buffer + COMMAND_SIZE, BUFFER_SIZE - COMMAND_SIZE);
 
-			// Validate and execute command
-			if (command_valid(command) == true) {
-				command_execute(command, payload, i);
-			}
+		// Validate and execute command
+		if (command_valid(command) == true) {
+			command_execute(command, payload, i);
 		}
 	}
 }

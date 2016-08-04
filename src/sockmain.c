@@ -4,6 +4,7 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <stdio.h>
+#include "sockmain.h"
 
 // Static vars
 static int mainsockfd = 0;
