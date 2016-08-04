@@ -23,7 +23,7 @@
 #include "sockmain.h"
 #include "readlist.h"
 
-void netio_startup(char *hostname, char *portno) {
+int netio_startup(char *hostname, char *portno) {
 	int startsockfd = 0;
 	
 	if (comp_type() == SERVER) {
@@ -105,14 +105,12 @@ void netio_startup(char *hostname, char *portno) {
 		}
 	}
 	
-	sockmain_set(startsockfd);
+	return startsockfd;
 }
 
-int netio_wait(void) {
+int netio_wait(fd_set *read_fd_set) {
 	int r;
 	struct timeval timeout;
-	
-	readlist_set(socklist_get());
 		
 	// Set select() timeout value.
 	// This needs to be inside the loop so it is reset for each loop interation.
@@ -120,7 +118,7 @@ int netio_wait(void) {
 	timeout.tv_usec = 0;
 		
 	// Block until input arrives on one or more active sockets
-	r = select(FD_SETSIZE, readlist_getptr(), NULL, NULL, &timeout);
+	r = select(FD_SETSIZE, read_fd_set, NULL, NULL, &timeout);
 	
 	if (r < 0) {
 		fprintf(stderr, "select() error.\n");
@@ -130,23 +128,21 @@ int netio_wait(void) {
 	return r;
 }
 
-void netio_accept(void) {
+int netio_accept(int socket) {
 	int newsockfd;
 	struct sockaddr cliaddr;
 	socklen_t clilen;
 	
-	if (readlist_check(sockmain_get())) {
-		clilen = sizeof(cliaddr);
-		newsockfd = accept(sockmain_get(), &cliaddr, &clilen);
-		if (newsockfd > 0) {
-			socklist_add(newsockfd);
-			socktime_set(newsockfd);
-			readlist_remove(sockmain_get());
-		} else if (newsockfd < 0) {
-			fprintf(stderr, "accept() error.\n");
-			netio_shutdown();
-		}
+	clilen = sizeof(cliaddr);
+	
+	newsockfd = accept(socket, &cliaddr, &clilen);
+	
+	if (newsockfd < 0) {
+		fprintf(stderr, "accept() error.\n");
+		netio_shutdown();
 	}
+	
+	return newsockfd;
 	// TODO - handshake here? Or somewhere else?
 }
 

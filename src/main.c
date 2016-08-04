@@ -16,6 +16,7 @@
 #include "socktime.h"
 #include "command.h"
 #include "socklist.h"
+#include "readlist.h"
 #include "sockmain.h"
 
 // Function prototypes
@@ -29,7 +30,8 @@ void handle_sigint(int);
  *
  */
 int main(int argc, char *argv[]) {
-	int o;
+	int o, r;
+	int mainsockfd, newsockfd;
 	char *hostname, *portno;
 	time_t last_periodic_time = time(NULL);
 	
@@ -63,24 +65,35 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Execute startup proceedure
-	netio_startup(hostname, portno);
+	mainsockfd = netio_startup(hostname, portno);
 	
 	// Print connection message
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
+	
+	// Make main socket accessible to other modules via sockmain module
+	sockmain_set(mainsockfd);
 		
 	// Initialize socket list and add main socket
 	socklist_init();
-	socklist_add(sockmain_get());
+	socklist_add(mainsockfd);
 
 	// Load client/server commands
 	load_commands();
 	
 	while (true) {
 		
-		if (netio_wait() > 0) {
+		readlist_set(socklist_get());
+		
+		r = netio_wait(readlist_getptr());
 
-			if (comp_type() == SERVER)
-				netio_accept();
+		if (r > 0) {
+
+			if (readlist_check(mainsockfd) && comp_type() == SERVER) {
+				newsockfd = netio_accept(mainsockfd);
+				socklist_add(newsockfd);
+				socktime_set(newsockfd);
+				readlist_remove(mainsockfd);
+			}
 
 			netio_read();
 		}
