@@ -30,9 +30,11 @@ void handle_sigint(int);
  *
  */
 int main(int argc, char *argv[]) {
-	int o, r;
+	int o, r, i;
 	int mainsockfd, newsockfd;
 	char *hostname, *portno;
+	char command[COMMAND_SIZE + 1];
+	char payload[BUFFER_SIZE - COMMAND_SIZE + 1];
 	time_t last_periodic_time = time(NULL);
 	
 	// Set SIGINT handler
@@ -95,7 +97,40 @@ int main(int argc, char *argv[]) {
 				readlist_remove(mainsockfd);
 			}
 
-			netio_read();
+			while ((i = readlist_next()) > 0) {
+
+				socktime_set(i);
+
+				r = netio_read(i);
+
+				if (r == 0) {
+
+					if (comp_type() == SERVER) {
+						close(i);
+						socklist_remove(i);
+						socktime_clear(i);
+					} else {
+						// TODO - replace this once I figure out a error-and-shutdown process
+						fprintf(stderr, "Server terminated connection.\n");
+						netio_shutdown();
+					}
+					
+					continue;
+				}
+				
+				// Reset command and payload
+				memset(command, 0, sizeof(command));
+				memset(payload, 0, sizeof(payload));
+				
+				// Parse netio input buffer for command and payload
+				strncpy(command, netio_get(), COMMAND_SIZE);
+				strncpy(payload, netio_get() + COMMAND_SIZE, BUFFER_SIZE - COMMAND_SIZE);
+				
+				// Validate and execute command
+				if (command_valid(command) == true) {
+					command_execute(command, payload, i);
+				}
+			}
 		}
 		
 		// Run periodic function if PERIODIC_SECONDS has elapsed

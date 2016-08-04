@@ -23,6 +23,8 @@
 #include "sockmain.h"
 #include "readlist.h"
 
+static char buffer[BUFFER_SIZE];
+
 int netio_startup(char *hostname, char *portno) {
 	int startsockfd = 0;
 	
@@ -146,57 +148,26 @@ int netio_accept(int socket) {
 	// TODO - handshake here? Or somewhere else?
 }
 
-void netio_read(void) {
-	int i, n;
-	char buffer[BUFFER_SIZE];
-	char command[COMMAND_SIZE + 1];
-	char payload[BUFFER_SIZE - COMMAND_SIZE + 1];
+int netio_read(int socket) {
+	int n;
+		
+	// Reset the buffer with all integer zeros ('\0')
+	memset(buffer, 0, BUFFER_SIZE);
 	
-	while ((i = readlist_next()) > 0) {
-		socktime_set(i);
-		
-		// Initialize the buffer with all integer zeros ('\0')
-		memset(buffer, 0, BUFFER_SIZE);
-		
-		// Read from socket
-		n = read(i, buffer, BUFFER_SIZE - 1);
-		
-		// Return error code if can't read socket
-		if (n < 0) {
-			fprintf(stderr, "read() error.\n");
-			netio_shutdown();
-		}
-		
-		// EOF (0) means the other side terminated connection. Handle apropriately.
-		if (n == 0) {
-			if (comp_type() == SERVER) {
-				close(i);
-				socklist_remove(i);
-				socktime_clear(i);
-			} else {
-				fprintf(stderr, "Server terminated connection.\n");
-				netio_shutdown();
-			}
-
-			continue;
-		}
-		
-		// TODO - Do we want to parse and execute commands in netio??
-		//        Maybe create a command list/execution module.
-
-		// Get incoming command
-		memset(command, 0, sizeof(command));
-		strncpy(command, buffer, COMMAND_SIZE);
-
-		// Get incoming payload
-		memset(payload, 0, sizeof(payload));
-		strncpy(payload, buffer + COMMAND_SIZE, BUFFER_SIZE - COMMAND_SIZE);
-
-		// Validate and execute command
-		if (command_valid(command) == true) {
-			command_execute(command, payload, i);
-		}
+	// Read from socket
+	n = read(socket, buffer, BUFFER_SIZE - 1);
+	
+	// Return error code if can't read socket
+	if (n < 0) {
+		fprintf(stderr, "read() error.\n");
+		netio_shutdown();
 	}
+	
+	return n;
+}
+
+char *netio_get(void) {
+	return buffer;
 }
 
 void netio_shutdown(void) {

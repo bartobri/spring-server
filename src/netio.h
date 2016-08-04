@@ -4,7 +4,8 @@
 int netio_startup(char *, char *);
 int netio_wait(fd_set *);
 int netio_accept(int);
-void netio_read(void);
+int netio_read(int);
+char *netio_get(void);
 void netio_shutdown(void);
 
 #endif
