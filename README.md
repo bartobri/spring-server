@@ -1,3 +1,6 @@
+##### NOTE: This project has become something much larger than planned. The documentation below is 
+##### outdated. This warning will be removed when it is updated.
+
 Spring Server
 =============
 
