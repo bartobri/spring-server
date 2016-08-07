@@ -100,6 +100,8 @@ int main(int argc, char *argv[]) {
 
 				socktime_set(i);
 
+				// TODO - change this to return contents of buffer once I have a
+				//        error module set up.
 				r = netio_read(i);
 
 				if (r == 0) {

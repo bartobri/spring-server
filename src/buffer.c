@@ -10,8 +10,8 @@
 
 // Static Variables
 static char buffer[BUFFER_SIZE];
-char command[COMMAND_SIZE + 1];
-char payload[BUFFER_SIZE - COMMAND_SIZE + 1];
+static char command[COMMAND_SIZE + 1];
+static char payload[BUFFER_SIZE - COMMAND_SIZE + 1];
 
 char *buffer_get(void) {
 	return buffer;
