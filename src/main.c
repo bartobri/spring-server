@@ -18,6 +18,7 @@
 #include "socklist.h"
 #include "readlist.h"
 #include "sockmain.h"
+#include "buffer.h"
 
 // Function prototypes
 void handle_sigint(int);
@@ -33,8 +34,6 @@ int main(int argc, char *argv[]) {
 	int o, r, i;
 	int mainsockfd, newsockfd;
 	char *hostname, *portno;
-	char command[COMMAND_SIZE + 1];
-	char payload[BUFFER_SIZE - COMMAND_SIZE + 1];
 	time_t last_periodic_time = time(NULL);
 	
 	// Set SIGINT handler
@@ -118,17 +117,12 @@ int main(int argc, char *argv[]) {
 					continue;
 				}
 				
-				// Reset command and payload
-				memset(command, 0, sizeof(command));
-				memset(payload, 0, sizeof(payload));
-				
-				// Parse netio input buffer for command and payload
-				strncpy(command, netio_get(), COMMAND_SIZE);
-				strncpy(payload, netio_get() + COMMAND_SIZE, BUFFER_SIZE - COMMAND_SIZE);
+				// Copy data read from netio_read in to buffer module
+				buffer_set(netio_get());
 				
 				// Validate and execute command
-				if (command_valid(command) == true) {
-					command_execute(command, payload, i);
+				if (command_valid(buffer_get_command()) == true) {
+					command_execute(buffer_get_command(), buffer_get_payload(), i);
 				}
 			}
 		}
