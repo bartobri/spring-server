@@ -9,8 +9,8 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <ctype.h>
-#include <time.h>
 #include <signal.h>
+#include <time.h>
 #include "main.h"
 #include "netio.h"
 #include "socktime.h"
@@ -19,6 +19,7 @@
 #include "readlist.h"
 #include "sockmain.h"
 #include "buffer.h"
+#include "ptime.h"
 
 // Function prototypes
 void handle_sigint(int);
@@ -34,7 +35,6 @@ int main(int argc, char *argv[]) {
 	int o, r, i;
 	int mainsockfd, newsockfd;
 	char *hostname, *portno;
-	time_t last_periodic_time = time(NULL);
 	
 	// Set SIGINT handler
 	signal(SIGINT, handle_sigint);
@@ -80,6 +80,9 @@ int main(int argc, char *argv[]) {
 
 	// Load client/server commands
 	load_commands();
+	
+	// Set periodic time to now
+	ptime_set(time(NULL));
 	
 	while (true) {
 		
@@ -130,10 +133,9 @@ int main(int argc, char *argv[]) {
 		}
 		
 		// Run periodic function if PERIODIC_SECONDS has elapsed
-		if (last_periodic_time <= time(NULL) - PERIODIC_SECONDS) {
+		if (ptime_get() <= time(NULL) - PERIODIC_SECONDS) {
 			periodic();
-			// TODO - evaluate return value of periodic
-			last_periodic_time = time(NULL);
+			ptime_set(time(NULL));
 		}
 		
 	}
