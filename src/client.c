@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "main.h"
-#include "command.h"
+#include "ctable.h"
 #include "socklist.h"
 #include "sockmain.h"
 

@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "main.h"
-#include "command.h"
+#include "ctable.h"
 
 struct commandTbl {
 	const char *command;
@@ -18,9 +18,7 @@ struct commandTbl {
 static struct commandTbl commands[COMMAND_LIMIT];
 static bool init_completed = false;
 
-// TODO - Conform to data module naming standards
-
-void command_add(char *command, COMMAND_RETURN (*functionPtr)(COMMAND_ARGS)) {
+void ctable_add(char *command, COMMAND_RETURN (*functionPtr)(COMMAND_ARGS)) {
 	int i;
 
 	// Initialize commands table if not done yet
@@ -44,7 +42,7 @@ void command_add(char *command, COMMAND_RETURN (*functionPtr)(COMMAND_ARGS)) {
 	// TODO - what to do if we reach COMMAND_LIMIT?
 }
 
-bool command_check(char *command) {
+bool ctable_check(char *command) {
 	int i;
 	
 	for (i = 0; i < COMMAND_LIMIT; ++i) {
@@ -62,7 +60,7 @@ bool command_check(char *command) {
 	return false;
 }
 
-void command_execute(char *command, char *payload, int socket) {
+void ctable_execute(char *command, char *payload, int socket) {
 	int i;
 	
 	for (i = 0; i < COMMAND_LIMIT; ++i) {

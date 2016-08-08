@@ -10,7 +10,7 @@
 #include <time.h>
 #include "main.h"
 #include "socktime.h"
-#include "command.h"
+#include "ctable.h"
 #include "socklist.h"
 #include "sockmain.h"
 
@@ -40,8 +40,8 @@ COMMAND_RETURN command_beat(COMMAND_ARGS) {
  * Load commands here
  */
 void load_commands(void) {
-	command_add("beat", &command_beat);
-	command_add("quit", &command_quit);
+	ctable_add("beat", &command_beat);
+	ctable_add("quit", &command_quit);
 }
 
 // TODO - Do we need periodic() to be user configurable? Maybe not...

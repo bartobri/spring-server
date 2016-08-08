@@ -14,7 +14,7 @@
 #include "main.h"
 #include "netio.h"
 #include "socktime.h"
-#include "command.h"
+#include "ctable.h"
 #include "socklist.h"
 #include "readlist.h"
 #include "sockmain.h"
@@ -126,8 +126,8 @@ int main(int argc, char *argv[]) {
 				buffer_set(netio_get());
 				
 				// Validate and execute command
-				if (command_check(buffer_get_command()) == true) {
-					command_execute(buffer_get_command(), buffer_get_payload(), i);
+				if (ctable_check(buffer_get_command()) == true) {
+					ctable_execute(buffer_get_command(), buffer_get_payload(), i);
 				}
 			}
 		}
