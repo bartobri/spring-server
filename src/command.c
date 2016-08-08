@@ -2,6 +2,7 @@
 //
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License. See LICENSE for more details.
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -19,7 +20,7 @@ static bool init_completed = false;
 
 // TODO - Conform to data module naming standards
 
-void command_load(char *command, COMMAND_RETURN (*functionPtr)(COMMAND_ARGS)) {
+void command_add(char *command, COMMAND_RETURN (*functionPtr)(COMMAND_ARGS)) {
 	int i;
 
 	// Initialize commands table if not done yet
@@ -43,7 +44,7 @@ void command_load(char *command, COMMAND_RETURN (*functionPtr)(COMMAND_ARGS)) {
 	// TODO - what to do if we reach COMMAND_LIMIT?
 }
 
-bool command_valid(char *command) {
+bool command_check(char *command) {
 	int i;
 	
 	for (i = 0; i < COMMAND_LIMIT; ++i) {

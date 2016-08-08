@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
 				buffer_set(netio_get());
 				
 				// Validate and execute command
-				if (command_valid(buffer_get_command()) == true) {
+				if (command_check(buffer_get_command()) == true) {
 					command_execute(buffer_get_command(), buffer_get_payload(), i);
 				}
 			}

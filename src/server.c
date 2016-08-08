@@ -40,8 +40,8 @@ COMMAND_RETURN command_beat(COMMAND_ARGS) {
  * Load commands here
  */
 void load_commands(void) {
-	command_load("beat", &command_beat);
-	command_load("quit", &command_quit);
+	command_add("beat", &command_beat);
+	command_add("quit", &command_quit);
 }
 
 // TODO - Do we need periodic() to be user configurable? Maybe not...
