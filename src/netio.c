@@ -166,6 +166,13 @@ int netio_read(int socket) {
 	return n;
 }
 
+int netio_write(int socket, char *data) {
+	if (write(socket, data, strlen(data)) < 0)
+		return -1;
+	
+	return 0;
+}
+
 char *netio_get(void) {
 	return buffer;
 }

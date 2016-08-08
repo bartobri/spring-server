@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "main.h"
+#include "netio.h"
 #include "ctable.h"
 #include "socklist.h"
 #include "sockmain.h"
@@ -17,9 +18,7 @@ void load_commands(void) {
 }
 
 int periodic(void) {
-
-	if (write(sockmain_get(), "beat", 4) < 0)
-		return -1;
+	netio_write(sockmain_get(), "beat");
 	
 	return 0;
 }
