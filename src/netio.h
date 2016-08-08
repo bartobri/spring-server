@@ -7,6 +7,6 @@ int netio_accept(int);
 int netio_read(int);
 int netio_write(int, char *);
 char *netio_get(void);
-void netio_shutdown(void);
+char *netio_get_errmsg(void);
 
 #endif

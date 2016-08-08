@@ -18,9 +18,11 @@ void load_commands(void) {
 }
 
 int periodic(void) {
-	netio_write(sockmain_get(), "beat");
+	int r;
+
+	r = netio_write(sockmain_get(), "beat");
 	
-	return 0;
+	return r;
 }
 
 int comp_type(void) {

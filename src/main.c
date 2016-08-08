@@ -23,6 +23,7 @@
 
 // Function prototypes
 void main_sigint(int);
+void main_shutdown(void);
 
 /*
  * int main(int, char *)
@@ -68,6 +69,12 @@ int main(int argc, char *argv[]) {
 	// Execute startup proceedure
 	mainsockfd = netio_startup(hostname, portno);
 	
+	// Check for error at startup
+	if (mainsockfd < 0) {
+		printf("%s\n", netio_get_errmsg());
+		main_shutdown();
+	}
+	
 	// Print connection message
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
 	
@@ -89,11 +96,23 @@ int main(int argc, char *argv[]) {
 		readlist_set(socklist_get());
 		
 		r = netio_wait(readlist_getptr());
+		
+		if (r < 0) {
+			printf("select() error\n");
+			main_shutdown();
+		}
 
 		if (r > 0) {
 
 			if (readlist_check(mainsockfd) && comp_type() == SERVER) {
+
 				newsockfd = netio_accept(mainsockfd);
+
+				if (newsockfd < 0) {
+					printf("accept() error\n");
+					main_shutdown();
+				}
+
 				socklist_add(newsockfd);
 				socktime_set(newsockfd);
 				readlist_remove(mainsockfd);
@@ -106,6 +125,11 @@ int main(int argc, char *argv[]) {
 				// TODO - change this to return contents of buffer once I have a
 				//        error module set up.
 				r = netio_read(i);
+				
+				if (r < 0) {
+					printf("read() error\n");
+					main_shutdown();
+				}
 
 				if (r == 0) {
 
@@ -114,9 +138,8 @@ int main(int argc, char *argv[]) {
 						socklist_remove(i);
 						socktime_clear(i);
 					} else {
-						// TODO - replace this once I figure out a error-and-shutdown process
-						fprintf(stderr, "Server terminated connection.\n");
-						netio_shutdown();
+						printf("Server terminated connection.\n");
+						main_shutdown();
 					}
 					
 					continue;
@@ -151,6 +174,24 @@ int main(int argc, char *argv[]) {
  */
 void main_sigint(int e) {
        printf("Caught sigint (%i).\n", e);
-       netio_shutdown();
+       main_shutdown();
+}
+
+void main_shutdown(void) {
+	int i;
+	
+	fprintf(stderr, "Shutting down... ");
+
+	// Cleanup tasks
+	while ((i = socklist_next()) > 0) {
+		close(i);
+		socklist_remove(i);
+		socktime_clear(i);
+	}
+
+	fprintf(stderr, "Done\n");
+	
+	// Shutdown
+	exit(1);
 }
 

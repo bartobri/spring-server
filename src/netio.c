@@ -23,10 +23,17 @@
 #include "sockmain.h"
 #include "readlist.h"
 
+#define ERRMSG_SIZE 100
+
+// Static Variables
 static char buffer[BUFFER_SIZE];
+static char errmsg[ERRMSG_SIZE];
 
 int netio_startup(char *hostname, char *portno) {
 	int startsockfd = 0;
+	
+	// Init errmsg string
+	memset(errmsg, 0, ERRMSG_SIZE);
 	
 	if (comp_type() == SERVER) {
 		struct addrinfo hints;
@@ -40,8 +47,8 @@ int netio_startup(char *hostname, char *portno) {
 		hints.ai_socktype = SOCK_STREAM;          // We want a TCP socket
 		hints.ai_flags = AI_PASSIVE;              // All interfaces
 		if (getaddrinfo(hostname, portno, &hints, &result) != 0) {
-			fprintf(stderr, "Could not obtain internet address info.\n");
-			netio_shutdown();
+			sprintf(errmsg, "Could not obtain internet address info.");
+			return -1;
 		}
 	
 		// Loop over results from getaddrinfo() and try to bind. Exit loop on first successful bind.
@@ -58,8 +65,8 @@ int netio_startup(char *hostname, char *portno) {
 		
 		// Error if we didn't bind to any sockets
 		if (rp == NULL) {
-			fprintf(stderr, "server: Could not bind to socket %i\n", startsockfd);
-			netio_shutdown();
+			sprintf(errmsg, "Could not bind to socket %i", startsockfd);
+			return -1;
 		}
 	
 		// Free the result structure we don't need anymore
@@ -74,22 +81,22 @@ int netio_startup(char *hostname, char *portno) {
 		
 		// Require hostname and port
 		if (hostname == NULL) {
-			fprintf(stderr, "client: hostname can not be NULL.\n");
-			netio_shutdown();
+			sprintf(errmsg, "hostname can not be NULL");
+			return -1;
 		}
 		
 		// Set up a socket in the AF_INET domain (Internet Protocol v4 addresses)
 		startsockfd = socket(AF_INET, SOCK_STREAM, 0);
 		if (startsockfd < 0) {
-			fprintf(stderr, "client: Could not create socket\n");
-			netio_shutdown();
+			sprintf(errmsg, "Could not create socket");
+			return -1;
 		}
 		
 		// Get a pointer to 'hostent' containing info about host.
 		server = gethostbyname(hostname);
 		if (server == NULL) {
-			fprintf(stderr, "client: no such host: %s\n", hostname);
-			netio_shutdown();
+			sprintf(errmsg, "no such host: %s", hostname);
+			return -1;
 		}
 		
 		// Initializing serv_addr memory footprint to all integer zeros ('\0')
@@ -102,8 +109,8 @@ int netio_startup(char *hostname, char *portno) {
 		
 		// Connect to server. Error if can't connect.
 		if (connect(startsockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) {
-			fprintf(stderr, "client: error conecting to host %s port %s\n", hostname, portno);
-			netio_shutdown();
+			sprintf(errmsg, "error conecting to host %s port %s", hostname, portno);
+			return -1;
 		}
 	}
 	
@@ -122,11 +129,6 @@ int netio_wait(fd_set *read_fd_set) {
 	// Block until input arrives on one or more active sockets
 	r = select(FD_SETSIZE, read_fd_set, NULL, NULL, &timeout);
 	
-	if (r < 0) {
-		fprintf(stderr, "select() error.\n");
-		netio_shutdown();
-	}
-	
 	return r;
 }
 
@@ -138,11 +140,6 @@ int netio_accept(int socket) {
 	clilen = sizeof(cliaddr);
 	
 	newsockfd = accept(socket, &cliaddr, &clilen);
-	
-	if (newsockfd < 0) {
-		fprintf(stderr, "accept() error.\n");
-		netio_shutdown();
-	}
 	
 	return newsockfd;
 	// TODO - handshake here? Or somewhere else?
@@ -157,40 +154,21 @@ int netio_read(int socket) {
 	// Read from socket
 	n = read(socket, buffer, BUFFER_SIZE - 1);
 	
-	// Return error code if can't read socket
-	if (n < 0) {
-		fprintf(stderr, "read() error.\n");
-		netio_shutdown();
-	}
-	
 	return n;
 }
 
 int netio_write(int socket, char *data) {
-	if (write(socket, data, strlen(data)) < 0)
-		return -1;
-	
-	return 0;
+	int r;
+
+	r = write(socket, data, strlen(data));
+
+	return r;
 }
 
 char *netio_get(void) {
 	return buffer;
 }
 
-void netio_shutdown(void) {
-	int i;
-	
-	fprintf(stderr, "Shutting down... ");
-
-	// Cleanup tasks
-	while ((i = socklist_next()) > 0) {
-		close(i);
-		socklist_remove(i);
-		socktime_clear(i);
-	}
-
-	fprintf(stderr, "Done\n");
-	
-	// Shutdown
-	exit(1);
+char *netio_get_errmsg(void) {
+	return errmsg;
 }
