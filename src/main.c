@@ -22,7 +22,7 @@
 #include "ptime.h"
 
 // Function prototypes
-void handle_sigint(int);
+void main_sigint(int);
 
 /*
  * int main(int, char *)
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 	char *hostname, *portno;
 	
 	// Set SIGINT handler
-	signal(SIGINT, handle_sigint);
+	signal(SIGINT, main_sigint);
 
 	// Set default port
 	portno = malloc(6);
@@ -144,12 +144,12 @@ int main(int argc, char *argv[]) {
 }
 
 /*
- * void handle_sigint(int)
+ * void main_sigint(int)
  *
  * DESCR:
  *
  */
-void handle_sigint(int e) {
+void main_sigint(int e) {
        printf("Caught sigint (%i).\n", e);
        netio_shutdown();
 }
