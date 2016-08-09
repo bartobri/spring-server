@@ -10,13 +10,13 @@
 #include <time.h>
 #include "main.h"
 #include "socktime.h"
-#include "ctable.h"
+#include "ftable.h"
 #include "socklist.h"
 
 /*
- * Define commands here
+ * Define functions here
  */
-COMMAND_RETURN command_quit(COMMAND_ARGS) {
+FUNCTION_RETURN command_quit(COMMAND_ARGS) {
 	
 	// Suppress "unused parameter" warning for payload
 	(void)payload;
@@ -29,30 +29,20 @@ COMMAND_RETURN command_quit(COMMAND_ARGS) {
 	return 0;
 }
 
-COMMAND_RETURN command_beat(COMMAND_ARGS) {
+FUNCTION_RETURN command_beat(COMMAND_ARGS) {
 	printf("command_beat socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;
 }
 
-/*
- * Load commands here
- */
-void load_commands(void) {
-	ctable_add("beat", &command_beat);
-	ctable_add("quit", &command_quit);
-}
-
-// TODO - Do we need periodic() to be user configurable? Maybe not...
-//        Maybe just have it check for inactive sockets and that's it...
-int periodic(void) {
+FUNCTION_RETURN periodic(PERIODIC_ARGS) {
 	int i;
 	
 	// Check time for all sockets and close unresponsive ones
 	while ((i = socklist_next()) > 0) {
 		if (i == socklist_get_mainsock())
 			continue;
-		if (socktime_get(i) < time(NULL) - (PERIODIC_SECONDS * 2)) {
+		if (socktime_get(i) < time(NULL) - 10) {
 			close(i);
 			socklist_remove(i);
 			socktime_clear(i);
@@ -60,6 +50,15 @@ int periodic(void) {
 	}
 	
 	return 0;
+}
+
+/*
+ * Load functions here
+ */
+void load_functions(void) {
+	ftable_add_command("beat", &command_beat);
+	ftable_add_command("quit", &command_quit);
+	ftable_add_periodic(&periodic);
 }
 
 int comp_type(void) {

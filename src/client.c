@@ -9,19 +9,19 @@
 #include <stdlib.h>
 #include "main.h"
 #include "netio.h"
-#include "ctable.h"
+#include "ftable.h"
 #include "socklist.h"
 
-void load_commands(void) {
-	// Populate commands
-}
-
-int periodic(void) {
+FUNCTION_RETURN periodic(PERIODIC_ARGS) {
 	int r;
 
 	r = netio_write(socklist_get_mainsock(), "beat");
 	
 	return r;
+}
+
+void load_functions(void) {
+	ftable_add_periodic(&periodic);
 }
 
 int comp_type(void) {

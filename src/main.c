@@ -14,7 +14,7 @@
 #include "main.h"
 #include "netio.h"
 #include "socktime.h"
-#include "ctable.h"
+#include "ftable.h"
 #include "socklist.h"
 #include "readlist.h"
 #include "buffer.h"
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 	
 	// Initialization functions
 	netio_init();
-	ctable_init();
+	ftable_init();
 	socktime_init();
 	socklist_init();
 	readlist_init();
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 	socklist_add_mainsock(mainsockfd);
 
 	// Load client/server commands
-	load_commands();
+	load_functions();
 	
 	while (true) {
 		
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
 		r = netio_wait(readlist_getptr());
 		
 		if (r < 0)
-			main_shutdown("select() error\n");
+			main_shutdown("select() error");
 
 		if (r > 0) {
 
@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
 				newsockfd = netio_accept(mainsockfd);
 
 				if (newsockfd < 0)
-					main_shutdown("accept() error\n");
+					main_shutdown("accept() error");
 
 				socklist_add(newsockfd);
 				socktime_set(newsockfd);
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
 				r = netio_read(i);
 				
 				if (r < 0)
-					main_shutdown("read() error\n");
+					main_shutdown("read() error");
 
 				if (r == 0) {
 
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 						socklist_remove(i);
 						socktime_clear(i);
 					} else {
-						main_shutdown("Server terminated connection.\n");
+						main_shutdown("Server terminated connection.");
 					}
 					
 					continue;
@@ -141,15 +141,15 @@ int main(int argc, char *argv[]) {
 				buffer_set(netio_get());
 				
 				// Validate and execute command
-				if (ctable_check(buffer_get_command()) == true) {
-					ctable_execute(buffer_get_command(), buffer_get_payload(), i);
+				if (ftable_check_command(buffer_get_command()) == true) {
+					ftable_exec_command(buffer_get_command(), buffer_get_payload(), i);
 				}
 			}
 		}
 		
 		// Run periodic function if expired
 		if (ptime_expired() == true) {
-			periodic();
+			ftable_exec_periodic();
 			ptime_reset();
 		}
 		

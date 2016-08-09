@@ -17,7 +17,7 @@
 #include <netdb.h>
 #include "main.h"
 #include "netio.h"
-#include "ctable.h"
+#include "ftable.h"
 #include "socktime.h"
 #include "socklist.h"
 #include "readlist.h"
