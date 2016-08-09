@@ -147,10 +147,10 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		
-		// Run periodic function if PERIODIC_SECONDS has elapsed
-		if (ptime_get() <= time(NULL) - PERIODIC_SECONDS) {
+		// Run periodic function if expired
+		if (ptime_expired() == true) {
 			periodic();
-			ptime_set(time(NULL));
+			ptime_reset();
 		}
 		
 	}

@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <stdbool.h>
 #include "main.h"
 #include "ptime.h"
 
@@ -21,4 +22,16 @@ void ptime_set(int t) {
 
 int ptime_get(void) {
 	return (int)ptime;
+}
+
+void ptime_reset(void) {
+	ptime = time(NULL);
+}
+
+bool ptime_expired(void) {
+	if (ptime <= time(NULL) - PERIODIC_SECONDS) {
+		return true;
+	}
+	
+	return false;
 }
