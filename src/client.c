@@ -11,7 +11,6 @@
 #include "netio.h"
 #include "ctable.h"
 #include "socklist.h"
-#include "sockmain.h"
 
 void load_commands(void) {
 	// Populate commands
@@ -20,7 +19,7 @@ void load_commands(void) {
 int periodic(void) {
 	int r;
 
-	r = netio_write(sockmain_get(), "beat");
+	r = netio_write(socklist_get_mainsock(), "beat");
 	
 	return r;
 }

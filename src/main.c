@@ -17,7 +17,6 @@
 #include "ctable.h"
 #include "socklist.h"
 #include "readlist.h"
-#include "sockmain.h"
 #include "buffer.h"
 #include "ptime.h"
 
@@ -69,7 +68,6 @@ int main(int argc, char *argv[]) {
 	// Initialization functions
 	netio_init();
 	ctable_init();
-	sockmain_init();
 	socktime_init();
 	socklist_init();
 	readlist_init();
@@ -86,11 +84,8 @@ int main(int argc, char *argv[]) {
 	// Print connection message
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
 	
-	// Make main socket accessible to other modules via sockmain module
-	sockmain_set(mainsockfd);
-		
-	// Add main socket to socket list
-	socklist_add(mainsockfd);
+	// Add main socket to socklist
+	socklist_add_mainsock(mainsockfd);
 
 	// Load client/server commands
 	load_commands();

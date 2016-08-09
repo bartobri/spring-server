@@ -20,7 +20,6 @@
 #include "ctable.h"
 #include "socktime.h"
 #include "socklist.h"
-#include "sockmain.h"
 #include "readlist.h"
 
 #define ERRMSG_SIZE 100
