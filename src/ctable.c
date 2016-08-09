@@ -16,19 +16,18 @@ struct commandTbl {
 
 // Static variables
 static struct commandTbl commands[COMMAND_LIMIT];
-static bool init_completed = false;
+
+void ctable_init(void) {
+	int i;
+	
+	for (i = 0; i < COMMAND_LIMIT; ++i) {
+		commands[i].command = NULL;
+		commands[i].functionPtr = NULL;
+	}
+}
 
 void ctable_add(char *command, COMMAND_RETURN (*functionPtr)(COMMAND_ARGS)) {
 	int i;
-
-	// Initialize commands table if not done yet
-	if (init_completed == false) {
-		for (i = 0; i < COMMAND_LIMIT; ++i) {
-			commands[i].command = NULL;
-			commands[i].functionPtr = NULL;
-		}
-		init_completed = true;
-	}
 	
 	// Add passed parameters to end of commands[] array
 	for (i = 0; i < COMMAND_LIMIT; ++i) {

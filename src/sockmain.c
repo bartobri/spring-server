@@ -7,7 +7,11 @@
 #include "sockmain.h"
 
 // Static vars
-static int mainsockfd = 0;
+static int mainsockfd;
+
+void sockmain_init(void) {
+	mainsockfd = 0;
+}
 
 void sockmain_set(int socket) {
 	mainsockfd = socket;

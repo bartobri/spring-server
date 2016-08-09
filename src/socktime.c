@@ -18,7 +18,11 @@ struct timeTbl {
 };
 
 // Static vars
-static struct timeTbl *tt_start = NULL;
+static struct timeTbl *tt_start;
+
+void socktime_init(void) {
+	tt_start = NULL;
+}
 
 
 void socktime_set(int socket) {

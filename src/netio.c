@@ -29,6 +29,12 @@
 static char buffer[BUFFER_SIZE];
 static char errmsg[ERRMSG_SIZE];
 
+void netio_init(void) {
+	// Set static vars to all null chars
+	memset(buffer, 0, BUFFER_SIZE);
+	memset(errmsg, 0, ERRMSG_SIZE);
+}
+
 int netio_startup(char *hostname, char *portno) {
 	int startsockfd = 0;
 	

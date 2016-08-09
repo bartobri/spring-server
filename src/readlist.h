@@ -1,6 +1,7 @@
 #ifndef READLIST_H
 #define READLIST_H 1
 
+void readlist_init(void);
 void readlist_set(fd_set);
 fd_set readlist_get(void);
 fd_set *readlist_getptr(void);

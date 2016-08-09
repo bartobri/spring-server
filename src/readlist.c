@@ -10,7 +10,12 @@
 
 // Static vars
 static fd_set read_fd_set;
-static int list_position = 0;
+static int list_position;
+
+void readlist_init(void) {
+	FD_ZERO(&read_fd_set);
+	list_position = 0;
+}
 
 void readlist_set(fd_set socklist) {
 	read_fd_set = socklist;

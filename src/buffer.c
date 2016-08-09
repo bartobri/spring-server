@@ -13,6 +13,12 @@ static char buffer[BUFFER_SIZE];
 static char command[COMMAND_SIZE + 1];
 static char payload[BUFFER_SIZE - COMMAND_SIZE + 1];
 
+void buffer_init(void) {
+	memset(buffer, 0, sizeof(buffer));
+	memset(command, 0, sizeof(command));
+	memset(payload, 0, sizeof(payload));
+}
+
 char *buffer_get(void) {
 	return buffer;
 }

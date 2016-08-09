@@ -11,6 +11,10 @@
 //Static Variables
 static time_t ptime;
 
+void ptime_init(void) {
+	ptime = time(NULL);
+}
+
 void ptime_set(int t) {
 	ptime = t;
 }

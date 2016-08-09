@@ -23,7 +23,7 @@
 
 // Function prototypes
 void main_sigint(int);
-void main_shutdown(void);
+void main_shutdown(const char *);
 
 /*
  * int main(int, char *)
@@ -65,15 +65,23 @@ int main(int argc, char *argv[]) {
 				exit(1);
 		}
 	}
+	
+	// Initialization functions
+	netio_init();
+	ctable_init();
+	sockmain_init();
+	socktime_init();
+	socklist_init();
+	readlist_init();
+	buffer_init();
+	ptime_init();
 
 	// Execute startup proceedure
 	mainsockfd = netio_startup(hostname, portno);
 	
 	// Check for error at startup
-	if (mainsockfd < 0) {
-		printf("%s\n", netio_get_errmsg());
-		main_shutdown();
-	}
+	if (mainsockfd < 0)
+		main_shutdown(netio_get_errmsg());
 	
 	// Print connection message
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
@@ -81,15 +89,11 @@ int main(int argc, char *argv[]) {
 	// Make main socket accessible to other modules via sockmain module
 	sockmain_set(mainsockfd);
 		
-	// Initialize socket list and add main socket
-	socklist_init();
+	// Add main socket to socket list
 	socklist_add(mainsockfd);
 
 	// Load client/server commands
 	load_commands();
-	
-	// Set periodic time to now
-	ptime_set(time(NULL));
 	
 	while (true) {
 		
@@ -97,10 +101,8 @@ int main(int argc, char *argv[]) {
 		
 		r = netio_wait(readlist_getptr());
 		
-		if (r < 0) {
-			printf("select() error\n");
-			main_shutdown();
-		}
+		if (r < 0)
+			main_shutdown("select() error\n");
 
 		if (r > 0) {
 
@@ -108,10 +110,8 @@ int main(int argc, char *argv[]) {
 
 				newsockfd = netio_accept(mainsockfd);
 
-				if (newsockfd < 0) {
-					printf("accept() error\n");
-					main_shutdown();
-				}
+				if (newsockfd < 0)
+					main_shutdown("accept() error\n");
 
 				socklist_add(newsockfd);
 				socktime_set(newsockfd);
@@ -126,10 +126,8 @@ int main(int argc, char *argv[]) {
 				//        error module set up.
 				r = netio_read(i);
 				
-				if (r < 0) {
-					printf("read() error\n");
-					main_shutdown();
-				}
+				if (r < 0)
+					main_shutdown("read() error\n");
 
 				if (r == 0) {
 
@@ -138,8 +136,7 @@ int main(int argc, char *argv[]) {
 						socklist_remove(i);
 						socktime_clear(i);
 					} else {
-						printf("Server terminated connection.\n");
-						main_shutdown();
+						main_shutdown("Server terminated connection.\n");
 					}
 					
 					continue;
@@ -173,14 +170,15 @@ int main(int argc, char *argv[]) {
  *
  */
 void main_sigint(int e) {
-       printf("Caught sigint (%i).\n", e);
-       main_shutdown();
+	(void)e;
+	main_shutdown("Caught sigint.");
 }
 
-void main_shutdown(void) {
+void main_shutdown(const char *errmsg) {
 	int i;
 	
-	fprintf(stderr, "Shutting down... ");
+	printf("%s\n", errmsg);
+	printf("Shutting down... ");
 
 	// Cleanup tasks
 	while ((i = socklist_next()) > 0) {
@@ -189,7 +187,7 @@ void main_shutdown(void) {
 		socktime_clear(i);
 	}
 
-	fprintf(stderr, "Done\n");
+	printf("Done\n");
 	
 	// Shutdown
 	exit(1);
