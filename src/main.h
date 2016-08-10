@@ -4,7 +4,6 @@
 #define DEFAULT_PORT        51717
 #define DEFAULT_HOST        NULL
 #define BUFFER_SIZE         1024
-#define COMMAND_SIZE        4
 #define COMMAND_ARGS        int socket, char *payload
 #define PERIODIC_ARGS       void
 #define FUNCTION_RETURN     int

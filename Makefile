@@ -24,11 +24,11 @@ EXES = server client
 
 all: $(EXES)
 
-server: $(OBJ_IF)/ptime.o $(OBJ_IF)/socktime.o $(OBJ_IF)/ftable.o $(OBJ_IF)/buffer.o $(OBJ_IF)/readlist.o $(OBJ_IF)/socklist.o $(OBJ_IF)/netio.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
+server: $(OBJ_IF)/ptime.o $(OBJ_IF)/socktime.o $(OBJ_IF)/ftable.o $(OBJ_IF)/input.o $(OBJ_IF)/readlist.o $(OBJ_IF)/socklist.o $(OBJ_IF)/netio.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 
-client: $(OBJ_IF)/ptime.o $(OBJ_IF)/socktime.o $(OBJ_IF)/ftable.o $(OBJ_IF)/buffer.o $(OBJ_IF)/readlist.o $(OBJ_IF)/socklist.o $(OBJ_IF)/netio.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
+client: $(OBJ_IF)/ptime.o $(OBJ_IF)/socktime.o $(OBJ_IF)/ftable.o $(OBJ_IF)/input.o $(OBJ_IF)/readlist.o $(OBJ_IF)/socklist.o $(OBJ_IF)/netio.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)

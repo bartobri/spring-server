@@ -17,7 +17,7 @@
 #include "if/ftable.h"
 #include "if/socklist.h"
 #include "if/readlist.h"
-#include "if/buffer.h"
+#include "if/input.h"
 #include "if/ptime.h"
 
 // Function prototypes
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 	socktime_init();
 	socklist_init();
 	readlist_init();
-	buffer_init();
+	input_init();
 	ptime_init();
 
 	// Execute startup proceedure
@@ -138,11 +138,11 @@ int main(int argc, char *argv[]) {
 				}
 				
 				// Copy data read from netio_read in to buffer module
-				buffer_set(netio_get_buffer());
+				input_set(netio_get_buffer());
 				
 				// Validate and execute command
-				if (ftable_check_command(buffer_get_command()) == true) {
-					ftable_exec_command(buffer_get_command(), buffer_get_payload(), i);
+				if (ftable_check_command(input_get_command()) == true) {
+					ftable_exec_command(input_get_command(), input_get_payload(), i);
 				}
 			}
 		}
