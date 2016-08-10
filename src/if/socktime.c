@@ -9,7 +9,7 @@
 #include <time.h>
 #include <netinet/in.h>
 #include "main.h"
-#include "socktime.h"
+#include "if/socktime.h"
 
 struct timeTbl {
 	int socket;

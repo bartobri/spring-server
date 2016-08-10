@@ -8,9 +8,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "main.h"
-#include "netio.h"
-#include "ftable.h"
-#include "socklist.h"
+#include "if/netio.h"
+#include "if/socklist.h"
+#include "if/ftable.h"
 
 FUNCTION_RETURN periodic(PERIODIC_ARGS) {
 	int r;

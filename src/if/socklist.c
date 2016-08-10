@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <sys/select.h>
 #include "main.h"
-#include "socklist.h"
+#include "if/socklist.h"
 
 // Static variables
 static fd_set active_fd_set;

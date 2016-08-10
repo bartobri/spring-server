@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <sys/select.h>
-#include "readlist.h"
+#include "main.h"
+#include "if/readlist.h"
 
 // Static vars
 static fd_set read_fd_set;

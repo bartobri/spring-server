@@ -16,11 +16,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "main.h"
-#include "netio.h"
-#include "ftable.h"
-#include "socktime.h"
-#include "socklist.h"
-#include "readlist.h"
+#include "if/netio.h"
 
 #define ERRMSG_SIZE 100
 

@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "main.h"
-#include "buffer.h"
+#include "if/buffer.h"
 
 // Static Variables
 static char buffer[BUFFER_SIZE];

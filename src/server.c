@@ -9,9 +9,9 @@
 #include <string.h>
 #include <time.h>
 #include "main.h"
-#include "socktime.h"
-#include "ftable.h"
-#include "socklist.h"
+#include "if/socktime.h"
+#include "if/ftable.h"
+#include "if/socklist.h"
 
 /*
  * Define functions here

@@ -12,13 +12,13 @@
 #include <signal.h>
 #include <time.h>
 #include "main.h"
-#include "netio.h"
-#include "socktime.h"
-#include "ftable.h"
-#include "socklist.h"
-#include "readlist.h"
-#include "buffer.h"
-#include "ptime.h"
+#include "if/netio.h"
+#include "if/socktime.h"
+#include "if/ftable.h"
+#include "if/socklist.h"
+#include "if/readlist.h"
+#include "if/buffer.h"
+#include "if/ptime.h"
 
 // Function prototypes
 void main_sigint(int);

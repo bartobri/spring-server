@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "main.h"
-#include "ftable.h"
+#include "if/ftable.h"
 
 #define FTABLE_COMMAND  1
 #define FTABLE_PERIODIC 2
