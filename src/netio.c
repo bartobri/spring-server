@@ -37,9 +37,6 @@ void netio_init(void) {
 int netio_startup(char *hostname, char *portno) {
 	int startsockfd = 0;
 	
-	// Init errmsg string
-	memset(errmsg, 0, ERRMSG_SIZE);
-	
 	if (comp_type() == SERVER) {
 		struct addrinfo hints;
 		struct addrinfo *result, *rp;
