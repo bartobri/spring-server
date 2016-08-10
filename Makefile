@@ -16,7 +16,7 @@ OBJ_IF=obj/if
 SRC_IF=src/if
 
 CC = gcc
-CFLAGS = -Wextra -Wall -I$(SRC)
+CFLAGS = -Wextra -Wall -iquote$(SRC)
 
 .PHONY: all install uninstall clean
 
