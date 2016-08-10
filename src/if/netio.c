@@ -163,7 +163,7 @@ int netio_write(int socket, char *data) {
 	return r;
 }
 
-char *netio_get(void) {
+char *netio_get_buffer(void) {
 	return buffer;
 }
 

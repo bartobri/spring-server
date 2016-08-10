@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
 				}
 				
 				// Copy data read from netio_read in to buffer module
-				buffer_set(netio_get());
+				buffer_set(netio_get_buffer());
 				
 				// Validate and execute command
 				if (ftable_check_command(buffer_get_command()) == true) {
