@@ -16,17 +16,15 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "main.h"
-#include "if/netio.h"
+#include "if/buffer.h"
+#include "logic/netio.h"
 
 #define ERRMSG_SIZE 100
 
 // Static Variables
-static char buffer[BUFFER_SIZE];
 static char errmsg[ERRMSG_SIZE];
 
 void netio_init(void) {
-	// Set static vars to all null chars
-	memset(buffer, 0, BUFFER_SIZE);
 	memset(errmsg, 0, ERRMSG_SIZE);
 }
 
@@ -141,30 +139,6 @@ int netio_accept(int socket) {
 	
 	return newsockfd;
 	// TODO - handshake here? Or somewhere else?
-}
-
-int netio_read(int socket) {
-	int n;
-		
-	// Reset the buffer with all integer zeros ('\0')
-	memset(buffer, 0, BUFFER_SIZE);
-	
-	// Read from socket
-	n = read(socket, buffer, BUFFER_SIZE - 1);
-	
-	return n;
-}
-
-int netio_write(int socket, char *data) {
-	int r;
-
-	r = write(socket, data, strlen(data));
-
-	return r;
-}
-
-char *netio_get_buffer(void) {
-	return buffer;
 }
 
 char *netio_get_errmsg(void) {

@@ -8,20 +8,20 @@
 #include <string.h>
 #include <stdlib.h>
 #include "main.h"
-#include "if/netio.h"
-#include "if/socklist.h"
-#include "if/ftable.h"
+#include "if/comfunctions.h"
+#include "if/prdfunctions.h"
+#include "logic/socket.h"
 
-FUNCTION_RETURN periodic(PERIODIC_ARGS) {
+PRDFUNCTIONS_RETURN periodic(PRDFUNCTIONS_ARGS) {
 	int r;
 
-	r = netio_write(socklist_get_mainsock(), "beat");
+	r = socket_write(socket_get_main(), "beat");
 	
 	return r;
 }
 
 void load_functions(void) {
-	ftable_add_periodic(&periodic);
+	prdfunctions_add(&periodic);
 }
 
 int comp_type(void) {

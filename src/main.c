@@ -12,13 +12,14 @@
 #include <signal.h>
 #include <time.h>
 #include "main.h"
-#include "if/netio.h"
-#include "if/socktime.h"
-#include "if/ftable.h"
-#include "if/socklist.h"
+
 #include "if/readlist.h"
-#include "if/input.h"
 #include "if/ptime.h"
+
+#include "logic/netio.h"
+#include "logic/socket.h"
+#include "logic/comfunction.h"
+#include "logic/prdfunction.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -67,11 +68,10 @@ int main(int argc, char *argv[]) {
 	
 	// Initialization functions
 	netio_init();
-	ftable_init();
-	socktime_init();
-	socklist_init();
+	comfunction_init();
+	prdfunction_init();
+	socket_init();
 	readlist_init();
-	input_init();
 	ptime_init();
 
 	// Execute startup proceedure
@@ -84,15 +84,15 @@ int main(int argc, char *argv[]) {
 	// Print connection message
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
 	
-	// Add main socket to socklist
-	socklist_add_mainsock(mainsockfd);
+	// Add main socket
+	socket_add_main(mainsockfd);
 
-	// Load client/server commands
+	// Load client/server custom functions
 	load_functions();
 	
 	while (true) {
 		
-		readlist_set(socklist_get());
+		readlist_set(socket_get_list());
 		
 		r = netio_wait(readlist_getptr());
 		
@@ -108,18 +108,13 @@ int main(int argc, char *argv[]) {
 				if (newsockfd < 0)
 					main_shutdown("accept() error");
 
-				socklist_add(newsockfd);
-				socktime_set(newsockfd);
+				socket_add(newsockfd);
 				readlist_remove(mainsockfd);
 			}
 
 			while ((i = readlist_next()) > 0) {
 
-				socktime_set(i);
-
-				// TODO - change this to return contents of buffer once I have a
-				//        error module set up.
-				r = netio_read(i);
+				r = socket_read(i);
 				
 				if (r < 0)
 					main_shutdown("read() error");
@@ -128,8 +123,7 @@ int main(int argc, char *argv[]) {
 
 					if (comp_type() == SERVER) {
 						close(i);
-						socklist_remove(i);
-						socktime_clear(i);
+						socket_remove(i);
 					} else {
 						main_shutdown("Server terminated connection.");
 					}
@@ -137,19 +131,16 @@ int main(int argc, char *argv[]) {
 					continue;
 				}
 				
-				// Copy data read from netio_read in to buffer module
-				input_set(netio_get_buffer());
-				
 				// Validate and execute command
-				if (ftable_check_command(input_get_command()) == true) {
-					ftable_exec_command(input_get_command(), input_get_payload(), i);
+				if (comfunction_exists(socket_get_command()) == true) {
+					comfunction_exec(socket_get_command(), socket_get_payload(), i);
 				}
 			}
 		}
 		
 		// Run periodic function if expired
 		if (ptime_expired() == true) {
-			ftable_exec_periodic();
+			prdfunction_exec();
 			ptime_reset();
 		}
 		
@@ -170,17 +161,11 @@ void main_sigint(int e) {
 }
 
 void main_shutdown(const char *errmsg) {
-	int i;
 	
 	printf("%s\n", errmsg);
 	printf("Shutting down... ");
 
-	// Cleanup tasks
-	while ((i = socklist_next()) > 0) {
-		close(i);
-		socklist_remove(i);
-		socktime_clear(i);
-	}
+	socket_shutdown_all();
 
 	printf("Done\n");
 	

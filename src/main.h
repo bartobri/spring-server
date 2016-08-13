@@ -3,10 +3,6 @@
 
 #define DEFAULT_PORT        51717
 #define DEFAULT_HOST        NULL
-#define BUFFER_SIZE         1024
-#define COMMAND_ARGS        int socket, char *payload
-#define PERIODIC_ARGS       void
-#define FUNCTION_RETURN     int
 #define PERIODIC_SECONDS    5
 #define SERVER              1
 #define CLIENT              2

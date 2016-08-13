@@ -9,44 +9,42 @@
 #include <string.h>
 #include <time.h>
 #include "main.h"
-#include "if/socktime.h"
-#include "if/ftable.h"
-#include "if/socklist.h"
+#include "if/comfunctions.h"
+#include "if/prdfunctions.h"
+
+#include "logic/socket.h"
 
 /*
  * Define functions here
  */
-FUNCTION_RETURN command_quit(COMMAND_ARGS) {
+COMFUNCTIONS_RETURN command_quit(COMFUNCTIONS_ARGS) {
 	
 	// Suppress "unused parameter" warning for payload
 	(void)payload;
 	
 	// Close socket
 	close(socket);
-	socklist_remove(socket);
-	socktime_clear(socket);
+	socket_remove(socket);
 	
 	return 0;
 }
 
-FUNCTION_RETURN command_beat(COMMAND_ARGS) {
+COMFUNCTIONS_RETURN command_beat(COMFUNCTIONS_ARGS) {
 	printf("command_beat socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;
 }
 
-FUNCTION_RETURN periodic(PERIODIC_ARGS) {
+PRDFUNCTIONS_RETURN periodic(PRDFUNCTIONS_ARGS) {
 	int i;
 	
 	// Check time for all sockets and close unresponsive ones
-	while ((i = socklist_next()) > 0) {
-		if (i == socklist_get_mainsock())
+	while ((i = socket_next()) > 0) {
+		if (i == socket_get_main())
 			continue;
-		if (socktime_get(i) < time(NULL) - 10) {
-			close(i);
-			socklist_remove(i);
-			socktime_clear(i);
-		}
+
+		if (socket_get_timestamp(i) < time(NULL) - 10)
+			socket_shutdown(i);
 	}
 	
 	return 0;
@@ -56,9 +54,9 @@ FUNCTION_RETURN periodic(PERIODIC_ARGS) {
  * Load functions here
  */
 void load_functions(void) {
-	ftable_add_command("beat", &command_beat);
-	ftable_add_command("quit", &command_quit);
-	ftable_add_periodic(&periodic);
+	comfunctions_add("beat", &command_beat);
+	comfunctions_add("quit", &command_quit);
+	prdfunctions_add(&periodic);
 }
 
 int comp_type(void) {
