@@ -20,7 +20,7 @@
 
 #include "l2/inputparser.h"
 #include "l2/periodic.h"
-#include "l2/comfunction.h"
+#include "l2/command.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 	readlist_init();
 	periodic_init();
 	inputparser_init();
-	comfunction_init();
+	command_init();
 
 	// Execute startup proceedure
 	mainsockfd = netio_startup(hostname, portno);
@@ -136,8 +136,8 @@ int main(int argc, char *argv[]) {
 				inputparser_parse_input(socket_get_buffer());
 				
 				// Validate and execute command
-				if (comfunction_exists(inputparser_get_command()) == true) {
-					comfunction_exec(inputparser_get_command(), inputparser_get_payload(), i);
+				if (command_exists(inputparser_get_command()) == true) {
+					command_exec(inputparser_get_command(), inputparser_get_payload(), i);
 				}
 			}
 		}

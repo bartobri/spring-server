@@ -12,12 +12,12 @@
 #include "logic/socket.h"
 
 #include "l2/periodic.h"
-#include "l2/comfunction.h"
+#include "l2/command.h"
 
 /*
  * Define functions here
  */
-COMFUNCTIONS_RETURN command_quit(COMFUNCTIONS_ARGS) {
+COMMANDS_RETURN command_quit(COMMANDS_ARGS) {
 	
 	// Suppress "unused parameter" warning for payload
 	(void)payload;
@@ -29,7 +29,7 @@ COMFUNCTIONS_RETURN command_quit(COMFUNCTIONS_ARGS) {
 	return 0;
 }
 
-COMFUNCTIONS_RETURN command_beat(COMFUNCTIONS_ARGS) {
+COMMANDS_RETURN command_beat(COMMANDS_ARGS) {
 	printf("command_beat socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;
@@ -54,8 +54,8 @@ PRDFUNCTION_RETURN periodic(PRDFUNCTION_ARGS) {
  * Load functions here
  */
 void load_functions(void) {
-	comfunction_add("beat", &command_beat);
-	comfunction_add("quit", &command_quit);
+	command_add("beat", &command_beat);
+	command_add("quit", &command_quit);
 	periodic_add_function(&periodic);
 }
 

@@ -4,40 +4,40 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "l1/comfunctions.h"
+#include "l1/commands.h"
 
-void comfunction_init(void) {
+void command_init(void) {
 	int i;
-	struct comFunctionsTbl entry;
+	struct commandTbl entry;
 	
 	// Init comfunctions table with all nulls
 	entry.command = NULL;
 	entry.functionPtr = NULL;
-	for (i = 0; i < COMFUNCTIONS_LIMIT; ++i)
-		comfunctions_set(i, entry);
+	for (i = 0; i < COMMANDS_LIMIT; ++i)
+		commands_set(i, entry);
 }
 
-void comfunction_add(char *command, comFunctionType functionPtr) {
+void command_add(char *command, comFunctionType functionPtr) {
 	int i;
-	struct comFunctionsTbl entry;
+	struct commandTbl entry;
 
-	for (i = 0; i < COMFUNCTIONS_LIMIT; ++i) {
-		entry = comfunctions_get(i);
+	for (i = 0; i < COMMANDS_LIMIT; ++i) {
+		entry = commands_get(i);
 		if (entry.command == NULL) {
 			entry.command = command;
 			entry.functionPtr = functionPtr;
-			comfunctions_set(i, entry);
+			commands_set(i, entry);
 			break;
 		}
 	}
 }
 
-int comfunction_exists(char *command) {
+int command_exists(char *command) {
 	int i;
-	struct comFunctionsTbl entry;
+	struct commandTbl entry;
 
-	for (i = 0; i < COMFUNCTIONS_LIMIT; ++i) {
-		entry = comfunctions_get(i);
+	for (i = 0; i < COMMANDS_LIMIT; ++i) {
+		entry = commands_get(i);
 		if (entry.command == NULL)
 			return 0;
 
@@ -48,14 +48,14 @@ int comfunction_exists(char *command) {
 	return 0;
 }
 
-int comfunction_exec(char *command, char *payload, int socket) {
+int command_exec(char *command, char *payload, int socket) {
 	int i, r;
-	struct comFunctionsTbl entry;
+	struct commandTbl entry;
 	
 	r = 0;
 
-	for (i = 0; i < COMFUNCTIONS_LIMIT; ++i) {
-		entry = comfunctions_get(i);
+	for (i = 0; i < COMMANDS_LIMIT; ++i) {
+		entry = commands_get(i);
 		if (entry.command == NULL)
 			break;
 

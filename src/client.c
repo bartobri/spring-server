@@ -10,7 +10,7 @@
 #include "main.h"
 #include "logic/socket.h"
 
-#include "l2/comfunction.h"
+#include "l2/command.h"
 #include "l2/periodic.h"
 
 PRDFUNCTION_RETURN periodic(PRDFUNCTION_ARGS) {
