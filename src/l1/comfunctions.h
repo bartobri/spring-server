@@ -5,13 +5,14 @@
 #define COMFUNCTIONS_ARGS        int socket, char *payload
 #define COMFUNCTIONS_RETURN      int
 
+typedef COMFUNCTIONS_RETURN (*comFunctionType)(COMFUNCTIONS_ARGS);
+
 struct comFunctionsTbl {
 	const char *command;
-	COMFUNCTIONS_RETURN (*functionPtr)(COMFUNCTIONS_ARGS);
+	comFunctionType functionPtr;
 };
 
-void comfunctions_init(void);
-void comfunctions_add(char *, COMFUNCTIONS_RETURN (*)(COMFUNCTIONS_ARGS));
-struct comFunctionsTbl *comfunctions_get (void);
+struct comFunctionsTbl comfunctions_get(int);
+void comfunctions_set(int i, struct comFunctionsTbl entry);
 
 #endif

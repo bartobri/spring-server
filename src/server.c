@@ -9,10 +9,10 @@
 #include <string.h>
 #include <time.h>
 #include "main.h"
-#include "if/comfunctions.h"
 #include "logic/socket.h"
 
 #include "l2/periodic.h"
+#include "l2/comfunction.h"
 
 /*
  * Define functions here
@@ -54,8 +54,8 @@ PRDFUNCTION_RETURN periodic(PRDFUNCTION_ARGS) {
  * Load functions here
  */
 void load_functions(void) {
-	comfunctions_add("beat", &command_beat);
-	comfunctions_add("quit", &command_quit);
+	comfunction_add("beat", &command_beat);
+	comfunction_add("quit", &command_quit);
 	periodic_add_function(&periodic);
 }
 

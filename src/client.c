@@ -8,9 +8,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "main.h"
-#include "if/comfunctions.h"
 #include "logic/socket.h"
 
+#include "l2/comfunction.h"
 #include "l2/periodic.h"
 
 PRDFUNCTION_RETURN periodic(PRDFUNCTION_ARGS) {

@@ -17,10 +17,10 @@
 
 #include "logic/netio.h"
 #include "logic/socket.h"
-#include "logic/comfunction.h"
 
 #include "l2/inputparser.h"
 #include "l2/periodic.h"
+#include "l2/comfunction.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -69,11 +69,11 @@ int main(int argc, char *argv[]) {
 	
 	// Initialization functions
 	netio_init();
-	comfunction_init();
 	socket_init();
 	readlist_init();
 	periodic_init();
 	inputparser_init();
+	comfunction_init();
 
 	// Execute startup proceedure
 	mainsockfd = netio_startup(hostname, portno);
