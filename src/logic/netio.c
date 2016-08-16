@@ -18,7 +18,8 @@
 #include "main.h"
 #include "logic/netio.h"
 
-#define ERRMSG_SIZE 100
+#define WAIT_SECONDS 5
+#define ERRMSG_SIZE  100
 
 // Static Variables
 static char errmsg[ERRMSG_SIZE];
@@ -118,7 +119,7 @@ int netio_wait(fd_set *read_fd_set) {
 		
 	// Set select() timeout value.
 	// This needs to be inside the loop so it is reset for each loop interation.
-	timeout.tv_sec  = (unsigned int)PERIODIC_SECONDS;
+	timeout.tv_sec  = (unsigned int)WAIT_SECONDS;
 	timeout.tv_usec = 0;
 		
 	// Block until input arrives on one or more active sockets

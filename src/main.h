@@ -3,7 +3,6 @@
 
 #define DEFAULT_PORT        51717
 #define DEFAULT_HOST        NULL
-#define PERIODIC_SECONDS    5
 #define SERVER              1
 #define CLIENT              2
 

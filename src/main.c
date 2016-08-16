@@ -14,7 +14,6 @@
 #include "main.h"
 
 #include "if/readlist.h"
-#include "if/ptime.h"
 
 #include "logic/netio.h"
 #include "logic/socket.h"
@@ -22,6 +21,7 @@
 #include "logic/prdfunction.h"
 
 #include "l2/inputparser.h"
+#include "l2/periodic.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 	prdfunction_init();
 	socket_init();
 	readlist_init();
-	ptime_init();
+	periodic_init();
 	inputparser_init();
 
 	// Execute startup proceedure
@@ -145,9 +145,9 @@ int main(int argc, char *argv[]) {
 		}
 		
 		// Run periodic function if expired
-		if (ptime_expired() == true) {
+		if (periodic_time_expired()) {
 			prdfunction_exec();
-			ptime_reset();
+			periodic_update_time();
 		}
 		
 	}
