@@ -5,10 +5,6 @@
 #define PRDFUNCTION_ARGS       void
 #define PRDFUNCTION_RETURN     int
 
-struct prdFunctionTbl {
-	PRDFUNCTION_RETURN (*functionPtr)(PRDFUNCTION_ARGS);
-};
-
 typedef PRDFUNCTION_RETURN (*prdFunctionType)(PRDFUNCTION_ARGS);
 
 void prdfunction_set(int, prdFunctionType);

@@ -8,12 +8,12 @@
 #include "l1/prdfunction.h"
 
 // Static variables
-static struct prdFunctionTbl functions[PRDFUNCTION_LIMIT];
+prdFunctionType functions[PRDFUNCTION_LIMIT];
 
 void prdfunction_set(int i, prdFunctionType functionPtr) {
-	functions[i].functionPtr = functionPtr;
+	functions[i] = functionPtr;
 }
 
 prdFunctionType prdfunction_get (int i) {
-	return functions[i].functionPtr;
+	return functions[i];
 }
