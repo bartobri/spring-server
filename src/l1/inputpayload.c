@@ -4,15 +4,15 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "l1/payload.h"
+#include "l1/inputpayload.h"
 
 // Static Variables
-static char payload[PAYLOAD_SIZE + 1];
+static char payload[INPUTPAYLOAD_SIZE + 1];
 
-void payload_set(char *data) {
-	strncpy(payload, data, PAYLOAD_SIZE);
+void inputpayload_set(char *data) {
+	strncpy(payload, data, INPUTPAYLOAD_SIZE);
 }
 
-char *payload_get(void) {
+char *inputpayload_get(void) {
 	return payload;
 }

@@ -5,41 +5,41 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "l1/command.h"
-#include "l1/payload.h"
+#include "l1/inputcommand.h"
+#include "l1/inputpayload.h"
 
 void inputparser_init(void) {
 	char *nullify;
 	
 	// nullify command
-	nullify = malloc(COMMAND_SIZE);
-	memset(nullify, 0, sizeof(COMMAND_SIZE));
-	command_set(nullify);
+	nullify = malloc(INPUTCOMMAND_SIZE);
+	memset(nullify, 0, sizeof(INPUTCOMMAND_SIZE));
+	inputcommand_set(nullify);
 	
 	// nullify payload
-	nullify = realloc(nullify, PAYLOAD_SIZE);
-	memset(nullify, 0, sizeof(PAYLOAD_SIZE));
-	payload_set(nullify);
+	nullify = realloc(nullify, INPUTPAYLOAD_SIZE);
+	memset(nullify, 0, sizeof(INPUTPAYLOAD_SIZE));
+	inputpayload_set(nullify);
 	
 	// Free memory
 	free(nullify);
 }
 
 void inputparser_parse_input(char *data) {
-	char command[COMMAND_SIZE + 1];
-	char payload[PAYLOAD_SIZE + 1];
+	char command[INPUTCOMMAND_SIZE + 1];
+	char payload[INPUTPAYLOAD_SIZE + 1];
 	
-	strncpy(command, data, COMMAND_SIZE);
-	strncpy(payload, data + COMMAND_SIZE, PAYLOAD_SIZE);
+	strncpy(command, data, INPUTCOMMAND_SIZE);
+	strncpy(payload, data + INPUTCOMMAND_SIZE, INPUTPAYLOAD_SIZE);
 	
-	command_set(command);
-	payload_set(payload);
+	inputcommand_set(command);
+	inputpayload_set(payload);
 }
 
 char *inputparser_get_command(void) {
-	return command_get();
+	return inputcommand_get();
 }
 
 char *inputparser_get_payload(void) {
-	return payload_get();
+	return inputpayload_get();
 }
