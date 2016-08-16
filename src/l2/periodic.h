@@ -1,10 +1,14 @@
 #ifndef PERIODIC_H
 #define PERIODIC_H 1
 
+#include "l1/prdfunction.h"
+
 #define PERIODIC_SECONDS    5
 
 void periodic_init(void);
 void periodic_update_time(void);
-int periodic_time_expired(void);
+int periodic_time_elapsed(void);
+void periodic_add_function(prdFunctionType);
+void periodic_exec(void);
 
 #endif

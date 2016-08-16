@@ -10,9 +10,9 @@
 #include <time.h>
 #include "main.h"
 #include "if/comfunctions.h"
-#include "if/prdfunctions.h"
-
 #include "logic/socket.h"
+
+#include "l2/periodic.h"
 
 /*
  * Define functions here
@@ -35,7 +35,7 @@ COMFUNCTIONS_RETURN command_beat(COMFUNCTIONS_ARGS) {
 	return 0;
 }
 
-PRDFUNCTIONS_RETURN periodic(PRDFUNCTIONS_ARGS) {
+PRDFUNCTION_RETURN periodic(PRDFUNCTION_ARGS) {
 	int i;
 	
 	// Check time for all sockets and close unresponsive ones
@@ -56,7 +56,7 @@ PRDFUNCTIONS_RETURN periodic(PRDFUNCTIONS_ARGS) {
 void load_functions(void) {
 	comfunctions_add("beat", &command_beat);
 	comfunctions_add("quit", &command_quit);
-	prdfunctions_add(&periodic);
+	periodic_add_function(&periodic);
 }
 
 int comp_type(void) {

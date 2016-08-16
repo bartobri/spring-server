@@ -18,7 +18,6 @@
 #include "logic/netio.h"
 #include "logic/socket.h"
 #include "logic/comfunction.h"
-#include "logic/prdfunction.h"
 
 #include "l2/inputparser.h"
 #include "l2/periodic.h"
@@ -71,7 +70,6 @@ int main(int argc, char *argv[]) {
 	// Initialization functions
 	netio_init();
 	comfunction_init();
-	prdfunction_init();
 	socket_init();
 	readlist_init();
 	periodic_init();
@@ -144,11 +142,9 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		
-		// Run periodic function if expired
-		if (periodic_time_expired()) {
-			prdfunction_exec();
-			periodic_update_time();
-		}
+		// Run periodic function if time elapsed
+		if (periodic_time_elapsed())
+			periodic_exec();
 		
 	}
 
