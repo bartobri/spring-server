@@ -22,7 +22,7 @@ PRDFUNCTION_RETURN periodic(PRDFUNCTION_ARGS) {
 }
 
 void load_functions(void) {
-	periodic_add_function(&periodic);
+	periodic_add(&periodic);
 }
 
 int comp_type(void) {

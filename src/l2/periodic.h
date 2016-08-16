@@ -8,7 +8,7 @@
 void periodic_init(void);
 void periodic_update_time(void);
 int periodic_time_elapsed(void);
-void periodic_add_function(prdFunctionType);
+void periodic_add(prdFunctionType);
 void periodic_exec(void);
 
 #endif

@@ -56,7 +56,7 @@ PRDFUNCTION_RETURN periodic(PRDFUNCTION_ARGS) {
 void load_functions(void) {
 	command_add("beat", &command_beat);
 	command_add("quit", &command_quit);
-	periodic_add_function(&periodic);
+	periodic_add(&periodic);
 }
 
 int comp_type(void) {

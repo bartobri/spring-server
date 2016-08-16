@@ -35,7 +35,7 @@ int periodic_time_elapsed(void) {
 	return 0;
 }
 
-void periodic_add_function(prdFunctionType functionPtr) {
+void periodic_add(prdFunctionType functionPtr) {
 	int i;
 
 	for (i = 0; i < PRDFUNCTION_LIMIT; ++i) {
