@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
 	socket_init();
 	readlist_init();
 	ptime_init();
+	inputparser_init();
 
 	// Execute startup proceedure
 	mainsockfd = netio_startup(hostname, portno);
