@@ -16,7 +16,6 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "main.h"
-#include "if/buffer.h"
 #include "logic/netio.h"
 
 #define ERRMSG_SIZE 100

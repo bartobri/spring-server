@@ -21,6 +21,8 @@
 #include "logic/comfunction.h"
 #include "logic/prdfunction.h"
 
+#include "l2/inputparser.h"
+
 // Function prototypes
 void main_sigint(int);
 void main_shutdown(const char *);
@@ -131,9 +133,12 @@ int main(int argc, char *argv[]) {
 					continue;
 				}
 				
+				// Store the input that we read from the socket
+				inputparser_set_input(socket_get_buffer());
+				
 				// Validate and execute command
-				if (comfunction_exists(socket_get_command()) == true) {
-					comfunction_exec(socket_get_command(), socket_get_payload(), i);
+				if (comfunction_exists(inputparser_get_command()) == true) {
+					comfunction_exec(inputparser_get_command(), inputparser_get_payload(), i);
 				}
 			}
 		}
