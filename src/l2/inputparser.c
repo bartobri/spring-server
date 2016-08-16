@@ -4,37 +4,42 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "l1/input.h"
-#include "l2/inputparser.h"
-
-static char command[COMMAND_SIZE + 1];
-static char payload[PAYLOAD_SIZE + 1];
+#include <stdlib.h>
+#include "l1/command.h"
+#include "l1/payload.h"
 
 void inputparser_init(void) {
-	char nullify[INPUT_SIZE];
-	memset(nullify, 0, sizeof(nullify));
-	input_set(nullify);
+	char *nullify;
+	
+	// nullify command
+	nullify = malloc(COMMAND_SIZE);
+	memset(nullify, 0, sizeof(COMMAND_SIZE));
+	command_set(nullify);
+	
+	// nullify payload
+	nullify = realloc(nullify, PAYLOAD_SIZE);
+	memset(nullify, 0, sizeof(PAYLOAD_SIZE));
+	payload_set(nullify);
+	
+	// Free memory
+	free(nullify);
 }
 
-void inputparser_set_input(char *data) {
-	input_set(data);
+void inputparser_parse_input(char *data) {
+	char command[COMMAND_SIZE + 1];
+	char payload[PAYLOAD_SIZE + 1];
+	
+	strncpy(command, data, COMMAND_SIZE);
+	strncpy(payload, data + COMMAND_SIZE, PAYLOAD_SIZE);
+	
+	command_set(command);
+	payload_set(payload);
 }
 
 char *inputparser_get_command(void) {
-	char *input;
-	
-	input = input_get();
-	strncpy(command, input, COMMAND_SIZE);
-
-	return command;
+	return command_get();
 }
 
 char *inputparser_get_payload(void) {
-	char *input;
-	
-	input = input_get();
-
-	strncpy(payload, input + COMMAND_SIZE, PAYLOAD_SIZE);
-	
-	return payload;
+	return payload_get();
 }

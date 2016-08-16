@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
 				}
 				
 				// Store the input that we read from the socket
-				inputparser_set_input(socket_get_buffer());
+				inputparser_parse_input(socket_get_buffer());
 				
 				// Validate and execute command
 				if (comfunction_exists(inputparser_get_command()) == true) {

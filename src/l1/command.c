@@ -4,15 +4,15 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "l1/input.h"
+#include "l1/command.h"
 
 // Static Variables
-static char input[INPUT_SIZE];
+static char command[COMMAND_SIZE + 1];
 
-void input_set(char *data) {
-	strncpy(input, data, INPUT_SIZE - 1);
+void command_set(char *data) {
+	strncpy(command, data, COMMAND_SIZE);
 }
 
-char *input_get(void) {
-	return input;
+char *command_get(void) {
+	return command;
 }
