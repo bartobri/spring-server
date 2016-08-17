@@ -30,11 +30,11 @@ EXES = server client
 
 all: $(EXES)
 
-server: $(OBJ_IF)/timestamps.o $(OBJ_IF)/readlist.o $(OBJ_LOGIC)/socket.o $(OBJ_LOGIC)/netio.o $(OBJ_L1)/mainsocket.o $(OBJ_L1)/commands.o $(OBJ_L1)/prdtime.o $(OBJ_L1)/prdfunction.o $(OBJ_L1)/inputpayload.o $(OBJ_L1)/inputcommand.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/socket.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/inputparser.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
+server: $(OBJ_IF)/timestamps.o $(OBJ_LOGIC)/socket.o $(OBJ_LOGIC)/netio.o $(OBJ_L1)/mainsocket.o $(OBJ_L1)/commands.o $(OBJ_L1)/prdtime.o $(OBJ_L1)/prdfunction.o $(OBJ_L1)/inputpayload.o $(OBJ_L1)/inputcommand.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/socket.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/inputparser.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 
-client: $(OBJ_IF)/timestamps.o $(OBJ_IF)/readlist.o $(OBJ_LOGIC)/socket.o $(OBJ_LOGIC)/netio.o $(OBJ_L1)/mainsocket.o $(OBJ_L1)/commands.o $(OBJ_L1)/prdtime.o $(OBJ_L1)/prdfunction.o $(OBJ_L1)/inputpayload.o $(OBJ_L1)/inputcommand.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/socket.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/inputparser.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
+client: $(OBJ_IF)/timestamps.o $(OBJ_LOGIC)/socket.o $(OBJ_LOGIC)/netio.o $(OBJ_L1)/mainsocket.o $(OBJ_L1)/commands.o $(OBJ_L1)/prdtime.o $(OBJ_L1)/prdfunction.o $(OBJ_L1)/inputpayload.o $(OBJ_L1)/inputcommand.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/socket.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/inputparser.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)

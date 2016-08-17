@@ -3,7 +3,6 @@
 
 void netio_init(void);
 int netio_startup(char *, char *);
-int netio_wait(fd_set *);
 int netio_accept(int);
 char *netio_get_errmsg(void);
 

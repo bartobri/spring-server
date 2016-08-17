@@ -18,7 +18,6 @@
 #include "main.h"
 #include "logic/netio.h"
 
-#define WAIT_SECONDS 5
 #define ERRMSG_SIZE  100
 
 // Static Variables
@@ -111,21 +110,6 @@ int netio_startup(char *hostname, char *portno) {
 	}
 	
 	return startsockfd;
-}
-
-int netio_wait(fd_set *read_fd_set) {
-	int r;
-	struct timeval timeout;
-		
-	// Set select() timeout value.
-	// This needs to be inside the loop so it is reset for each loop interation.
-	timeout.tv_sec  = (unsigned int)WAIT_SECONDS;
-	timeout.tv_usec = 0;
-		
-	// Block until input arrives on one or more active sockets
-	r = select(FD_SETSIZE, read_fd_set, NULL, NULL, &timeout);
-	
-	return r;
 }
 
 int netio_accept(int socket) {

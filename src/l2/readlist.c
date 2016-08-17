@@ -4,7 +4,10 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <sys/select.h>
-#include "if/readlist.h"
+#include <time.h>
+#include "l2/readlist.h"
+
+#define WAIT_SECONDS 5
 
 // Static vars
 static fd_set read_fd_set;
@@ -19,8 +22,23 @@ void readlist_add(int socket) {
 	FD_SET(socket, &read_fd_set);
 }
 
-fd_set *readlist_getptr(void) {
-	return &read_fd_set;
+int readlist_wait(void) {
+	int r;
+	struct timeval timeout;
+		
+	// Set select() timeout value.
+	// This needs to be inside the loop so it is reset for each loop interation.
+	timeout.tv_sec  = (unsigned int)WAIT_SECONDS;
+	timeout.tv_usec = 0;
+		
+	// Block until input arrives on one or more active sockets
+	r = select(FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout);
+	
+	return r;
+}
+
+void readlist_remove(int socket) {
+	FD_CLR(socket, &read_fd_set);
 }
 
 int readlist_check(int socket) {
@@ -30,21 +48,17 @@ int readlist_check(int socket) {
 	return 0;
 }
 
-void readlist_remove(int socket) {
-	FD_CLR(socket, &read_fd_set);
-}
-
-int readlist_next(void) {
+int readlist_get_next(void) {
 
 	while (++list_position < FD_SETSIZE)
 		if (FD_ISSET (list_position, &read_fd_set))
 			return list_position;
 
-	readlist_reset();
+	readlist_reset_next();
 
 	return -1;
 }
 
-void readlist_reset(void) {
+void readlist_reset_next(void) {
 	list_position = 0;
 }

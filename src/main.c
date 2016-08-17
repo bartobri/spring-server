@@ -13,8 +13,6 @@
 #include <time.h>
 #include "main.h"
 
-#include "if/readlist.h"
-
 #include "logic/netio.h"
 #include "logic/socket.h"
 
@@ -23,6 +21,7 @@
 #include "l2/command.h"
 #include "l2/socket.h"
 #include "l2/socketlist.h"
+#include "l2/readlist.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -77,6 +76,7 @@ int main(int argc, char *argv[]) {
 	inputparser_init();
 	command_init();
 	socketlist_init();
+	readlist_init();
 
 	// Execute startup proceedure
 	mainsockfd = netio_startup(hostname, portno);
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
 		while ((i = socketlist_get_next()) > 0)
 			readlist_add(i);
 		
-		r = netio_wait(readlist_getptr());
+		r = readlist_wait();
 		
 		if (r < 0)
 			main_shutdown("select() error");
@@ -119,12 +119,12 @@ int main(int argc, char *argv[]) {
 					main_shutdown("accept() error");
 
 				socket_add(newsockfd);
+
 				readlist_remove(mainsockfd);
-				
 				socketlist_add(newsockfd);
 			}
 
-			while ((i = readlist_next()) > 0) {
+			while ((i = readlist_get_next()) > 0) {
 
 				r = socket_read(i);
 				
