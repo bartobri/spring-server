@@ -3,10 +3,7 @@
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License. See LICENSE for more details.
 
-#include <stdio.h>
-#include <stdbool.h>
 #include <sys/select.h>
-#include "main.h"
 #include "if/readlist.h"
 
 // Static vars
@@ -18,23 +15,19 @@ void readlist_init(void) {
 	list_position = 0;
 }
 
-void readlist_set(fd_set socklist) {
-	read_fd_set = socklist;
-}
-
-fd_set readlist_get(void) {
-	return read_fd_set;
+void readlist_add(int socket) {
+	FD_SET(socket, &read_fd_set);
 }
 
 fd_set *readlist_getptr(void) {
 	return &read_fd_set;
 }
 
-bool readlist_check(int socket) {
+int readlist_check(int socket) {
 	if (FD_ISSET(socket, &read_fd_set))
-		return true;
+		return 1;
 	
-	return false;
+	return 0;
 }
 
 void readlist_remove(int socket) {

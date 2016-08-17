@@ -13,6 +13,7 @@
 #include "l2/command.h"
 #include "l2/periodic.h"
 #include "l2/socket.h"
+#include "l2/socketlist.h"
 
 PRDFUNCTION_RETURN periodic(PRDFUNCTION_ARGS) {
 	int r;

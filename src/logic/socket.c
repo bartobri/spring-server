@@ -9,7 +9,6 @@
 #include <unistd.h>
 #include <time.h>
 #include "if/timestamps.h"
-#include "if/socklist.h"
 
 #define BUFFER_SIZE 1024
 
@@ -17,7 +16,6 @@ static char buffer[BUFFER_SIZE];
 
 void socket_init(void) {
 	timestamps_init();
-	socklist_init();
 }
 
 int socket_read(int socket) {
@@ -51,36 +49,12 @@ char *socket_get_buffer(void) {
 
 void socket_add(int socket) {
 	timestamps_add(socket, (int)time(NULL));
-	socklist_add(socket);
 }
 
 void socket_remove(int socket) {
 	timestamps_remove(socket);
-	socklist_remove(socket);
-}
-
-fd_set socket_get_list(void) {
-	return socklist_get();
 }
 
 int socket_get_timestamp(int socket) {
 	return timestamps_get(socket);
-}
-
-void socket_shutdown_all(void) {
-	int i;
-	
-	while ((i = socklist_next()) > 0) {
-		close(i);
-		socket_remove(i);
-	}
-}
-
-void socket_shutdown(int socket) {
-	close(socket);
-	socket_remove(socket);
-}
-
-int socket_next(void) {
-	return socklist_next();
 }

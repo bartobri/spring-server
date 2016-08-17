@@ -22,6 +22,7 @@
 #include "l2/periodic.h"
 #include "l2/command.h"
 #include "l2/socket.h"
+#include "l2/socketlist.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -75,6 +76,7 @@ int main(int argc, char *argv[]) {
 	periodic_init();
 	inputparser_init();
 	command_init();
+	socketlist_init();
 
 	// Execute startup proceedure
 	mainsockfd = netio_startup(hostname, portno);
@@ -90,13 +92,17 @@ int main(int argc, char *argv[]) {
 	socket_add(mainsockfd);
 	
 	socket_set_main(mainsockfd);
+	socketlist_add(mainsockfd);
 
 	// Load client/server custom functions
 	load_functions();
 	
 	while (true) {
 		
-		readlist_set(socket_get_list());
+		readlist_init();
+
+		while ((i = socketlist_get_next()) > 0)
+			readlist_add(i);
 		
 		r = netio_wait(readlist_getptr());
 		
@@ -114,6 +120,8 @@ int main(int argc, char *argv[]) {
 
 				socket_add(newsockfd);
 				readlist_remove(mainsockfd);
+				
+				socketlist_add(newsockfd);
 			}
 
 			while ((i = readlist_next()) > 0) {
@@ -128,6 +136,8 @@ int main(int argc, char *argv[]) {
 					if (comp_type() == SERVER) {
 						close(i);
 						socket_remove(i);
+						
+						socketlist_remove(i);
 					} else {
 						main_shutdown("Server terminated connection.");
 					}
@@ -166,11 +176,16 @@ void main_sigint(int e) {
 }
 
 void main_shutdown(const char *errmsg) {
+	int i;
 	
 	printf("%s\n", errmsg);
 	printf("Shutting down... ");
-
-	socket_shutdown_all();
+	
+	while ((i = socketlist_get_next()) > 0) {
+		close(i);
+		socket_remove(i);
+		socketlist_remove(i);
+	}
 
 	printf("Done\n");
 	

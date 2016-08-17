@@ -14,6 +14,7 @@
 #include "l2/periodic.h"
 #include "l2/command.h"
 #include "l2/socket.h"
+#include "l2/socketlist.h"
 
 /*
  * Define functions here
@@ -26,6 +27,8 @@ COMMANDS_RETURN command_quit(COMMANDS_ARGS) {
 	// Close socket
 	close(socket);
 	socket_remove(socket);
+
+	socketlist_remove(socket);
 	
 	return 0;
 }
@@ -40,12 +43,15 @@ PRDFUNCTION_RETURN periodic(PRDFUNCTION_ARGS) {
 	int i;
 	
 	// Check time for all sockets and close unresponsive ones
-	while ((i = socket_next()) > 0) {
+	while ((i = socketlist_get_next()) > 0) {
 		if (i == socket_get_main())
 			continue;
 
-		if (socket_get_timestamp(i) < time(NULL) - 10)
-			socket_shutdown(i);
+		if (socket_get_timestamp(i) < time(NULL) - 10) {
+			socket_remove(i);
+			socketlist_remove(i);
+			close(i);
+		}
 	}
 	
 	return 0;
