@@ -3,15 +3,12 @@
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License. See LICENSE for more details.
 
-#include "l1/prdtime.h"
+static int mainsocket;
 
-//Static Variables
-static int prdtime;
-
-int prdtime_get(void) {
-	return prdtime;
+void mainsocket_set(int n) {
+	mainsocket = n;
 }
 
-void prdtime_set(int t) {
-	prdtime = t;
+int mainsocket_get(void) {
+	return mainsocket;
 }

@@ -11,12 +11,10 @@
 // Static variables
 static fd_set active_fd_set;
 static int list_position;
-static int mainsock;
 
 void socklist_init(void) {
 	FD_ZERO(&active_fd_set);
 	list_position = 0;
-	mainsock = 0;
 }
 
 void socklist_add(int socket) {
@@ -44,12 +42,4 @@ int socklist_next(void) {
 
 void socklist_reset(void) {
 	list_position = 0;
-}
-
-void socklist_add_mainsock(int socket) {
-	mainsock = socket;
-	socklist_add(socket);
-}
-int socklist_get_mainsock(void) {
-	return mainsock;
 }

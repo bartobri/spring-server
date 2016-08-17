@@ -13,6 +13,7 @@
 
 #include "l2/periodic.h"
 #include "l2/command.h"
+#include "l2/socket.h"
 
 /*
  * Define functions here

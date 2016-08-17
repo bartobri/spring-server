@@ -21,6 +21,7 @@
 #include "l2/inputparser.h"
 #include "l2/periodic.h"
 #include "l2/command.h"
+#include "l2/socket.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -86,7 +87,9 @@ int main(int argc, char *argv[]) {
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
 	
 	// Add main socket
-	socket_add_main(mainsockfd);
+	socket_add(mainsockfd);
+	
+	socket_set_main(mainsockfd);
 
 	// Load client/server custom functions
 	load_functions();

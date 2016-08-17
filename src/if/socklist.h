@@ -9,7 +9,5 @@ void socklist_remove(int);
 fd_set socklist_get(void);
 int socklist_next(void);
 void socklist_reset(void);
-void socklist_add_mainsock(int);
-int socklist_get_mainsock(void);
 
 #endif

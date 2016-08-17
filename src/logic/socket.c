@@ -54,11 +54,6 @@ void socket_add(int socket) {
 	socklist_add(socket);
 }
 
-void socket_add_main(int socket) {
-	timestamps_add(socket, (int)time(NULL));
-	socklist_add_mainsock(socket);
-}
-
 void socket_remove(int socket) {
 	timestamps_remove(socket);
 	socklist_remove(socket);
@@ -66,10 +61,6 @@ void socket_remove(int socket) {
 
 fd_set socket_get_list(void) {
 	return socklist_get();
-}
-
-int socket_get_main(void) {
-	return socklist_get_mainsock();
 }
 
 int socket_get_timestamp(int socket) {
