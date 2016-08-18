@@ -30,11 +30,11 @@ EXES = server client
 
 all: $(EXES)
 
-server: $(OBJ_LOGIC)/socket.o $(OBJ_LOGIC)/netio.o $(OBJ_L1)/sockettimes.o $(OBJ_L1)/mainsocket.o $(OBJ_L1)/commandfunctions.o $(OBJ_L1)/periodictime.o $(OBJ_L1)/periodicfunctions.o $(OBJ_L1)/inputpayload.o $(OBJ_L1)/inputcommand.o $(OBJ_L2)/sockettime.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/socket.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/inputparser.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
+server: $(OBJ_LOGIC)/socket.o $(OBJ_LOGIC)/netio.o $(OBJ_L1)/sockettimes.o $(OBJ_L1)/mainsocket.o $(OBJ_L1)/commandfunctions.o $(OBJ_L1)/periodictime.o $(OBJ_L1)/periodicfunctions.o $(OBJ_L1)/inputpayload.o $(OBJ_L1)/inputcommand.o $(OBJ_L2)/nextperiodic.o $(OBJ_L2)/sockettime.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/socket.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/inputparser.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 
-client: $(OBJ_LOGIC)/socket.o $(OBJ_LOGIC)/netio.o $(OBJ_L1)/sockettimes.o $(OBJ_L1)/mainsocket.o $(OBJ_L1)/commandfunctions.o $(OBJ_L1)/periodictime.o $(OBJ_L1)/periodicfunctions.o $(OBJ_L1)/inputpayload.o $(OBJ_L1)/inputcommand.o $(OBJ_L2)/sockettime.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/socket.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/inputparser.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
+client: $(OBJ_LOGIC)/socket.o $(OBJ_LOGIC)/netio.o $(OBJ_L1)/sockettimes.o $(OBJ_L1)/mainsocket.o $(OBJ_L1)/commandfunctions.o $(OBJ_L1)/periodictime.o $(OBJ_L1)/periodicfunctions.o $(OBJ_L1)/inputpayload.o $(OBJ_L1)/inputcommand.o $(OBJ_L2)/nextperiodic.o $(OBJ_L2)/sockettime.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/socket.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/inputparser.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)

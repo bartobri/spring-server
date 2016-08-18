@@ -23,6 +23,7 @@
 #include "l2/socketlist.h"
 #include "l2/readlist.h"
 #include "l2/sockettime.h"
+#include "l2/nextperiodic.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -78,6 +79,7 @@ int main(int argc, char *argv[]) {
 	socketlist_init();
 	readlist_init();
 	sockettime_init();
+	nextperiodic_init();
 
 	// Execute startup proceedure
 	mainsockfd = netio_startup(hostname, portno);
@@ -155,8 +157,10 @@ int main(int argc, char *argv[]) {
 		}
 		
 		// Run periodic function if time elapsed
-		if (periodic_time_elapsed())
+		if (nextperiodic_elapsed()) {
 			periodic_exec();
+			nextperiodic_reset();
+		}
 		
 	}
 
