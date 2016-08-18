@@ -3,15 +3,15 @@
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License. See LICENSE for more details.
 
-#include "l1/commands.h"
+#include "l1/commandfunctions.h"
 
 // Static variables
-static struct commandTbl commands[COMMANDS_LIMIT];
+static struct commandTbl commands[COMMANDFUNCTIONS_LIMIT];
 
-struct commandTbl commands_get(int i) {
+struct commandTbl commandfunctions_get(int i) {
 	return commands[i];
 }
 
-void commands_set(int i, struct commandTbl entry) {
+void commandfunctions_set(int i, struct commandTbl entry) {
 	commands[i] = entry;
 }

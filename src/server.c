@@ -20,7 +20,7 @@
 /*
  * Define functions here
  */
-COMMANDS_RETURN command_quit(COMMANDS_ARGS) {
+COMMANDFUNCTIONS_RETURN command_quit(COMMANDFUNCTIONS_ARGS) {
 	
 	// Suppress "unused parameter" warning for payload
 	(void)payload;
@@ -32,7 +32,7 @@ COMMANDS_RETURN command_quit(COMMANDS_ARGS) {
 	return 0;
 }
 
-COMMANDS_RETURN command_beat(COMMANDS_ARGS) {
+COMMANDFUNCTIONS_RETURN command_beat(COMMANDFUNCTIONS_ARGS) {
 	printf("command_beat socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;

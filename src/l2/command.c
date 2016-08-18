@@ -4,7 +4,7 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "l1/commands.h"
+#include "l1/commandfunctions.h"
 
 void command_init(void) {
 	int i;
@@ -13,20 +13,20 @@ void command_init(void) {
 	// Init comfunctions table with all nulls
 	entry.command = NULL;
 	entry.functionPtr = NULL;
-	for (i = 0; i < COMMANDS_LIMIT; ++i)
-		commands_set(i, entry);
+	for (i = 0; i < COMMANDFUNCTIONS_LIMIT; ++i)
+		commandfunctions_set(i, entry);
 }
 
 void command_add(char *command, comFunctionType functionPtr) {
 	int i;
 	struct commandTbl entry;
 
-	for (i = 0; i < COMMANDS_LIMIT; ++i) {
-		entry = commands_get(i);
+	for (i = 0; i < COMMANDFUNCTIONS_LIMIT; ++i) {
+		entry = commandfunctions_get(i);
 		if (entry.command == NULL) {
 			entry.command = command;
 			entry.functionPtr = functionPtr;
-			commands_set(i, entry);
+			commandfunctions_set(i, entry);
 			break;
 		}
 	}
@@ -36,8 +36,8 @@ int command_exists(char *command) {
 	int i;
 	struct commandTbl entry;
 
-	for (i = 0; i < COMMANDS_LIMIT; ++i) {
-		entry = commands_get(i);
+	for (i = 0; i < COMMANDFUNCTIONS_LIMIT; ++i) {
+		entry = commandfunctions_get(i);
 		if (entry.command == NULL)
 			return 0;
 
@@ -54,8 +54,8 @@ int command_exec(char *command, char *payload, int socket) {
 	
 	r = 0;
 
-	for (i = 0; i < COMMANDS_LIMIT; ++i) {
-		entry = commands_get(i);
+	for (i = 0; i < COMMANDFUNCTIONS_LIMIT; ++i) {
+		entry = commandfunctions_get(i);
 		if (entry.command == NULL)
 			break;
 
