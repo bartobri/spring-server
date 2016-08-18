@@ -9,6 +9,10 @@
 // Static Variables
 static char command[INPUTCOMMAND_SIZE + 1];
 
+void inputcommand_init(void) {
+	memset(command, 0, sizeof(INPUTCOMMAND_SIZE + 1));
+}
+
 void inputcommand_set(char *data) {
 	strncpy(command, data, INPUTCOMMAND_SIZE);
 }

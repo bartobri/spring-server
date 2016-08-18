@@ -3,6 +3,7 @@
 
 #define INPUTCOMMAND_SIZE         4
 
+void inputcommand_init(void);
 void inputcommand_set(char *);
 char *inputcommand_get(void);
 

@@ -80,6 +80,7 @@ int main(int argc, char *argv[]) {
 	readlist_init();
 	sockettime_init();
 	nextperiodic_init();
+	inputcommand_init();
 	inputpayload_init();
 
 	// Execute startup proceedure
