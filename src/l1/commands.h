@@ -13,6 +13,6 @@ struct commandTbl {
 };
 
 struct commandTbl commands_get(int);
-void commands_set(int i, struct commandTbl entry);
+void commands_set(int, struct commandTbl);
 
 #endif

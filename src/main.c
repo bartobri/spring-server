@@ -22,6 +22,7 @@
 #include "l2/socket.h"
 #include "l2/socketlist.h"
 #include "l2/readlist.h"
+#include "l2/sockettime.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -70,13 +71,13 @@ int main(int argc, char *argv[]) {
 	
 	// Initialization functions
 	netio_init();
-	socket_init();
 	readlist_init();
 	periodic_init();
 	inputparser_init();
 	command_init();
 	socketlist_init();
 	readlist_init();
+	sockettime_init();
 
 	// Execute startup proceedure
 	mainsockfd = netio_startup(hostname, portno);
@@ -89,10 +90,9 @@ int main(int argc, char *argv[]) {
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
 	
 	// Add main socket
-	socket_add(mainsockfd);
-	
 	socket_set_main(mainsockfd);
 	socketlist_add(mainsockfd);
+	sockettime_set(mainsockfd);
 
 	// Load client/server custom functions
 	load_functions();
@@ -118,10 +118,10 @@ int main(int argc, char *argv[]) {
 				if (newsockfd < 0)
 					main_shutdown("accept() error");
 
-				socket_add(newsockfd);
-
-				readlist_remove(mainsockfd);
 				socketlist_add(newsockfd);
+				sockettime_set(newsockfd);
+				sockettime_set(mainsockfd);
+				readlist_remove(mainsockfd);
 			}
 
 			while ((i = readlist_get_next()) > 0) {
@@ -135,8 +135,6 @@ int main(int argc, char *argv[]) {
 
 					if (comp_type() == SERVER) {
 						close(i);
-						socket_remove(i);
-						
 						socketlist_remove(i);
 					} else {
 						main_shutdown("Server terminated connection.");
@@ -145,13 +143,14 @@ int main(int argc, char *argv[]) {
 					continue;
 				}
 				
+				sockettime_set(i);
+				
 				// Store the input that we read from the socket
 				inputparser_parse_input(socket_get_buffer());
 				
 				// Validate and execute command
-				if (command_exists(inputparser_get_command()) == true) {
+				if (command_exists(inputparser_get_command()) == true)
 					command_exec(inputparser_get_command(), inputparser_get_payload(), i);
-				}
 			}
 		}
 		
@@ -183,7 +182,6 @@ void main_shutdown(const char *errmsg) {
 	
 	while ((i = socketlist_get_next()) > 0) {
 		close(i);
-		socket_remove(i);
 		socketlist_remove(i);
 	}
 
