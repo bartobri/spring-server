@@ -5,7 +5,6 @@
 
 #include <time.h>
 #include "l1/prdtime.h"
-#include "l1/prdfunction.h"
 #include "l2/periodic.h"
 
 void periodic_init(void) {
@@ -15,8 +14,8 @@ void periodic_init(void) {
 	prdtime_set((int)time(NULL));
 	
 	// prdfunction array init
-	for (i = 0; i < PRDFUNCTION_LIMIT; ++i) {
-		prdfunction_set(i, NULL);
+	for (i = 0; i < PERIODICFUNCTIONS_LIMIT; ++i) {
+		periodicfunctions_set(i, NULL);
 	}
 }
 
@@ -38,9 +37,9 @@ int periodic_time_elapsed(void) {
 void periodic_add(prdFunctionType functionPtr) {
 	int i;
 
-	for (i = 0; i < PRDFUNCTION_LIMIT; ++i) {
-		if (prdfunction_get(i) == NULL) {
-			prdfunction_set(i, functionPtr);
+	for (i = 0; i < PERIODICFUNCTIONS_LIMIT; ++i) {
+		if (periodicfunctions_get(i) == NULL) {
+			periodicfunctions_set(i, functionPtr);
 			break;
 		}
 	}
@@ -50,8 +49,8 @@ void periodic_exec(void) {
 	int i;
 	prdFunctionType functionPtr;
 	
-	for (i = 0; i < PRDFUNCTION_LIMIT; ++i) {
-		functionPtr = prdfunction_get(i);
+	for (i = 0; i < PERIODICFUNCTIONS_LIMIT; ++i) {
+		functionPtr = periodicfunctions_get(i);
 		if (functionPtr != NULL) {
 			functionPtr();
 		}

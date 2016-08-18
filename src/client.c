@@ -15,7 +15,7 @@
 #include "l2/socket.h"
 #include "l2/socketlist.h"
 
-PRDFUNCTION_RETURN periodic(PRDFUNCTION_ARGS) {
+PERIODICFUNCTIONS_RETURN periodic(PERIODICFUNCTIONS_ARGS) {
 	int r;
 
 	r = socket_write(socket_get_main(), "beat");

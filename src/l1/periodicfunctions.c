@@ -3,17 +3,15 @@
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License. See LICENSE for more details.
 
-#include <stdio.h>
-#include "main.h"
-#include "l1/prdfunction.h"
+#include "l1/periodicfunctions.h"
 
 // Static variables
-prdFunctionType functions[PRDFUNCTION_LIMIT];
+prdFunctionType functions[PERIODICFUNCTIONS_LIMIT];
 
-void prdfunction_set(int i, prdFunctionType functionPtr) {
+void periodicfunctions_set(int i, prdFunctionType functionPtr) {
 	functions[i] = functionPtr;
 }
 
-prdFunctionType prdfunction_get (int i) {
+prdFunctionType periodicfunctions_get (int i) {
 	return functions[i];
 }
