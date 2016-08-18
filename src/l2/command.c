@@ -4,13 +4,13 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "l1/commandfunctions.h"
+#include "l2/command.h"
 
 void command_init(void) {
 	int i;
 	struct commandTbl entry;
 	
-	// Init comfunctions table with all nulls
+	// Init commandfunctions table with all nulls
 	entry.command = NULL;
 	entry.functionPtr = NULL;
 	for (i = 0; i < COMMANDFUNCTIONS_LIMIT; ++i)
