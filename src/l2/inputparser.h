@@ -3,7 +3,6 @@
 
 void inputparser_init(void);
 void inputparser_parse_input(char *);
-char *inputparser_get_command(void);
 char *inputparser_get_payload(void);
 
 #endif

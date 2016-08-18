@@ -24,6 +24,7 @@
 #include "l2/readlist.h"
 #include "l2/sockettime.h"
 #include "l2/nextperiodic.h"
+#include "l2/inputcommand.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -150,9 +151,14 @@ int main(int argc, char *argv[]) {
 				// Store the input that we read from the socket
 				inputparser_parse_input(socket_get_buffer());
 				
+				// Parse out command from input buffer
+				char command[INPUTCOMMAND_SIZE + 1];
+				strncpy(command, socket_get_buffer(), INPUTCOMMAND_SIZE);
+				inputcommand_set(command);
+				
 				// Validate and execute command
-				if (command_exists(inputparser_get_command()) == true)
-					command_exec(inputparser_get_command(), inputparser_get_payload(), i);
+				if (command_exists(inputcommand_get()))
+					command_exec(inputcommand_get(), inputparser_get_payload(), i);
 			}
 		}
 		

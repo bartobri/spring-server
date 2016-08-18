@@ -4,7 +4,7 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "l1/inputcommand.h"
+#include "l2/inputcommand.h"
 
 // Static Variables
 static char command[INPUTCOMMAND_SIZE + 1];
