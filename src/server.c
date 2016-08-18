@@ -13,9 +13,9 @@
 
 #include "l2/periodic.h"
 #include "l2/command.h"
-#include "l2/socket.h"
 #include "l2/socketlist.h"
 #include "l2/sockettime.h"
+#include "l2/mainsocket.h"
 
 /*
  * Define functions here
@@ -43,7 +43,7 @@ PERIODICFUNCTIONS_RETURN periodic(PERIODICFUNCTIONS_ARGS) {
 	
 	// Check time for all sockets and close unresponsive ones
 	while ((i = socketlist_get_next()) > 0) {
-		if (i == socket_get_main())
+		if (i == mainsocket_get())
 			continue;
 
 		if (sockettime_get(i) < time(NULL) - 10) {

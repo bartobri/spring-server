@@ -18,13 +18,13 @@
 
 #include "l2/periodic.h"
 #include "l2/command.h"
-#include "l2/socket.h"
 #include "l2/socketlist.h"
 #include "l2/readlist.h"
 #include "l2/sockettime.h"
 #include "l2/nextperiodic.h"
 #include "l2/inputcommand.h"
 #include "l2/inputpayload.h"
+#include "l2/mainsocket.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
 	
 	// Add main socket
-	socket_set_main(mainsockfd);
+	mainsocket_set(mainsockfd);
 	socketlist_add(mainsockfd);
 	sockettime_set(mainsockfd);
 
