@@ -16,7 +16,6 @@
 #include "logic/netio.h"
 #include "logic/socket.h"
 
-#include "l2/inputparser.h"
 #include "l2/periodic.h"
 #include "l2/command.h"
 #include "l2/socket.h"
@@ -25,6 +24,7 @@
 #include "l2/sockettime.h"
 #include "l2/nextperiodic.h"
 #include "l2/inputcommand.h"
+#include "l2/inputpayload.h"
 
 // Function prototypes
 void main_sigint(int);
@@ -75,12 +75,12 @@ int main(int argc, char *argv[]) {
 	netio_init();
 	readlist_init();
 	periodic_init();
-	inputparser_init();
 	command_init();
 	socketlist_init();
 	readlist_init();
 	sockettime_init();
 	nextperiodic_init();
+	inputpayload_init();
 
 	// Execute startup proceedure
 	mainsockfd = netio_startup(hostname, portno);
@@ -148,17 +148,19 @@ int main(int argc, char *argv[]) {
 				
 				sockettime_set(i);
 				
-				// Store the input that we read from the socket
-				inputparser_parse_input(socket_get_buffer());
-				
 				// Parse out command from input buffer
 				char command[INPUTCOMMAND_SIZE + 1];
 				strncpy(command, socket_get_buffer(), INPUTCOMMAND_SIZE);
 				inputcommand_set(command);
 				
+				// Parse out payload from input buffer
+				char payload[INPUTPAYLOAD_SIZE + 1];
+				strncpy(payload, socket_get_buffer() + INPUTCOMMAND_SIZE, INPUTPAYLOAD_SIZE);
+				inputpayload_set(payload);
+				
 				// Validate and execute command
 				if (command_exists(inputcommand_get()))
-					command_exec(inputcommand_get(), inputparser_get_payload(), i);
+					command_exec(inputcommand_get(), inputpayload_get(), i);
 			}
 		}
 		
