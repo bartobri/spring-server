@@ -4,14 +4,13 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <time.h>
-#include "l1/prdtime.h"
 #include "l2/periodic.h"
 
 void periodic_init(void) {
 	int i;
 	
-	// prdtime init
-	prdtime_set((int)time(NULL));
+	// periodictime init
+	periodictime_set((int)time(NULL));
 	
 	// prdfunction array init
 	for (i = 0; i < PERIODICFUNCTIONS_LIMIT; ++i) {
@@ -20,13 +19,13 @@ void periodic_init(void) {
 }
 
 void periodic_update_time(void) {
-	prdtime_set((int)time(NULL));
+	periodictime_set((int)time(NULL));
 }
 
 int periodic_time_elapsed(void) {
 	int curtime;
 	
-	curtime = prdtime_get();
+	curtime = periodictime_get();
 	
 	if (curtime <= time(NULL) - PERIODIC_SECONDS)
 		return 1;
