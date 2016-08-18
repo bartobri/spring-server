@@ -9,7 +9,6 @@
 #include <string.h>
 #include <time.h>
 #include "main.h"
-#include "logic/socket.h"
 
 #include "l2/periodic.h"
 #include "l2/command.h"

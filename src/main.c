@@ -13,9 +13,7 @@
 #include <time.h>
 #include "main.h"
 
-#include "logic/netio.h"
-#include "logic/socket.h"
-
+#include "l2/network.h"
 #include "l2/periodic.h"
 #include "l2/command.h"
 #include "l2/socketlist.h"
@@ -72,7 +70,7 @@ int main(int argc, char *argv[]) {
 	}
 	
 	// Initialization functions
-	netio_init();
+	network_init();
 	readlist_init();
 	periodic_init();
 	command_init();
@@ -84,11 +82,11 @@ int main(int argc, char *argv[]) {
 	inputpayload_init();
 
 	// Execute startup proceedure
-	mainsockfd = netio_startup(hostname, portno);
+	mainsockfd = network_startup(hostname, portno);
 	
 	// Check for error at startup
 	if (mainsockfd < 0)
-		main_shutdown(netio_get_errmsg());
+		main_shutdown(network_get_errmsg());
 	
 	// Print connection message
 	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
@@ -117,7 +115,7 @@ int main(int argc, char *argv[]) {
 
 			if (readlist_check(mainsockfd) && comp_type() == SERVER) {
 
-				newsockfd = netio_accept(mainsockfd);
+				newsockfd = network_accept(mainsockfd);
 
 				if (newsockfd < 0)
 					main_shutdown("accept() error");
@@ -130,7 +128,7 @@ int main(int argc, char *argv[]) {
 
 			while ((i = readlist_get_next()) > 0) {
 
-				r = socket_read(i);
+				r = network_read(i);
 				
 				if (r < 0)
 					main_shutdown("read() error");
@@ -151,12 +149,12 @@ int main(int argc, char *argv[]) {
 				
 				// Parse out command from input buffer
 				char command[INPUTCOMMAND_SIZE + 1];
-				strncpy(command, socket_get_buffer(), INPUTCOMMAND_SIZE);
+				strncpy(command, network_get_readdata(), INPUTCOMMAND_SIZE);
 				inputcommand_set(command);
 				
 				// Parse out payload from input buffer
 				char payload[INPUTPAYLOAD_SIZE + 1];
-				strncpy(payload, socket_get_buffer() + INPUTCOMMAND_SIZE, INPUTPAYLOAD_SIZE);
+				strncpy(payload, network_get_readdata() + INPUTCOMMAND_SIZE, INPUTPAYLOAD_SIZE);
 				inputpayload_set(payload);
 				
 				// Validate and execute command

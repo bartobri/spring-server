@@ -8,8 +8,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "main.h"
-#include "logic/socket.h"
 
+#include "l2/network.h"
 #include "l2/command.h"
 #include "l2/periodic.h"
 #include "l2/socketlist.h"
@@ -18,7 +18,7 @@
 PERIODICFUNCTIONS_RETURN periodic(PERIODICFUNCTIONS_ARGS) {
 	int r;
 
-	r = socket_write(mainsocket_get(), "beat");
+	r = network_write(mainsocket_get(), "beat");
 	
 	return r;
 }

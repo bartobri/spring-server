@@ -16,18 +16,22 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "main.h"
-#include "logic/netio.h"
 
+#include "l2/network.h"
+
+#define BUFFER_SIZE  1024
 #define ERRMSG_SIZE  100
 
 // Static Variables
 static char errmsg[ERRMSG_SIZE];
+static char buffer[BUFFER_SIZE];
 
-void netio_init(void) {
+void network_init(void) {
 	memset(errmsg, 0, ERRMSG_SIZE);
+	memset(buffer, 0, BUFFER_SIZE);
 }
 
-int netio_startup(char *hostname, char *portno) {
+int network_startup(char *hostname, char *portno) {
 	int startsockfd = 0;
 	
 	if (comp_type() == SERVER) {
@@ -112,7 +116,7 @@ int netio_startup(char *hostname, char *portno) {
 	return startsockfd;
 }
 
-int netio_accept(int socket) {
+int network_accept(int socket) {
 	int newsockfd;
 	struct sockaddr cliaddr;
 	socklen_t clilen;
@@ -125,6 +129,30 @@ int netio_accept(int socket) {
 	// TODO - handshake here? Or somewhere else?
 }
 
-char *netio_get_errmsg(void) {
+int network_read(int socket) {
+	int r;
+		
+	// Reset the buffer with all integer zeros ('\0')
+	memset(buffer, 0, BUFFER_SIZE);
+	
+	// Read from socket
+	r = read(socket, buffer, BUFFER_SIZE - 1);
+	
+	return r;
+}
+
+char *network_get_readdata(void) {
+	return buffer;
+}
+
+int network_write(int socket, char *data) {
+	int r;
+
+	r = write(socket, data, strlen(data));
+
+	return r;
+}
+
+char *network_get_errmsg(void) {
 	return errmsg;
 }
