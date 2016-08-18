@@ -11,11 +11,6 @@ mandir = $(datarootdir)/man
 BIN=bin
 OBJ=obj
 SRC=src
-OBJ_IF=obj/if
-SRC_IF=src/if
-OBJ_LOGIC=obj/logic
-SRC_LOGIC=src/logic
-
 OBJ_L1=obj/l1
 SRC_L1=src/l1
 OBJ_L2=obj/l2
@@ -38,12 +33,6 @@ client: $(OBJ_L1)/sockettimes.o $(OBJ_L1)/commandfunctions.o $(OBJ_L1)/periodict
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
-	$(CC) $(CFLAGS) -o $@ -c $<
-
-$(OBJ_IF)/%.o: $(SRC_IF)/%.c | $(OBJ_IF)
-	$(CC) $(CFLAGS) -o $@ -c $<
-	
-$(OBJ_LOGIC)/%.o: $(SRC_LOGIC)/%.c | $(OBJ_LOGIC)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(OBJ_L1)/%.o: $(SRC_L1)/%.c | $(OBJ_L1)
