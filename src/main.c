@@ -82,7 +82,10 @@ int main(int argc, char *argv[]) {
 	inputpayload_init();
 
 	// Execute startup proceedure
-	mainsockfd = network_startup(hostname, portno);
+	if (comp_type() == SERVER)
+		mainsockfd = network_start_server(hostname, portno);
+	else
+		mainsockfd = network_start_client(hostname, portno);
 	
 	// Check for error at startup
 	if (mainsockfd < 0)
