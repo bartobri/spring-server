@@ -11,6 +11,8 @@
 #include <ctype.h>
 #include <signal.h>
 #include "main.h"
+#include "server.h"
+#include "client.h"
 #include "modules/network.h"
 #include "modules/periodic.h"
 #include "modules/command.h"

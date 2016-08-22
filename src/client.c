@@ -3,8 +3,7 @@
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License. See LICENSE for more details.
 
-#include "main.h"
-
+#include "client.h"
 #include "modules/network.h"
 #include "modules/command.h"
 #include "modules/periodic.h"

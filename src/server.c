@@ -6,8 +6,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
-#include "main.h"
-
+#include "server.h"
 #include "modules/periodic.h"
 #include "modules/command.h"
 #include "modules/socketlist.h"
