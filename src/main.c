@@ -25,6 +25,7 @@
 #include "modules/mainsocket.h"
 
 // Function prototypes
+void main_init(void);
 void main_sigint(int);
 void main_shutdown(const char *);
 
@@ -70,16 +71,7 @@ int main(int argc, char *argv[]) {
 	}
 	
 	// Initialization functions
-	network_init();
-	readlist_init();
-	periodic_init();
-	command_init();
-	socketlist_init();
-	readlist_init();
-	sockettime_init();
-	nextperiodic_init();
-	inputcommand_init();
-	inputpayload_init();
+	main_init();
 
 	// Execute startup proceedure
 	if (comp_type() == SERVER)
@@ -117,6 +109,8 @@ int main(int argc, char *argv[]) {
 		if (r > 0) {
 
 			if (readlist_check(mainsockfd) && comp_type() == SERVER) {
+				
+				sockettime_set(mainsockfd);
 
 				newsockfd = network_accept(mainsockfd);
 
@@ -125,7 +119,6 @@ int main(int argc, char *argv[]) {
 
 				socketlist_add(newsockfd);
 				sockettime_set(newsockfd);
-				sockettime_set(mainsockfd);
 				readlist_remove(mainsockfd);
 			}
 
@@ -175,6 +168,20 @@ int main(int argc, char *argv[]) {
 	}
 
 	return 0;
+}
+
+
+void main_init(void) {
+	network_init();
+	readlist_init();
+	periodic_init();
+	command_init();
+	socketlist_init();
+	readlist_init();
+	sockettime_init();
+	nextperiodic_init();
+	inputcommand_init();
+	inputpayload_init();
 }
 
 /*
