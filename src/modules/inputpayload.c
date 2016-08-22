@@ -4,7 +4,7 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "l2/inputpayload.h"
+#include "modules/inputpayload.h"
 
 // Static Variables
 static char payload[INPUTPAYLOAD_SIZE + 1];

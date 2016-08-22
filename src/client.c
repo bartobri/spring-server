@@ -9,11 +9,11 @@
 #include <stdlib.h>
 #include "main.h"
 
-#include "l2/network.h"
-#include "l2/command.h"
-#include "l2/periodic.h"
-#include "l2/socketlist.h"
-#include "l2/mainsocket.h"
+#include "modules/network.h"
+#include "modules/command.h"
+#include "modules/periodic.h"
+#include "modules/socketlist.h"
+#include "modules/mainsocket.h"
 
 PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 	int r;

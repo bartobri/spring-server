@@ -13,16 +13,16 @@
 #include <time.h>
 #include "main.h"
 
-#include "l2/network.h"
-#include "l2/periodic.h"
-#include "l2/command.h"
-#include "l2/socketlist.h"
-#include "l2/readlist.h"
-#include "l2/sockettime.h"
-#include "l2/nextperiodic.h"
-#include "l2/inputcommand.h"
-#include "l2/inputpayload.h"
-#include "l2/mainsocket.h"
+#include "modules/network.h"
+#include "modules/periodic.h"
+#include "modules/command.h"
+#include "modules/socketlist.h"
+#include "modules/readlist.h"
+#include "modules/sockettime.h"
+#include "modules/nextperiodic.h"
+#include "modules/inputcommand.h"
+#include "modules/inputpayload.h"
+#include "modules/mainsocket.h"
 
 // Function prototypes
 void main_sigint(int);

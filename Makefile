@@ -11,8 +11,8 @@ mandir = $(datarootdir)/man
 BIN=bin
 OBJ=obj
 SRC=src
-OBJ_L2=obj/l2
-SRC_L2=src/l2
+OBJ_MODS=obj/modules
+SRC_MODS=src/modules
 
 CC = gcc
 CFLAGS = -Wextra -Wall -iquote$(SRC)
@@ -23,17 +23,17 @@ EXES = server client
 
 all: $(EXES)
 
-server: $(OBJ_L2)/mainsocket.o $(OBJ_L2)/inputpayload.o $(OBJ_L2)/inputcommand.o $(OBJ_L2)/nextperiodic.o $(OBJ_L2)/sockettime.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/network.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
+server: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 
-client: $(OBJ_L2)/mainsocket.o $(OBJ_L2)/inputpayload.o $(OBJ_L2)/inputcommand.o $(OBJ_L2)/nextperiodic.o $(OBJ_L2)/sockettime.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/network.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
+client: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
 	$(CC) $(CFLAGS) -o $@ -c $<
 	
-$(OBJ_L2)/%.o: $(SRC_L2)/%.c | $(OBJ_L2)
+$(OBJ_MODS)/%.o: $(SRC_MODS)/%.c | $(OBJ_MODS)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(BIN):
@@ -42,8 +42,8 @@ $(BIN):
 $(OBJ):
 	mkdir $(OBJ)
 
-$(OBJ_L2): $(OBJ)
-	mkdir $(OBJ_L2)
+$(OBJ_MODS): $(OBJ)
+	mkdir $(OBJ_MODS)
 
 clean:
 	rm -rf $(BIN)

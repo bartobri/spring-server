@@ -10,11 +10,11 @@
 #include <time.h>
 #include "main.h"
 
-#include "l2/periodic.h"
-#include "l2/command.h"
-#include "l2/socketlist.h"
-#include "l2/sockettime.h"
-#include "l2/mainsocket.h"
+#include "modules/periodic.h"
+#include "modules/command.h"
+#include "modules/socketlist.h"
+#include "modules/sockettime.h"
+#include "modules/mainsocket.h"
 
 /*
  * Define functions here

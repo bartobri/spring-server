@@ -16,7 +16,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#include "l2/network.h"
+#include "modules/network.h"
 
 #define BUFFER_SIZE  1024
 #define ERRMSG_SIZE  100

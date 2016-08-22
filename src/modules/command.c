@@ -4,7 +4,7 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "l2/command.h"
+#include "modules/command.h"
 
 // Static vars
 static struct commandTbl commands[COMMAND_LIMIT];
