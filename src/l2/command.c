@@ -6,27 +6,26 @@
 #include <string.h>
 #include "l2/command.h"
 
+// Static vars
+static struct commandTbl commands[COMMAND_LIMIT];
+
 void command_init(void) {
 	int i;
-	struct commandTbl entry;
 	
 	// Init commandfunctions table with all nulls
-	entry.command = NULL;
-	entry.functionPtr = NULL;
-	for (i = 0; i < COMMANDFUNCTIONS_LIMIT; ++i)
-		commandfunctions_set(i, entry);
+	for (i = 0; i < COMMAND_LIMIT; ++i) {
+		commands[i].command = NULL;
+		commands[i].functionPtr = NULL;
+	}
 }
 
 void command_add(char *command, comFunctionType functionPtr) {
 	int i;
-	struct commandTbl entry;
 
-	for (i = 0; i < COMMANDFUNCTIONS_LIMIT; ++i) {
-		entry = commandfunctions_get(i);
-		if (entry.command == NULL) {
-			entry.command = command;
-			entry.functionPtr = functionPtr;
-			commandfunctions_set(i, entry);
+	for (i = 0; i < COMMAND_LIMIT; ++i) {
+		if (commands[i].command == NULL) {
+			commands[i].command = command;
+			commands[i].functionPtr = functionPtr;
 			break;
 		}
 	}
@@ -34,14 +33,12 @@ void command_add(char *command, comFunctionType functionPtr) {
 
 int command_exists(char *command) {
 	int i;
-	struct commandTbl entry;
 
-	for (i = 0; i < COMMANDFUNCTIONS_LIMIT; ++i) {
-		entry = commandfunctions_get(i);
-		if (entry.command == NULL)
+	for (i = 0; i < COMMAND_LIMIT; ++i) {
+		if (commands[i].command == NULL)
 			return 0;
 
-		if (strcmp(entry.command, command) == 0)
+		if (strcmp(commands[i].command, command) == 0)
 			return 1;
 	}
 	
@@ -50,17 +47,15 @@ int command_exists(char *command) {
 
 int command_exec(char *command, char *payload, int socket) {
 	int i, r;
-	struct commandTbl entry;
 	
 	r = 0;
 
-	for (i = 0; i < COMMANDFUNCTIONS_LIMIT; ++i) {
-		entry = commandfunctions_get(i);
-		if (entry.command == NULL)
+	for (i = 0; i < COMMAND_LIMIT; ++i) {
+		if (commands[i].command == NULL)
 			break;
 
-		if (strcmp(entry.command, command) == 0) {
-			r = entry.functionPtr(socket, payload);
+		if (strcmp(commands[i].command, command) == 0) {
+			r = commands[i].functionPtr(socket, payload);
 			break;
 		}
 	}
