@@ -11,8 +11,6 @@ mandir = $(datarootdir)/man
 BIN=bin
 OBJ=obj
 SRC=src
-OBJ_L1=obj/l1
-SRC_L1=src/l1
 OBJ_L2=obj/l2
 SRC_L2=src/l2
 
@@ -25,17 +23,14 @@ EXES = server client
 
 all: $(EXES)
 
-server: $(OBJ_L1)/sockettimes.o $(OBJ_L2)/mainsocket.o $(OBJ_L2)/inputpayload.o $(OBJ_L2)/inputcommand.o $(OBJ_L2)/nextperiodic.o $(OBJ_L2)/sockettime.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/network.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
+server: $(OBJ_L2)/mainsocket.o $(OBJ_L2)/inputpayload.o $(OBJ_L2)/inputcommand.o $(OBJ_L2)/nextperiodic.o $(OBJ_L2)/sockettime.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/network.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 
-client: $(OBJ_L1)/sockettimes.o $(OBJ_L2)/mainsocket.o $(OBJ_L2)/inputpayload.o $(OBJ_L2)/inputcommand.o $(OBJ_L2)/nextperiodic.o $(OBJ_L2)/sockettime.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/network.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
+client: $(OBJ_L2)/mainsocket.o $(OBJ_L2)/inputpayload.o $(OBJ_L2)/inputcommand.o $(OBJ_L2)/nextperiodic.o $(OBJ_L2)/sockettime.o $(OBJ_L2)/readlist.o $(OBJ_L2)/socketlist.o $(OBJ_L2)/command.o $(OBJ_L2)/periodic.o $(OBJ_L2)/network.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
-	$(CC) $(CFLAGS) -o $@ -c $<
-
-$(OBJ_L1)/%.o: $(SRC_L1)/%.c | $(OBJ_L1)
 	$(CC) $(CFLAGS) -o $@ -c $<
 	
 $(OBJ_L2)/%.o: $(SRC_L2)/%.c | $(OBJ_L2)
@@ -46,15 +41,6 @@ $(BIN):
 
 $(OBJ):
 	mkdir $(OBJ)
-
-$(OBJ_IF): $(OBJ)
-	mkdir $(OBJ_IF)
-
-$(OBJ_LOGIC): $(OBJ)
-	mkdir $(OBJ_LOGIC)
-
-$(OBJ_L1): $(OBJ)
-	mkdir $(OBJ_L1)
 
 $(OBJ_L2): $(OBJ)
 	mkdir $(OBJ_L2)

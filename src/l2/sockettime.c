@@ -4,34 +4,34 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <time.h>
-#include "l1/sockettimes.h"
+#include <sys/select.h>
+
+static struct {
+	int socket;
+	int timestamp;
+} times[FD_SETSIZE];
 
 void sockettime_init(void) {
 	int i;
-	struct timestampTbl entry;
 	
 	// Init timestamp table with all zeros
-	entry.socket = 0;
-	entry.timestamp = 0;
-	for (i = 0; i < FD_SETSIZE; ++i)
-		sockettimes_set(i, entry);
+	for (i = 0; i < FD_SETSIZE; ++i) {
+		times[i].socket = 0;
+		times[i].timestamp = 0;
+	}
 }
 
 void sockettime_set(int socket) {
 	int i;
-	struct timestampTbl entry;
 	
 	for (i = 0; i < FD_SETSIZE; ++i) {
-		entry = sockettimes_get(i);
-		if (entry.socket == socket) {
-			entry.timestamp = (int)time(NULL);
-			sockettimes_set(i, entry);
+		if (times[i].socket == socket) {
+			times[i].timestamp = (int)time(NULL);
 			break;
 		}
-		if (entry.socket == 0) {
-			entry.socket = socket;
-			entry.timestamp = (int)time(NULL);
-			sockettimes_set(i, entry);
+		if (times[i].socket == 0) {
+			times[i].socket = socket;
+			times[i].timestamp = (int)time(NULL);
 			break;
 		}
 	}
@@ -39,15 +39,12 @@ void sockettime_set(int socket) {
 
 int sockettime_get(int socket) {
 	int i;
-	struct timestampTbl entry;
 	
 	for (i = 0; i < FD_SETSIZE; ++i) {
-		entry = sockettimes_get(i);
+		if (times[i].socket == socket)
+			return times[i].timestamp;
 
-		if (entry.socket == socket)
-			return entry.timestamp;
-
-		if (entry.socket == 0)
+		if (times[i].socket == 0)
 			return 0;
 	}
 	
