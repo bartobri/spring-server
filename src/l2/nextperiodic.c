@@ -6,20 +6,19 @@
 #include <time.h>
 #include "l2/nextperiodic.h"
 
+//Static Variables
+static int periodictime;
+
 void nextperiodic_init(void) {
-	periodictime_set((int)time(NULL));
+	periodictime = (int)time(NULL);
 }
 
 void nextperiodic_reset(void) {
-	periodictime_set((int)time(NULL));
+	periodictime = (int)time(NULL);
 }
 
 int nextperiodic_elapsed(void) {
-	int curtime;
-	
-	curtime = periodictime_get();
-	
-	if (curtime <= time(NULL) - PERIODIC_SECONDS)
+	if (periodictime <= time(NULL) - PERIODIC_SECONDS)
 		return 1;
 	
 	return 0;
