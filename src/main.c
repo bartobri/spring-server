@@ -10,9 +10,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <signal.h>
-#include <time.h>
 #include "main.h"
-
 #include "modules/network.h"
 #include "modules/periodic.h"
 #include "modules/command.h"

@@ -4,9 +4,7 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <string.h>
 #include <time.h>
 #include "main.h"
 
@@ -45,6 +43,7 @@ PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 		if (i == mainsocket_get())
 			continue;
 
+		// TODO - replace "10" with a defined name
 		if (sockettime_get(i) < time(NULL) - 10) {
 			socketlist_remove(i);
 			close(i);

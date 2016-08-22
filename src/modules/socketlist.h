@@ -1,8 +1,6 @@
 #ifndef SOCKETLIST_H
 #define SOCKETLIST_H 1
 
-#include <sys/select.h>
-
 void socketlist_init(void);
 void socketlist_add(int);
 void socketlist_remove(int);
