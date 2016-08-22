@@ -5,21 +5,23 @@
 
 #include "l2/periodic.h"
 
+// Static variables
+prdFunctionType functions[PERIODIC_LIMIT];
+
 void periodic_init(void) {
 	int i;
 	
 	// prdfunction array init
-	for (i = 0; i < PERIODICFUNCTIONS_LIMIT; ++i) {
-		periodicfunctions_set(i, 0);
-	}
+	for (i = 0; i < PERIODIC_LIMIT; ++i)
+		functions[i] = 0;
 }
 
 void periodic_add(prdFunctionType functionPtr) {
 	int i;
 
-	for (i = 0; i < PERIODICFUNCTIONS_LIMIT; ++i) {
-		if (periodicfunctions_get(i) == 0) {
-			periodicfunctions_set(i, functionPtr);
+	for (i = 0; i < PERIODIC_LIMIT; ++i) {
+		if (functions[i] == 0) {
+			functions[i] = functionPtr;
 			break;
 		}
 	}
@@ -27,12 +29,8 @@ void periodic_add(prdFunctionType functionPtr) {
 
 void periodic_exec(void) {
 	int i;
-	prdFunctionType functionPtr;
 	
-	for (i = 0; i < PERIODICFUNCTIONS_LIMIT; ++i) {
-		functionPtr = periodicfunctions_get(i);
-		if (functionPtr != 0) {
-			functionPtr();
-		}
-	}
+	for (i = 0; i < PERIODIC_LIMIT; ++i)
+		if (functions[i] != 0)
+			functions[i]();
 }

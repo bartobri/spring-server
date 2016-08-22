@@ -37,7 +37,7 @@ COMMAND_RETURN command_beat(COMMAND_ARGS) {
 	return 0;
 }
 
-PERIODICFUNCTIONS_RETURN periodic(PERIODICFUNCTIONS_ARGS) {
+PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 	int i;
 	
 	// Check time for all sockets and close unresponsive ones
