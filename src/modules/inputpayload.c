@@ -22,5 +22,8 @@ char *inputpayload_get(void) {
 }
 
 void inputpayload_parse(char *data) {
-	strncpy(payload, data + COMMAND_SIZE, PAYLOAD_SIZE);
+	if (strlen(data) > COMMAND_SIZE)
+		strncpy(payload, data + COMMAND_SIZE, PAYLOAD_SIZE);
+	else
+		memset(payload, 0, sizeof(PAYLOAD_SIZE + 1));
 }
