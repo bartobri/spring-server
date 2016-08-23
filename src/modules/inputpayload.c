@@ -4,19 +4,17 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "modules/inputpayload.h"
-// TODO - remove me once config.h is implemented
-#include "modules/inputcommand.h"
+#include "config.h"
 
 // Static Variables
-static char payload[INPUTPAYLOAD_SIZE + 1];
+static char payload[PAYLOAD_SIZE + 1];
 
 void inputpayload_init(void) {
-	memset(payload, 0, sizeof(INPUTPAYLOAD_SIZE + 1));
+	memset(payload, 0, sizeof(PAYLOAD_SIZE + 1));
 }
 
 void inputpayload_set(char *data) {
-	strncpy(payload, data, INPUTPAYLOAD_SIZE);
+	strncpy(payload, data, PAYLOAD_SIZE);
 }
 
 char *inputpayload_get(void) {
@@ -24,5 +22,5 @@ char *inputpayload_get(void) {
 }
 
 void inputpayload_parse(char *data) {
-	strncpy(payload, data + INPUTCOMMAND_SIZE, INPUTPAYLOAD_SIZE);
+	strncpy(payload, data + COMMAND_SIZE, PAYLOAD_SIZE);
 }

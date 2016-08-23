@@ -1,7 +1,6 @@
 #ifndef COMMAND_H
 #define COMMAND_H 1
 
-#define COMMAND_LIMIT       10
 #define COMMAND_ARGS        int socket, char *payload
 #define COMMAND_RETURN      int
 

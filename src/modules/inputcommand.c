@@ -4,17 +4,17 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <string.h>
-#include "modules/inputcommand.h"
+#include "config.h"
 
 // Static Variables
-static char command[INPUTCOMMAND_SIZE + 1];
+static char command[COMMAND_SIZE + 1];
 
 void inputcommand_init(void) {
-	memset(command, 0, sizeof(INPUTCOMMAND_SIZE + 1));
+	memset(command, 0, sizeof(COMMAND_SIZE + 1));
 }
 
 void inputcommand_set(char *data) {
-	strncpy(command, data, INPUTCOMMAND_SIZE);
+	strncpy(command, data, COMMAND_SIZE);
 }
 
 char *inputcommand_get(void) {
@@ -22,5 +22,5 @@ char *inputcommand_get(void) {
 }
 
 void inputcommand_parse(char *data) {
-	strncpy(command, data, INPUTCOMMAND_SIZE);
+	strncpy(command, data, COMMAND_SIZE);
 }

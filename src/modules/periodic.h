@@ -1,7 +1,6 @@
 #ifndef PERIODIC_H
 #define PERIODIC_H 1
 
-#define PERIODIC_LIMIT      10
 #define PERIODIC_ARGS       void
 #define PERIODIC_RETURN     int
 

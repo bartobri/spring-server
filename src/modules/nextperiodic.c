@@ -4,7 +4,7 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <time.h>
-#include "modules/nextperiodic.h"
+#include "config.h"
 
 //Static Variables
 static int periodictime;

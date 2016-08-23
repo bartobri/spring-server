@@ -9,9 +9,6 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <signal.h>
-#include "main.h"
-#include "server.h"
-#include "client.h"
 #include "modules/network.h"
 #include "modules/periodic.h"
 #include "modules/command.h"
@@ -22,6 +19,10 @@
 #include "modules/inputcommand.h"
 #include "modules/inputpayload.h"
 #include "modules/mainsocket.h"
+#include "config.h"
+#include "server.h"
+#include "client.h"
+#include "main.h"
 
 // Function prototypes
 void main_init(void);

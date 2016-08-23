@@ -5,9 +5,8 @@
 
 #include <sys/select.h>
 #include <time.h>
+#include "config.h"
 #include "modules/readlist.h"
-
-#define WAIT_SECONDS 5
 
 // Static vars
 static fd_set read_fd_set;
@@ -28,7 +27,7 @@ int readlist_wait(void) {
 		
 	// Set select() timeout value.
 	// This needs to be inside the loop so it is reset for each loop interation.
-	timeout.tv_sec  = (unsigned int)WAIT_SECONDS;
+	timeout.tv_sec  = (unsigned int)PERIODIC_SECONDS;
 	timeout.tv_usec = 0;
 		
 	// Block until input arrives on one or more active sockets

@@ -4,6 +4,7 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <stdlib.h>
+#include "config.h"
 #include "modules/periodic.h"
 
 // Static variables
