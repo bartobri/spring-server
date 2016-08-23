@@ -9,6 +9,16 @@
 #include "modules/socketlist.h"
 #include "modules/mainsocket.h"
 
+COMMAND_RETURN command_helo(COMMAND_ARGS) {
+	(void)socket;
+	(void)payload;
+	
+	// Use helo command to display an initial message to the client
+	// or to initiate a process.
+	
+	return 0;
+}
+
 PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 	int r;
 
@@ -18,5 +28,6 @@ PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 }
 
 void load_functions(void) {
+	command_add("helo", &command_helo);
 	periodic_add(&periodic);
 }

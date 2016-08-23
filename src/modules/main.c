@@ -118,6 +118,9 @@ int main(int argc, char *argv[]) {
 				socketlist_add(newsockfd);
 				sockettime_set(newsockfd);
 				readlist_remove(mainsockfd);
+				
+				// Send greeting
+				network_write(newsockfd, "helo");
 			}
 
 			while ((i = readlist_get_next()) > 0) {
