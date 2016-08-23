@@ -5,6 +5,8 @@
 
 #include <string.h>
 #include "modules/inputpayload.h"
+// TODO - remove me once config.h is implemented
+#include "modules/inputcommand.h"
 
 // Static Variables
 static char payload[INPUTPAYLOAD_SIZE + 1];
@@ -19,4 +21,8 @@ void inputpayload_set(char *data) {
 
 char *inputpayload_get(void) {
 	return payload;
+}
+
+void inputpayload_parse(char *data) {
+	strncpy(payload, data + INPUTCOMMAND_SIZE, INPUTPAYLOAD_SIZE);
 }

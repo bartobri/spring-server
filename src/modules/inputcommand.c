@@ -20,3 +20,7 @@ void inputcommand_set(char *data) {
 char *inputcommand_get(void) {
 	return command;
 }
+
+void inputcommand_parse(char *data) {
+	strncpy(command, data, INPUTCOMMAND_SIZE);
+}

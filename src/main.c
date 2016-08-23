@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include <ctype.h>
@@ -143,15 +142,8 @@ int main(int argc, char *argv[]) {
 				
 				sockettime_set(i);
 				
-				// Parse out command from input buffer
-				char command[INPUTCOMMAND_SIZE + 1];
-				strncpy(command, network_get_readdata(), INPUTCOMMAND_SIZE);
-				inputcommand_set(command);
-				
-				// Parse out payload from input buffer
-				char payload[INPUTPAYLOAD_SIZE + 1];
-				strncpy(payload, network_get_readdata() + INPUTCOMMAND_SIZE, INPUTPAYLOAD_SIZE);
-				inputpayload_set(payload);
+				inputcommand_parse(network_get_readdata());
+				inputpayload_parse(network_get_readdata());
 				
 				// Validate and execute command
 				if (command_exists(inputcommand_get()))
