@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
-#include "server.h"
 #include "modules/periodic.h"
 #include "modules/command.h"
 #include "modules/socketlist.h"
@@ -59,8 +58,4 @@ void load_functions(void) {
 	command_add("beat", &command_beat);
 	command_add("quit", &command_quit);
 	periodic_add(&periodic);
-}
-
-int comp_type(void) {
-	return SERVER;
 }

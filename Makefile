@@ -17,18 +17,27 @@ SRC_MODS=src/modules
 CC = gcc
 CFLAGS = -Wextra -Wall -iquote$(SRC)
 
+SERVERFLAGS = -DIS_SERVER=1 -DIS_CLIENT=0
+CLIENTFLAGS = -DIS_SERVER=0 -DIS_CLIENT=1
+
 .PHONY: all install uninstall clean
 
 EXES = server client
 
 all: $(EXES)
 
-server: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ)/server.o $(OBJ)/main.o | $(BIN)
+server: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ)/server.o $(OBJ)/main_server.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 
-client: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ)/client.o $(OBJ)/main.o | $(BIN)
+client: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ)/client.o $(OBJ)/main_client.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
+	
+$(OBJ)/main_server.o: $(SRC)/main.c | $(OBJ)
+	$(CC) $(CFLAGS) $(SERVERFLAGS) -o $@ -c $<
+	
+$(OBJ)/main_client.o: $(SRC)/main.c | $(OBJ)
+	$(CC) $(CFLAGS) $(CLIENTFLAGS) -o $@ -c $<
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
 	$(CC) $(CFLAGS) -o $@ -c $<

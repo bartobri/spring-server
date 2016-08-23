@@ -3,7 +3,6 @@
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License. See LICENSE for more details.
 
-#include "client.h"
 #include "modules/network.h"
 #include "modules/command.h"
 #include "modules/periodic.h"
@@ -20,8 +19,4 @@ PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 
 void load_functions(void) {
 	periodic_add(&periodic);
-}
-
-int comp_type(void) {
-	return CLIENT;
 }

@@ -20,8 +20,6 @@
 #include "modules/inputpayload.h"
 #include "modules/mainsocket.h"
 #include "config.h"
-#include "server.h"
-#include "client.h"
 #include "main.h"
 
 // Function prototypes
@@ -74,7 +72,7 @@ int main(int argc, char *argv[]) {
 	main_init();
 
 	// Execute startup proceedure
-	if (comp_type() == SERVER)
+	if (IS_SERVER)
 		mainsockfd = network_start_server(hostname, portno);
 	else
 		mainsockfd = network_start_client(hostname, portno);
@@ -84,7 +82,7 @@ int main(int argc, char *argv[]) {
 		main_shutdown(network_get_errmsg());
 	
 	// Print connection message
-	printf("%s on port %s\n", comp_type() == SERVER ? "Listening" : "Connected", portno);
+	printf("%s on port %s\n", IS_SERVER ? "Listening" : "Connected", portno);
 	
 	// Add main socket
 	mainsocket_set(mainsockfd);
@@ -108,7 +106,7 @@ int main(int argc, char *argv[]) {
 
 		if (r > 0) {
 
-			if (readlist_check(mainsockfd) && comp_type() == SERVER) {
+			if (readlist_check(mainsockfd) && IS_SERVER) {
 				
 				sockettime_set(mainsockfd);
 
@@ -131,7 +129,7 @@ int main(int argc, char *argv[]) {
 
 				if (r == 0) {
 
-					if (comp_type() == SERVER) {
+					if (IS_SERVER) {
 						close(i);
 						socketlist_remove(i);
 					} else {
