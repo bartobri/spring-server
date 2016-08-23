@@ -26,21 +26,21 @@ EXES = server client
 
 all: $(EXES)
 
-server: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ)/server.o $(OBJ)/main_server.o | $(BIN)
+server: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ_MODS)/main_server.o $(OBJ)/server.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 
-client: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ)/client.o $(OBJ)/main_client.o | $(BIN)
+client: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ_MODS)/main_client.o $(OBJ)/client.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 	
-$(OBJ)/main_server.o: $(SRC)/main.c | $(OBJ)
-	$(CC) $(CFLAGS) $(SERVERFLAGS) -o $@ -c $<
-	
-$(OBJ)/main_client.o: $(SRC)/main.c | $(OBJ)
-	$(CC) $(CFLAGS) $(CLIENTFLAGS) -o $@ -c $<
-
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
 	$(CC) $(CFLAGS) -o $@ -c $<
+	
+$(OBJ_MODS)/main_server.o: $(SRC_MODS)/main.c | $(OBJ_MODS)
+	$(CC) $(CFLAGS) $(SERVERFLAGS) -o $@ -c $<
+	
+$(OBJ_MODS)/main_client.o: $(SRC_MODS)/main.c | $(OBJ_MODS)
+	$(CC) $(CFLAGS) $(CLIENTFLAGS) -o $@ -c $<
 	
 $(OBJ_MODS)/%.o: $(SRC_MODS)/%.c | $(OBJ_MODS)
 	$(CC) $(CFLAGS) -o $@ -c $<

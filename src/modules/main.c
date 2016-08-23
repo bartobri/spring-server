@@ -19,8 +19,8 @@
 #include "modules/inputcommand.h"
 #include "modules/inputpayload.h"
 #include "modules/mainsocket.h"
+#include "modules/main.h"
 #include "config.h"
-#include "main.h"
 
 // Function prototypes
 void main_init(void);
