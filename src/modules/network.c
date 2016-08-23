@@ -121,7 +121,6 @@ int network_accept(int socket) {
 	newsockfd = accept(socket, &cliaddr, &clilen);
 	
 	return newsockfd;
-	// TODO - handshake here? Or somewhere else?
 }
 
 int network_read(int socket) {
