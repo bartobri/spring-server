@@ -41,10 +41,10 @@ PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 		if (i == mainsocket_get())
 			continue;
 
-		// TODO - replace "10" with a defined name
-		if (sockettime_get(i) < time(NULL) - 10) {
-			socketlist_remove(i);
+		// Close socket if idle time elapsed
+		if (sockettime_elapsed(i)) {
 			close(i);
+			socketlist_remove(i);
 		}
 	}
 	

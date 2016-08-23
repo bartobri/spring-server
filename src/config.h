@@ -8,5 +8,6 @@
 #define PAYLOAD_SIZE        1000
 #define PERIODIC_SECONDS    5
 #define PERIODIC_LIMIT      10
+#define IDLE_SECONDS        10
 
 #endif

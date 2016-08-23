@@ -5,6 +5,7 @@
 
 #include <time.h>
 #include <sys/select.h>
+#include "config.h"
 
 static struct {
 	int socket;
@@ -46,6 +47,21 @@ int sockettime_get(int socket) {
 
 		if (times[i].socket == 0)
 			return 0;
+	}
+	
+	return 0;
+}
+
+int sockettime_elapsed(int socket) {
+	int i;
+	
+	for (i = 0; i < FD_SETSIZE; ++i) {
+		if (times[i].socket == socket) {
+			if (times[i].timestamp < time(NULL) - IDLE_SECONDS)
+				return 1;
+			else
+				return 0;
+		}
 	}
 	
 	return 0;
