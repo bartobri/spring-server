@@ -19,6 +19,7 @@
 #include "modules/inputcommand.h"
 #include "modules/inputpayload.h"
 #include "modules/mainsocket.h"
+#include "modules/log.h"
 #include "modules/main.h"
 #include "config.h"
 
@@ -70,8 +71,18 @@ int main(int argc, char *argv[]) {
 	
 	// Initialization functions
 	main_init();
+	
+	// Open log file
+	if (IS_SERVER)
+		r = log_open_server();
+	else
+		r = log_open_client();
+	
+	// Ensure log was successfully opened
+	if (r < 0)
+		main_shutdown(log_get_errmsg());
 
-	// Execute startup proceedure
+	// Execute network startup proceedure
 	if (IS_SERVER)
 		mainsockfd = network_start_server(hostname, portno);
 	else
@@ -80,6 +91,8 @@ int main(int argc, char *argv[]) {
 	// Check for error at startup
 	if (mainsockfd < 0)
 		main_shutdown(network_get_errmsg());
+
+	log_write("Successful startup on port");
 	
 	// Print connection message
 	printf("%s on port %s\n", IS_SERVER ? "Listening" : "Connected", portno);
@@ -176,6 +189,7 @@ void main_init(void) {
 	nextperiodic_init();
 	inputcommand_init();
 	inputpayload_init();
+	log_init();
 }
 
 /*
@@ -199,6 +213,8 @@ void main_shutdown(const char *errmsg) {
 		close(i);
 		socketlist_remove(i);
 	}
+	
+	log_close();
 
 	printf("Done\n");
 	
