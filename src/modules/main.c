@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
 	if (mainsockfd < 0)
 		main_shutdown(network_get_errmsg());
 
-	log_write("Successful startup on port");
+	log_write("Successful startup on port %i", mainsockfd);
 	
 	// Print connection message
 	printf("%s on port %s\n", IS_SERVER ? "Listening" : "Connected", portno);

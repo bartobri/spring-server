@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <sys/stat.h>
 #include "config.h"
 #include "modules/log.h"
@@ -99,8 +100,15 @@ int log_open(int logType) {
 	return 0;
 }
 
-void log_write(char *txt) {
-	fprintf(logFile, "%s\n", txt);
+void log_write(char *format, ...) {
+	va_list argList;
+	
+	va_start(argList, format);
+	vfprintf(logFile, format, argList);
+	va_end(argList);
+	
+	fprintf(logFile, "\n");
+	
 	fflush(logFile);
 }
 
