@@ -28,7 +28,7 @@ COMMAND_RETURN command_quit(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_beat(COMMAND_ARGS) {
-	printf("command_beat socket: %i, payload: %s\n", socket, payload);
+	printf("Received beat command on socket: %i, payload: %s\n", socket, payload);
 	
 	return 0;
 }

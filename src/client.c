@@ -19,7 +19,7 @@ COMMAND_RETURN command_helo(COMMAND_ARGS) {
 	return 0;
 }
 
-PERIODIC_RETURN periodic(PERIODIC_ARGS) {
+PERIODIC_RETURN send_heartbeat(PERIODIC_ARGS) {
 	int r;
 
 	r = network_write(mainsocket_get(), "beat");
@@ -29,5 +29,5 @@ PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 
 void load_functions(void) {
 	command_add("helo", &command_helo);
-	periodic_add(&periodic);
+	periodic_add(&send_heartbeat);
 }
