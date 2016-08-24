@@ -40,6 +40,21 @@ int main(int argc, char *argv[]) {
 	int mainsockfd, newsockfd;
 	char *hostname, *portno;
 	
+	// Initialization functions
+	main_init();
+	
+	// Open log file
+	if (IS_SERVER)
+		r = log_open_server();
+	else
+		r = log_open_client();
+	
+	// Ensure log was successfully opened
+	if (r < 0)
+		main_shutdown(log_get_errmsg());
+		
+	log_write("Starting Up");
+	
 	// Set SIGINT handler
 	signal(SIGINT, main_sigint);
 
@@ -62,25 +77,12 @@ int main(int argc, char *argv[]) {
 				break;
 			case '?':
 				if (isprint(optopt))
-					printf ("Unknown option '-%c'.\n", optopt);
+					log_print("Unknown option '-%c'.", optopt);
 				else
-					printf ("Unknown option character '\\x%x'.\n", optopt);
-				exit(1);
+					log_print("Unknown option character '\\x%x'.", optopt);
+				main_shutdown("Invalid command option(s).");
 		}
 	}
-	
-	// Initialization functions
-	main_init();
-	
-	// Open log file
-	if (IS_SERVER)
-		r = log_open_server();
-	else
-		r = log_open_client();
-	
-	// Ensure log was successfully opened
-	if (r < 0)
-		main_shutdown(log_get_errmsg());
 
 	// Execute network startup proceedure
 	if (IS_SERVER)
@@ -91,11 +93,9 @@ int main(int argc, char *argv[]) {
 	// Check for error at startup
 	if (mainsockfd < 0)
 		main_shutdown(network_get_errmsg());
-
-	log_write("Successful startup on port %i", mainsockfd);
 	
 	// Print connection message
-	printf("%s on port %s\n", IS_SERVER ? "Listening" : "Connected", portno);
+	log_print("%s on port %s", IS_SERVER ? "Listening" : "Connected", portno);
 	
 	// Add main socket
 	mainsocket_set(mainsockfd);
@@ -132,11 +132,15 @@ int main(int argc, char *argv[]) {
 				sockettime_set(newsockfd);
 				readlist_remove(mainsockfd);
 				
+				log_write("New client connected. Assigned socket %i.", newsockfd);
+				
 				// Send greeting
 				network_write(newsockfd, "helo");
 			}
 
 			while ((i = readlist_get_next()) > 0) {
+				
+				log_write("Reading data from socket %i.", i);
 
 				r = network_read(i);
 				
@@ -146,6 +150,7 @@ int main(int argc, char *argv[]) {
 				if (r == 0) {
 
 					if (IS_SERVER) {
+						log_write("Client terminated connection. Closing socket %i.", i);
 						close(i);
 						socketlist_remove(i);
 					} else {
@@ -160,6 +165,8 @@ int main(int argc, char *argv[]) {
 				inputcommand_parse(network_get_readdata());
 				inputpayload_parse(network_get_readdata());
 				
+				log_write("Received command %s from socket %i", inputcommand_get(), i);
+				
 				// Validate and execute command
 				if (command_exists(inputcommand_get()))
 					command_exec(inputcommand_get(), inputpayload_get(), i);
@@ -168,6 +175,7 @@ int main(int argc, char *argv[]) {
 		
 		// Run periodic function if time elapsed
 		if (nextperiodic_elapsed()) {
+			log_write("Executing periodic commands.");
 			periodic_exec();
 			nextperiodic_reset();
 		}
@@ -206,8 +214,7 @@ void main_sigint(int e) {
 void main_shutdown(const char *errmsg) {
 	int i;
 	
-	printf("%s\n", errmsg);
-	printf("Shutting down... ");
+	log_print("Shutting down. Reason: %s", errmsg);
 	
 	while ((i = socketlist_get_next()) > 0) {
 		close(i);
@@ -215,8 +222,6 @@ void main_shutdown(const char *errmsg) {
 	}
 	
 	log_close();
-
-	printf("Done\n");
 	
 	// Shutdown
 	exit(1);

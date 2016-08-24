@@ -112,6 +112,24 @@ void log_write(char *format, ...) {
 	fflush(logFile);
 }
 
+void log_print(char *format, ...) {
+	va_list argList;
+	
+	va_start(argList, format);
+	vprintf(format, argList);
+	va_end(argList);
+	
+	printf("\n");
+	
+	va_start(argList, format);
+	vfprintf(logFile, format, argList);
+	va_end(argList);
+	
+	fprintf(logFile, "\n");
+	
+	fflush(logFile);
+}
+
 void log_close(void) {
 	if (logFile != NULL)
 		fclose(logFile);
