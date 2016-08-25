@@ -34,7 +34,7 @@ int network_start_server(char *hostname, char *portno) {
 	memset((char *) &hints, 0, sizeof(struct addrinfo));
 	
 	// Get one or more arrdinfo structures that conforms with that provided by 'hints'
-	hints.ai_family = AF_UNSPEC;              // Return IPv4 and IPv6 choices
+	hints.ai_family = AF_INET;                // Return IPv4 choices
 	hints.ai_socktype = SOCK_STREAM;          // We want a TCP socket
 	hints.ai_flags = AI_PASSIVE;              // All interfaces
 	if (getaddrinfo(hostname, portno, &hints, &result) != 0) {
