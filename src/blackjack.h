@@ -118,7 +118,6 @@ void blackjack_shuffle_table(int tableIndex) {
 					myBlackjack.tables[tableIndex].decks[d].cards[c].highValue = n.highValue;
 					myBlackjack.tables[tableIndex].decks[d].cards[c].lowValue = n.lowValue;
 					myBlackjack.tables[tableIndex].decks[d].cards[c].display = n.display;
-					printf("table %i, deck %i, card %i\n", tableIndex, d, n.id);
 					break;
 				}
 

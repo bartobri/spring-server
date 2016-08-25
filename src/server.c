@@ -83,4 +83,10 @@ void load_functions(void) {
 	command_add("join", &command_join);
 	command_add("quit", &command_quit);
 	periodic_add(&periodic);
+	
+	// Shuffling all tables;
+	int i;
+	for (i = 0; i < TABLE_MAX; ++i) {
+		blackjack_shuffle_table(i);
+	}
 }
