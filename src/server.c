@@ -6,38 +6,15 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
-#include "modules/network.h"
 #include "modules/periodic.h"
 #include "modules/command.h"
 #include "modules/socketlist.h"
 #include "modules/sockettime.h"
 #include "modules/mainsocket.h"
 
-#include "blackjack.h"
-
-
 /*
  * Define functions here
  */
- 
-COMMAND_RETURN command_info(COMMAND_ARGS) {
-	(void)socket;
-	(void)payload;
-
-	network_write(socket, "info" "Info about table rules here.");
-	
-	return 0;
-}
-
-COMMAND_RETURN command_join(COMMAND_ARGS) {
-	(void)socket;
-	(void)payload;
-
-	network_write(socket, "aval" "Info about open seats.");
-	
-	return 0;
-}
-
 COMMAND_RETURN command_quit(COMMAND_ARGS) {
 	
 	// Suppress "unused parameter" warning for payload
@@ -79,14 +56,6 @@ PERIODIC_RETURN periodic(PERIODIC_ARGS) {
  */
 void load_functions(void) {
 	command_add("beat", &command_beat);
-	command_add("info", &command_info);
-	command_add("join", &command_join);
 	command_add("quit", &command_quit);
 	periodic_add(&periodic);
-	
-	// Shuffling all tables;
-	int i;
-	for (i = 0; i < TABLE_MAX; ++i) {
-		blackjack_shuffle_table(i);
-	}
 }
