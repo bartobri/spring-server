@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <time.h>
 #include <sys/stat.h>
 #include "config.h"
 #include "modules/log.h"
@@ -102,6 +103,14 @@ int log_open(int logType) {
 
 void log_write(char *format, ...) {
 	va_list argList;
+	time_t timeNow;
+	struct tm *timePtr;
+	char timeString[20];
+
+	timeNow = time(NULL);
+	timePtr = localtime(&timeNow);
+	strftime(timeString, 20, "%Y-%m-%d %H:%M:%S", timePtr);
+	fprintf(logFile, "[%s] ", timeString);
 	
 	va_start(argList, format);
 	vfprintf(logFile, format, argList);
@@ -114,12 +123,14 @@ void log_write(char *format, ...) {
 
 void log_print(char *format, ...) {
 	va_list argList;
-	
-	va_start(argList, format);
-	vprintf(format, argList);
-	va_end(argList);
-	
-	printf("\n");
+	time_t timeNow;
+	struct tm *timePtr;
+	char timeString[20];
+
+	timeNow = time(NULL);
+	timePtr = localtime(&timeNow);
+	strftime(timeString, 20, "%Y-%m-%d %H:%M:%S", timePtr);
+	fprintf(logFile, "[%s] ", timeString);
 	
 	va_start(argList, format);
 	vfprintf(logFile, format, argList);
@@ -128,6 +139,12 @@ void log_print(char *format, ...) {
 	fprintf(logFile, "\n");
 	
 	fflush(logFile);
+	
+	va_start(argList, format);
+	vprintf(format, argList);
+	va_end(argList);
+	
+	printf("\n");
 }
 
 void log_close(void) {
