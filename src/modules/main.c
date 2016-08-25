@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
 #include <signal.h>
@@ -64,7 +65,10 @@ int main(int argc, char *argv[]) {
 
 	// Set default hostname
 	hostname = malloc(65);
-	hostname = DEFAULT_HOST;
+	if (strlen(DEFAULT_HOST) == 0)
+		hostname = NULL;
+	else
+		hostname = DEFAULT_HOST;
 
 	// Check arguments
 	while ((o = getopt(argc, argv, "h:p:")) != -1) {

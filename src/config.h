@@ -2,7 +2,7 @@
 #define CONFIG_H 1
 
 #define DEFAULT_PORT        51717
-#define DEFAULT_HOST        NULL
+#define DEFAULT_HOST        ""
 #define COMMAND_LIMIT       10
 #define COMMAND_SIZE        4
 #define PAYLOAD_SIZE        1000
