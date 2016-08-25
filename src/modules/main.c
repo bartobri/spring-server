@@ -87,6 +87,8 @@ int main(int argc, char *argv[]) {
 				main_shutdown("Invalid command option(s).");
 		}
 	}
+	
+	log_write("host=%s port=%s", hostname, portno);
 
 	// Execute network startup proceedure
 	if (IS_SERVER)
@@ -179,7 +181,6 @@ int main(int argc, char *argv[]) {
 		
 		// Run periodic function if time elapsed
 		if (nextperiodic_elapsed()) {
-			log_write("Executing periodic commands.");
 			periodic_exec();
 			nextperiodic_reset();
 		}
