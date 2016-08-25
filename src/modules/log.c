@@ -110,13 +110,11 @@ void log_write(char *format, ...) {
 	timeNow = time(NULL);
 	timePtr = localtime(&timeNow);
 	strftime(timeString, 20, "%Y-%m-%d %H:%M:%S", timePtr);
-	fprintf(logFile, "[%s] ", timeString);
+	fprintf(logFile, "\n[%s] ", timeString);
 	
 	va_start(argList, format);
 	vfprintf(logFile, format, argList);
 	va_end(argList);
-	
-	fprintf(logFile, "\n");
 	
 	fflush(logFile);
 }
@@ -130,13 +128,11 @@ void log_print(char *format, ...) {
 	timeNow = time(NULL);
 	timePtr = localtime(&timeNow);
 	strftime(timeString, 20, "%Y-%m-%d %H:%M:%S", timePtr);
-	fprintf(logFile, "[%s] ", timeString);
+	fprintf(logFile, "\n[%s] ", timeString);
 	
 	va_start(argList, format);
 	vfprintf(logFile, format, argList);
 	va_end(argList);
-	
-	fprintf(logFile, "\n");
 	
 	fflush(logFile);
 	
