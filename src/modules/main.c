@@ -107,9 +107,6 @@ int main(int argc, char *argv[]) {
 	mainsocket_set(mainsockfd);
 	socketlist_add(mainsockfd);
 	sockettime_set(mainsockfd);
-
-	// Load client/server custom functions
-	load_functions();
 	
 	while (true) {
 		
@@ -203,6 +200,12 @@ void main_init(void) {
 	inputcommand_init();
 	inputpayload_init();
 	log_init();
+
+	if (IS_SERVER) {
+		server_init();
+	} else {
+		client_init();
+	}
 }
 
 /*

@@ -27,7 +27,7 @@ PERIODIC_RETURN send_heartbeat(PERIODIC_ARGS) {
 	return r;
 }
 
-void load_functions(void) {
+void client_init(void) {
 	command_add("helo", &command_helo);
 	periodic_add(&send_heartbeat);
 }

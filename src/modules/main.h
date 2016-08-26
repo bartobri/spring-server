@@ -2,6 +2,7 @@
 #define MAIN_H 1
 
 // Function prototypes defined in server.c and client.c
-void load_functions(void);
+void server_init(void);
+void client_init(void);
 
 #endif

@@ -54,7 +54,7 @@ PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 /*
  * Load functions here
  */
-void load_functions(void) {
+void server_init(void) {
 	command_add("beat", &command_beat);
 	command_add("quit", &command_quit);
 	periodic_add(&periodic);
