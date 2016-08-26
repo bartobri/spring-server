@@ -12,7 +12,11 @@
 #define SEAT_MAX       7
 #define TABLE_MAX      10
 
-// Declare and define the entire blackjack game structure
+// Declare function prototypes
+void blackjack_shuffle_table(int);
+void blackjack_init(void);
+
+// Declare the entire blackjack game structure
 struct card {
 	int id;
 	int highValue;
@@ -43,7 +47,7 @@ struct blackjack {
 	struct table tables[TABLE_MAX];
 };
 
-// Static structures
+// Define static structures
 static struct blackjack myBlackjack;
 static struct deck masterDeck = {
 	{
@@ -83,6 +87,15 @@ static struct deck masterDeck = {
 };
 
 // Game functions
+
+void blackjack_init(void) {
+	int i;
+	// Shuffling all tables;
+
+	for (i = 0; i < TABLE_MAX; ++i) {
+		blackjack_shuffle_table(i);
+	}
+}
 
 void blackjack_shuffle_table(int tableIndex) {
 	int d, c, r, i;
