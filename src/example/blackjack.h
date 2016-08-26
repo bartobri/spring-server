@@ -90,8 +90,8 @@ static struct deck masterDeck = {
 
 void blackjack_init(void) {
 	int i;
+	
 	// Shuffling all tables;
-
 	for (i = 0; i < TABLE_MAX; ++i) {
 		blackjack_shuffle_table(i);
 	}

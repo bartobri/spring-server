@@ -14,7 +14,7 @@ COMMAND_RETURN command_helo(COMMAND_ARGS) {
 	(void)socket;
 	(void)payload;
 	
-	network_write(mainsocket_get(), "info");
+	network_write(socket, "info");
 	
 	return 0;
 }
@@ -40,11 +40,11 @@ COMMAND_RETURN command_info(COMMAND_ARGS) {
 		
 		switch(o) {
 			case '1':
-				network_write(mainsocket_get(), "join");
+				network_write(socket, "join");
 				loop = 0;
 				break;
 			case '2':
-				network_write(mainsocket_get(), "quit");
+				network_write(socket, "quit");
 				loop = 0;
 				break;
 			default:
