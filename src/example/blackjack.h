@@ -33,14 +33,16 @@ struct deck {
 };
 
 struct seat {
+	int id;
 	int socket;
 	struct hand hands[HAND_MAX];
 };
 
 struct table {
+	int id;
 	struct seat seats[SEAT_MAX];
 	struct deck decks[DECK_MAX];
-	struct hand dealer;
+	struct card dealerhand[HAND_CARD_MAX];
 };
 
 struct blackjack {
@@ -89,11 +91,23 @@ static struct deck masterDeck = {
 // Game functions
 
 void blackjack_init(void) {
-	int i;
+	int i, s;
 	
-	// Shuffling all tables;
+	// Initialize tables
 	for (i = 0; i < TABLE_MAX; ++i) {
+		
+		// Assign table id
+		myBlackjack.tables[i].id = i+1;
+		
+		// Assign seat ids and set socket asignments to zero
+		for (s = 0; s < SEAT_MAX; ++s) {
+			myBlackjack.tables[i].seats[s].id = s+1;
+			myBlackjack.tables[i].seats[s].socket = 0;
+		}
+		
+		// Shuffling cards
 		blackjack_shuffle_table(i);
+
 	}
 }
 
