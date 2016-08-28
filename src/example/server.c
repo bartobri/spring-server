@@ -13,7 +13,7 @@
 #include "modules/sockettime.h"
 #include "modules/mainsocket.h"
 
-#include "blackjack.h"
+#include "example/blackjack.h"
 
 
 /*
