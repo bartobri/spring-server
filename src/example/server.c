@@ -6,14 +6,19 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
+#include <string.h>
 #include "modules/network.h"
 #include "modules/periodic.h"
 #include "modules/command.h"
 #include "modules/socketlist.h"
 #include "modules/sockettime.h"
 #include "modules/mainsocket.h"
+#include "config.h"
 
 #include "example/blackjack.h"
+
+// serialized field width (must be single digit)
+#define SFW 5
 
 
 /*
@@ -30,10 +35,47 @@ COMMAND_RETURN command_info(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_join(COMMAND_ARGS) {
+	int i, s;
+	int tid, sid, taken;
+	char *serialized_data;
+
 	(void)socket;
 	(void)payload;
+	
+	serialized_data = malloc(COMMAND_SIZE + 1 + SFW + ((SFW + (SEAT_MAX * SFW) + (SEAT_MAX * SFW)) * TABLE_MAX) + 1);
+	
+	// Write command to serialized data
+	sprintf(serialized_data, "aval");
+	
+	// Write serialized field width
+	sprintf(serialized_data + strlen(serialized_data), "%i", SFW);
+	
+	// Write number of tables
+	sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, TABLE_MAX);
+	
+	for (i = 0; i < TABLE_MAX; ++i) {
+		
+		tid = blackjack_get_table_id(i);
+		sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, tid);
+		
+		for (s = 0; s < SEAT_MAX; ++s) {
+			
+			// Serialize seat id
+			sid = blackjack_get_seat_id(i, s);
+			sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, sid);
+			
+			// serialize seat status (0 = open, 1 = occupied)
+			taken = blackjack_get_seat_socket(i, s);
+			if (taken)
+				sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, 1);
+			else
+				sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, 0);
+		}
+	}
 
-	network_write(socket, "aval" "Info about open seats.");
+	network_write(socket, serialized_data);
+	
+	free(serialized_data);
 	
 	return 0;
 }

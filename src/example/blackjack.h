@@ -51,6 +51,9 @@ struct blackjack {
 
 // Function prototypes
 void blackjack_init(void);
-void blackjack_shuffle_table(int tableIndex);
+void blackjack_shuffle_table(int);
+int blackjack_get_table_id(int);
+int blackjack_get_seat_id(int, int);
+int blackjack_get_seat_socket(int, int);
 
 #endif
