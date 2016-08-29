@@ -42,9 +42,9 @@ COMMAND_RETURN command_join(COMMAND_ARGS) {
 	(void)socket;
 	(void)payload;
 	
-	serialized_data = malloc(COMMAND_SIZE + 1 + SFW + ((SFW + (SEAT_MAX * SFW) + (SEAT_MAX * SFW)) * TABLE_MAX) + 1);
+	serialized_data = malloc(COMMAND_SIZE + 1 + SFW + SFW + ((SFW + (SEAT_MAX * SFW) + (SEAT_MAX * SFW)) * TABLE_MAX) + 1);
 	
-	// Write command to serialized data
+	// Write command
 	sprintf(serialized_data, "aval");
 	
 	// Write serialized field width
@@ -52,6 +52,9 @@ COMMAND_RETURN command_join(COMMAND_ARGS) {
 	
 	// Write number of tables
 	sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, TABLE_MAX);
+	
+	// Write number of seats per table
+	sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, SEAT_MAX);
 	
 	for (i = 0; i < TABLE_MAX; ++i) {
 		
