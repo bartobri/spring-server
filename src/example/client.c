@@ -4,6 +4,9 @@
 // under the terms of the MIT License. See LICENSE for more details.
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 #include "modules/network.h"
 #include "modules/command.h"
 #include "modules/periodic.h"
@@ -56,8 +59,27 @@ COMMAND_RETURN command_info(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_aval(COMMAND_ARGS) {
+	int i;
+	int sfw;
+	int numTables;
+	int numSeats;
+	
 	(void)socket;
 	(void)payload;
+	
+	sfw = payload[0] - '0';
+	
+	numTables = 0;
+	for (i = 1; i <= sfw; ++i)
+		numTables += (payload[i] - '0') * pow(10, sfw - i);
+		
+	numSeats = 0;
+	for (; i <= sfw * 2; ++i)
+		numSeats += (payload[i] - '0') * pow(10, (sfw * 2) - i);
+	
+	printf("Field Width: %i\n", sfw);
+	printf("Table Count: %i\n", numTables);
+	printf("Seat Count: %i\n", numSeats);
 	
 	printf("%s\n", payload);
 	
