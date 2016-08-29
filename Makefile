@@ -36,7 +36,6 @@ example: $(BLACKJACK)
 server: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ_MODS)/log.o $(OBJ_MODS)/main_server.o $(OBJ)/server.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
-
 client: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ_MODS)/log.o $(OBJ_MODS)/main_client.o $(OBJ)/client.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
@@ -62,16 +61,16 @@ $(OBJ_EX)/%.o: $(SRC_EX)/%.c | $(OBJ_EX)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(OBJ_MODS): $(OBJ)
-	mkdir $(OBJ_MODS)
+	mkdir -p $(OBJ_MODS)
 	
 $(OBJ_EX): $(OBJ)
-	mkdir $(OBJ_EX)
+	mkdir -p $(OBJ_EX)
 
 $(BIN):
-	mkdir $(BIN)
+	mkdir -p $(BIN)
 
 $(OBJ):
-	mkdir $(OBJ)
+	mkdir -p $(OBJ)
 
 clean:
 	rm -rf $(BIN)
