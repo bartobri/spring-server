@@ -25,7 +25,7 @@ COMMAND_RETURN command_helo(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_info(COMMAND_ARGS) {
-	int i, c, v;
+	int c, v;
 
 	(void)socket;
 	(void)payload;
@@ -40,7 +40,8 @@ COMMAND_RETURN command_info(COMMAND_ARGS) {
 	while (1) {
 
 		// Get user input. Invalid if any non-digits.
-		for (v = 0, i = 0; (c = getchar()) != '\n'; ++i) {
+		v = 0;
+		while ((c = getchar()) != '\n') {
 			if (c >= '0' && c <= '9')
 				v = (v * 10) + c - '0';
 			else {
