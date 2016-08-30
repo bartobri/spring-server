@@ -43,12 +43,11 @@ COMMAND_RETURN command_info(COMMAND_ARGS) {
 		for (v = 0, i = 0; (c = getchar()) != '\n'; ++i) {
 			if (c >= '0' && c <= '9')
 				v = (v * 10) + c - '0';
-			else
+			else {
 				while (getchar() != '\n')
 					v = 0;
-
-			if (v == 0)
 				break;
+			}
 		}
 		
 		switch(v) {
