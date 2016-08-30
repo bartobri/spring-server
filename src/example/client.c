@@ -14,6 +14,7 @@
 #include "modules/mainsocket.h"
 
 int payload_next_int(char **, int);
+int get_user_int(void);
 
 COMMAND_RETURN command_helo(COMMAND_ARGS) {
 	(void)socket;
@@ -25,7 +26,7 @@ COMMAND_RETURN command_helo(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_info(COMMAND_ARGS) {
-	int c, v;
+	int v;
 
 	(void)socket;
 	(void)payload;
@@ -39,17 +40,7 @@ COMMAND_RETURN command_info(COMMAND_ARGS) {
 	printf("Choose: ");
 	while (1) {
 
-		// Get user input. Invalid if any non-digits.
-		v = 0;
-		while ((c = getchar()) != '\n') {
-			if (c >= '0' && c <= '9')
-				v = (v * 10) + c - '0';
-			else {
-				while (getchar() != '\n')
-					v = 0;
-				break;
-			}
-		}
+		v = get_user_int();
 		
 		switch(v) {
 			case 1:
@@ -72,8 +63,8 @@ COMMAND_RETURN command_info(COMMAND_ARGS) {
 COMMAND_RETURN command_aval(COMMAND_ARGS) {
 	int t, s;
 	int sfw;
-	int numTables;
-	int numSeats;
+	int numTables, numSeats;
+	//int tc, sc;
 	
 	(void)socket;
 	(void)payload;
@@ -103,8 +94,6 @@ COMMAND_RETURN command_aval(COMMAND_ARGS) {
 		printf("\n");
 		
 	}
-	
-	//int tc, sc;
 	
 	//printf("Chosoe Table: ");
 	//while (scanf("%i", &tc) > 0) {
@@ -136,6 +125,23 @@ int payload_next_int(char **payload, int len) {
 			r += (*(*payload)++ - '0') * pow(10, len);
 	
 	return r;
+}
+
+int get_user_int(void) {
+	int c, v;
+	
+	v = 0;
+	while ((c = getchar()) != '\n') {
+		if (c >= '0' && c <= '9')
+			v = (v * 10) + c - '0';
+		else {
+			while (getchar() != '\n')
+				v = 0;
+			break;
+		}
+	}
+	
+	return v;
 }
 
 
