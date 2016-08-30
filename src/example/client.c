@@ -13,6 +13,8 @@
 #include "modules/socketlist.h"
 #include "modules/mainsocket.h"
 
+int payload_next_int(char **, int);
+
 COMMAND_RETURN command_helo(COMMAND_ARGS) {
 	(void)socket;
 	(void)payload;
@@ -59,7 +61,6 @@ COMMAND_RETURN command_info(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_aval(COMMAND_ARGS) {
-	int i;
 	int sfw;
 	int numTables;
 	int numSeats;
@@ -67,21 +68,15 @@ COMMAND_RETURN command_aval(COMMAND_ARGS) {
 	(void)socket;
 	(void)payload;
 	
-	sfw = payload[0] - '0';
+	printf("%s\n", payload);
 	
-	numTables = 0;
-	for (i = 1; i <= sfw; ++i)
-		numTables += (payload[i] - '0') * pow(10, sfw - i);
-		
-	numSeats = 0;
-	for (; i <= sfw * 2; ++i)
-		numSeats += (payload[i] - '0') * pow(10, (sfw * 2) - i);
+	sfw = *payload++ - '0';
+	numTables = payload_next_int(&payload, sfw);
+	numSeats = payload_next_int(&payload, sfw);
 	
 	printf("Field Width: %i\n", sfw);
 	printf("Table Count: %i\n", numTables);
 	printf("Seat Count: %i\n", numSeats);
-	
-	printf("%s\n", payload);
 	
 	return 0;
 }
@@ -100,3 +95,16 @@ void client_init(void) {
 	command_add("aval", &command_aval);
 	periodic_add(&send_heartbeat);
 }
+
+int payload_next_int(char **payload, int len) {
+	int r = 0;
+	
+	while (len-- > 0)
+		if (**payload != '\0')
+			r += (*(*payload)++ - '0') * pow(10, len);
+	
+	return r;
+}
+
+
+
