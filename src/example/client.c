@@ -25,8 +25,7 @@ COMMAND_RETURN command_helo(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_info(COMMAND_ARGS) {
-	char o;
-	int loop;
+	int o;
 
 	(void)socket;
 	(void)payload;
@@ -36,31 +35,34 @@ COMMAND_RETURN command_info(COMMAND_ARGS) {
 	printf("Menu\n");
 	printf("1 - Join\n");
 	printf("2 - Leave\n\n");
-	
-	loop = 1;
 
-	while (loop) {
-		printf("Choose: ");
-		o = getchar();
+	printf("Choose: ");
+	while (1) {
+		
+		if (scanf("%i", &o) == 0)
+			while (getchar() != '\n')
+				;
 		
 		switch(o) {
-			case '1':
+			case 1:
 				network_write(socket, "join");
-				loop = 0;
 				break;
-			case '2':
+			case 2:
 				network_write(socket, "quit");
-				loop = 0;
 				break;
 			default:
-				printf("Invalid option.\n");
+				printf("Invalid option. Choose again: ");
+				continue;
 		}
+		
+		break;
 	}
 	
 	return 0;
 }
 
 COMMAND_RETURN command_aval(COMMAND_ARGS) {
+	int t, s;
 	int sfw;
 	int numTables;
 	int numSeats;
@@ -68,15 +70,37 @@ COMMAND_RETURN command_aval(COMMAND_ARGS) {
 	(void)socket;
 	(void)payload;
 	
-	printf("%s\n", payload);
+	//printf("%s\n", payload);
 	
 	sfw = *payload++ - '0';
 	numTables = payload_next_int(&payload, sfw);
 	numSeats = payload_next_int(&payload, sfw);
 	
-	printf("Field Width: %i\n", sfw);
-	printf("Table Count: %i\n", numTables);
-	printf("Seat Count: %i\n", numSeats);
+	//printf("Field Width: %i\n", sfw);
+	//printf("Table Count: %i\n", numTables);
+	//printf("Seat Count: %i\n", numSeats);
+	
+	for (t = 0; t < numTables; ++t) {
+	
+		int tid = payload_next_int(&payload, sfw);
+		printf("Table %i: ", tid);
+
+		for (s = 0; s < numSeats; ++s) {
+			
+			int sid = payload_next_int(&payload, sfw);
+			int occ = payload_next_int(&payload, sfw);
+			printf("%i(%i) ", sid, occ);
+		}
+		
+		printf("\n");
+		
+	}
+	
+	//int tc, sc;
+	
+	//printf("Chosoe Table: ");
+	//while (scanf("%i", &tc) > 0) {
+	//}
 	
 	return 0;
 }
