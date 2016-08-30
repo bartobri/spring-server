@@ -25,7 +25,7 @@ COMMAND_RETURN command_helo(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_info(COMMAND_ARGS) {
-	int o;
+	int i, c, v;
 
 	(void)socket;
 	(void)payload;
@@ -38,12 +38,20 @@ COMMAND_RETURN command_info(COMMAND_ARGS) {
 
 	printf("Choose: ");
 	while (1) {
+
+		// Get user input. Invalid if any non-digits.
+		for (v = 0, i = 0; (c = getchar()) != '\n'; ++i) {
+			if (c >= '0' && c <= '9')
+				v = (v * 10) + c - '0';
+			else
+				while (getchar() != '\n')
+					v = 0;
+
+			if (v == 0)
+				break;
+		}
 		
-		if (scanf("%i", &o) == 0)
-			while (getchar() != '\n')
-				;
-		
-		switch(o) {
+		switch(v) {
 			case 1:
 				network_write(socket, "join");
 				break;
