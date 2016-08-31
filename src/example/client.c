@@ -154,11 +154,16 @@ COMMAND_RETURN command_sitt(COMMAND_ARGS) {
 	(void)socket;
 	(void)payload;
 	
-	// Display error message
-	printf("\nError: %s\n\n", payload);
+	if (*payload++ == '0') {
+		// Display error message
+		printf("\nError: %s\n\n", payload);
 	
-	// request table data again
-	network_write(socket, "join");
+		// request table data again
+		network_write(socket, "join");
+	} else {
+		// Display success message
+		printf("\n%s\n\n", payload);
+	}
 
 	return 0;
 }
