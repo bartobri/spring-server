@@ -138,6 +138,7 @@ int main(int argc, char *argv[]) {
 				log_write("New client connected. Assigned socket %i.", newsockfd);
 				
 				// Send greeting
+				// TODO - make "greeting" command programable like the others.
 				network_write(newsockfd, "helo");
 			}
 

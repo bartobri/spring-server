@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <string.h>
+#include <math.h>
 #include "modules/network.h"
 #include "modules/periodic.h"
 #include "modules/command.h"
@@ -19,6 +20,8 @@
 
 // serialized field width (must be single digit)
 #define SFW 5
+
+int payload_next_int(char **, int);
 
 
 /*
@@ -84,10 +87,45 @@ COMMAND_RETURN command_join(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_sitt(COMMAND_ARGS) {
+	int t, s;
+	int tc, sc;
+	
 	(void)socket;
 	(void)payload;
 	
-	printf("Received sitt command on socket: %i, payload: %s\n", socket, payload);
+	// Get client choices
+	tc = payload_next_int(&payload, SFW);
+	sc = payload_next_int(&payload, SFW);
+	
+	// Make sure table and seat choice are valid. Set to 0 if not.
+	for (t = 0; t < TABLE_MAX; ++t)
+		if (tc == blackjack_get_table_id(t))
+			break;
+	if (t == TABLE_MAX)
+		tc = 0;
+	else {
+		for (s = 0; s < SEAT_MAX; ++s)
+			if (sc == blackjack_get_seat_id(t, s) && !blackjack_get_seat_socket(t, s))
+				break;
+		if (s == SEAT_MAX)
+			sc = 0;
+	}
+	
+	// If error, send error message to client.
+	if (tc == 0) {
+		network_write(socket, "sitt" "Invalid Table Choice");
+		return 0;
+	}
+	
+	if (sc == 0) {
+		network_write(socket, "sitt" "Invalid Seat Choice");
+		return 0;
+	}
+	
+	// Set seat socket to occupy the seat
+	blackjack_set_seat_socket(t, s, socket);
+	
+	network_write(socket, "tbst" "Table Status Data Here");
 	
 	return 0;
 }
@@ -141,4 +179,14 @@ void server_init(void) {
 	
 	// Initialize blackjack game
 	blackjack_init();
+}
+
+int payload_next_int(char **payload, int len) {
+	int r = 0;
+	
+	while (len-- > 0)
+		if (**payload != '\0')
+			r += (*(*payload)++ - '0') * pow(10, len);
+	
+	return r;
 }

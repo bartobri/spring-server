@@ -104,7 +104,7 @@ COMMAND_RETURN command_aval(COMMAND_ARGS) {
 		printf("\n");
 		
 	}
-	
+
 	printf("Choose Table: ");
 	while (1) {
 		tc = get_user_int();
@@ -135,10 +135,9 @@ COMMAND_RETURN command_aval(COMMAND_ARGS) {
 			printf("Invalid Seat ID. Choose Seat: ");
 	}
 	
-	char *serialized_data = malloc(COMMAND_SIZE + 1 + sfw  + sfw + 1);
+	char *serialized_data = malloc(COMMAND_SIZE + sfw  + sfw + 1);
 	
 	sprintf(serialized_data, "sitt");
-	sprintf(serialized_data + strlen(serialized_data), "%i", sfw);
 	sprintf(serialized_data + strlen(serialized_data), "%.*i", sfw, tc);
 	sprintf(serialized_data + strlen(serialized_data), "%.*i", sfw, sc);
 	
@@ -146,8 +145,30 @@ COMMAND_RETURN command_aval(COMMAND_ARGS) {
 	
 	free(serialized_data);
 	
-	printf("Table: %i, Seat: %i\n", tc, sc);
+	//printf("Table: %i, Seat: %i\n", tc, sc);
 	
+	return 0;
+}
+
+COMMAND_RETURN command_sitt(COMMAND_ARGS) {
+	(void)socket;
+	(void)payload;
+	
+	// Display error message
+	printf("\nError: %s\n\n", payload);
+	
+	// request table data again
+	network_write(socket, "join");
+
+	return 0;
+}
+
+COMMAND_RETURN command_tbst(COMMAND_ARGS) {
+	(void)socket;
+	(void)payload;
+	
+	printf("%s\n", payload);
+
 	return 0;
 }
 
@@ -163,6 +184,8 @@ void client_init(void) {
 	command_add("helo", &command_helo);
 	command_add("info", &command_info);
 	command_add("aval", &command_aval);
+	command_add("sitt", &command_sitt);
+	command_add("tbst", &command_tbst);
 	periodic_add(&send_heartbeat);
 }
 
@@ -185,7 +208,8 @@ int get_user_int(void) {
 			v = (v * 10) + c - '0';
 		else {
 			while (getchar() != '\n')
-				v = 0;
+				;
+			v = 0;
 			break;
 		}
 	}
