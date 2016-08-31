@@ -12,6 +12,7 @@
 #include "modules/periodic.h"
 #include "modules/socketlist.h"
 #include "modules/mainsocket.h"
+#include "config.h"
 
 int payload_next_int(char **, int);
 int get_user_int(void);
@@ -64,7 +65,7 @@ COMMAND_RETURN command_aval(COMMAND_ARGS) {
 	int t, s;
 	int sfw;
 	int numTables, numSeats;
-	//int tc, sc;
+	int tc, sc;
 	
 	(void)socket;
 	(void)payload;
@@ -79,25 +80,73 @@ COMMAND_RETURN command_aval(COMMAND_ARGS) {
 	//printf("Table Count: %i\n", numTables);
 	//printf("Seat Count: %i\n", numSeats);
 	
+	int tableIDs[numTables];
+	int seatIDs[numTables][numSeats];
+	int seatOcc[numTables][numSeats];
+	
 	for (t = 0; t < numTables; ++t) {
 	
 		int tid = payload_next_int(&payload, sfw);
 		printf("Table %i: ", tid);
+		
+		tableIDs[t] = tid;
 
 		for (s = 0; s < numSeats; ++s) {
 			
 			int sid = payload_next_int(&payload, sfw);
 			int occ = payload_next_int(&payload, sfw);
 			printf("%i(%i) ", sid, occ);
+
+			seatIDs[t][s] = sid;
+			seatOcc[t][s] = occ;
 		}
 		
 		printf("\n");
 		
 	}
 	
-	//printf("Chosoe Table: ");
-	//while (scanf("%i", &tc) > 0) {
-	//}
+	printf("Choose Table: ");
+	while (1) {
+		tc = get_user_int();
+		
+		int i;
+		for (i = 0; i < numTables; ++i)
+			if (tableIDs[i] == tc)
+				break;
+				
+		if (i < numTables)
+			break;
+		else
+			printf("Invalid Table ID. Choose Table: ");
+	}
+	
+	printf("Choose Seat: ");
+	while (1) {
+		sc = get_user_int();
+		
+		int i;
+		for(i = 0; i < numSeats; ++i)
+			if (seatIDs[tc][i] == sc && seatOcc[tc][i] == 0)
+				break;
+				
+		if (i < numSeats)
+			break;
+		else
+			printf("Invalid Seat ID. Choose Seat: ");
+	}
+	
+	char *serialized_data = malloc(COMMAND_SIZE + 1 + sfw  + sfw + 1);
+	
+	sprintf(serialized_data, "sitt");
+	sprintf(serialized_data + strlen(serialized_data), "%i", sfw);
+	sprintf(serialized_data + strlen(serialized_data), "%.*i", sfw, tc);
+	sprintf(serialized_data + strlen(serialized_data), "%.*i", sfw, sc);
+	
+	network_write(socket, serialized_data);
+	
+	free(serialized_data);
+	
+	printf("Table: %i, Seat: %i\n", tc, sc);
 	
 	return 0;
 }

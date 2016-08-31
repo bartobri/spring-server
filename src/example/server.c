@@ -83,6 +83,15 @@ COMMAND_RETURN command_join(COMMAND_ARGS) {
 	return 0;
 }
 
+COMMAND_RETURN command_sitt(COMMAND_ARGS) {
+	(void)socket;
+	(void)payload;
+	
+	printf("Received sitt command on socket: %i, payload: %s\n", socket, payload);
+	
+	return 0;
+}
+
 COMMAND_RETURN command_quit(COMMAND_ARGS) {
 	
 	// Suppress "unused parameter" warning for payload
@@ -126,6 +135,7 @@ void server_init(void) {
 	command_add("beat", &command_beat);
 	command_add("info", &command_info);
 	command_add("join", &command_join);
+	command_add("sitt", &command_sitt);
 	command_add("quit", &command_quit);
 	periodic_add(&periodic);
 	

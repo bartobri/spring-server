@@ -128,22 +128,3 @@ int blackjack_get_seat_socket(int tableIndex, int seatIndex) {
 	return myBlackjack.tables[tableIndex].seats[seatIndex].socket;
 }
 
-/*
-void blackjack_table_seats_avail(int table, char *data_string) {
-	int i, s;
-	int tid, sid;
-	
-	data_string = malloc(SEAT_MAX + 1);
-
-	// Get table id
-	tid = myBlackjack.tables[table].id;
-	
-	// Get seat ids and set socket asignments to zero
-	for (s = 0; s < SEAT_MAX; ++s) {
-		sid = myBlackjack.tables[i].seats[s].id;
-		if (myBlackjack.tables[i].seats[s].socket == 0) {
-		}
-	}
-
-}
-*/

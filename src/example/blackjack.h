@@ -12,9 +12,12 @@
 #define SEAT_MAX       7
 #define TABLE_MAX      10
 
-// Declare function prototypes
-void blackjack_shuffle_table(int);
+// Function prototypes
 void blackjack_init(void);
+void blackjack_shuffle_table(int);
+int blackjack_get_table_id(int);
+int blackjack_get_seat_id(int, int);
+int blackjack_get_seat_socket(int, int);
 
 // Declare the entire blackjack game structure
 struct card {
@@ -48,12 +51,5 @@ struct table {
 struct blackjack {
 	struct table tables[TABLE_MAX];
 };
-
-// Function prototypes
-void blackjack_init(void);
-void blackjack_shuffle_table(int);
-int blackjack_get_table_id(int);
-int blackjack_get_seat_id(int, int);
-int blackjack_get_seat_socket(int, int);
 
 #endif
