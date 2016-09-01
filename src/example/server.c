@@ -176,7 +176,7 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 	// that is called when a table status is changed from player input.
 	// Only update that specific table.
 	
-	serialized_data = malloc(COMMAND_SIZE + 1 + SFW + SFW + SFW + (SEAT_MAX * SFW) + (HAND_MAX * SEAT_MAX * SFW) + (HAND_CARD_MAX * HAND_MAX * SEAT_MAX * SFW) + 1);
+	serialized_data = malloc(COMMAND_SIZE + 1 + SFW + SFW + SFW + (HAND_CARD_MAX * SFW) + (SEAT_MAX * SFW) + (HAND_MAX * SEAT_MAX * SFW) + (HAND_CARD_MAX * HAND_MAX * SEAT_MAX * SFW) + 1);
 	
 	// Write command
 	sprintf(serialized_data, "tbst");
@@ -193,8 +193,6 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 	// Write number of cards per hand
 	sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, HAND_CARD_MAX);
 	
-	// TODO - include dealer cards here
-	
 	seat_dat_pos = strlen(serialized_data);
 	
 	for (t = 0; t < TABLE_MAX; ++t) {
@@ -202,7 +200,14 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 		// reset string length by setting string terminator here
 		serialized_data[seat_dat_pos] = '\0';
 		
-		//printf("%s\n\n", serialized_data);
+		// Write dealer hand
+		// TODO - Don't show dealer's second card until it is the dealer's turn.
+		for (c = 0; c < HAND_CARD_MAX; ++c) {
+			int cid = blackjack_get_dealer_card_id(t, c);
+			sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, cid);
+		}
+		
+		// TODO - seat ID of current turn
 		
 		for (s = 0; s < SEAT_MAX; ++s) {
 			

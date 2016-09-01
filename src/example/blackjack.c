@@ -132,6 +132,10 @@ int blackjack_get_seat_hand_card_id(int tableIndex, int seatIndex, int handIndex
 	return myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].cards[cardIndex].id;
 }
 
+int blackjack_get_dealer_card_id(int tableIndex, int cardIndex) {
+	return myBlackjack.tables[tableIndex].dealerhand[cardIndex].id;
+}
+
 void blackjack_set_seat_socket(int tableIndex, int seatIndex, int socket) {
 	myBlackjack.tables[tableIndex].seats[seatIndex].socket = socket;
 }
