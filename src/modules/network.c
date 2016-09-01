@@ -132,6 +132,8 @@ int network_read(int socket) {
 	// Read from socket
 	r = read(socket, buffer, BUFFER_SIZE - 1);
 	
+	// TODO - make this read total data if beyond buffer size.
+	
 	return r;
 }
 

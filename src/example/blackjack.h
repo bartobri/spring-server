@@ -18,6 +18,7 @@ void blackjack_shuffle_table(int);
 int blackjack_get_table_id(int);
 int blackjack_get_seat_id(int, int);
 int blackjack_get_seat_socket(int, int);
+int blackjack_get_seat_hand_card_id(int, int, int, int);
 void blackjack_set_seat_socket(int, int, int);
 
 // Declare the entire blackjack game structure

@@ -148,7 +148,7 @@ COMMAND_RETURN command_beat(COMMAND_ARGS) {
 	return 0;
 }
 
-PERIODIC_RETURN periodic(PERIODIC_ARGS) {
+PERIODIC_RETURN periodic_close(PERIODIC_ARGS) {
 	int i;
 	
 	// Check time for all sockets and close unresponsive ones
@@ -158,10 +158,82 @@ PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 
 		// Close socket if idle time elapsed
 		if (sockettime_elapsed(i)) {
+			// TODO - remove player from blackjack table if seated
 			close(i);
 			socketlist_remove(i);
 		}
 	}
+	
+	return 0;
+}
+
+PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
+	int t, s, h, c, socket;
+	char *serialized_data;
+	int seat_dat_pos;
+	
+	// TODO - Periodic for now. Change this to a regular function
+	// that is called when a table status is changed from player input.
+	// Only update that specific table.
+	
+	serialized_data = malloc(COMMAND_SIZE + 1 + SFW + SFW + SFW + (SEAT_MAX * SFW) + (HAND_MAX * SEAT_MAX * SFW) + (HAND_CARD_MAX * HAND_MAX * SEAT_MAX * SFW) + 1);
+	
+	// Write command
+	sprintf(serialized_data, "tbst");
+	
+	// Write serialized field width
+	sprintf(serialized_data + strlen(serialized_data), "%i", SFW);
+	
+	// Write number of seats per table
+	sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, SEAT_MAX);
+	
+	// Write number of hands per seat
+	sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, HAND_MAX);
+	
+	// Write number of cards per hand
+	sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, HAND_CARD_MAX);
+	
+	// TODO - include dealer cards here
+	
+	seat_dat_pos = strlen(serialized_data);
+	
+	for (t = 0; t < TABLE_MAX; ++t) {
+		
+		// reset string length by setting string terminator here
+		serialized_data[seat_dat_pos] = '\0';
+		
+		printf("%s\n\n", serialized_data);
+		
+		for (s = 0; s < SEAT_MAX; ++s) {
+			
+			int sid = blackjack_get_seat_id(t, s);
+			sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, sid);
+			
+			// TODO - occupied?? If occupied, skip all other bullshit and save space.
+			
+			for (h = 0; h < HAND_MAX; ++h) {
+				
+				int hid = blackjack_get_seat_id(t, s);
+				sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, hid);
+				
+				for (c = 0; c < HAND_CARD_MAX; ++c) {
+					int cid = blackjack_get_seat_hand_card_id(t, s, h, c);
+					sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, cid);
+				}
+			}
+		}
+		
+		//printf("%s\n\n", serialized_data);
+		
+		// Loop over seats again
+		for (s = 0; s < SEAT_MAX; ++s) {
+			if ((socket = blackjack_get_seat_socket(t, s)) > 0) {
+				network_write(socket, serialized_data);
+			}
+		}
+	}
+	
+	free(serialized_data);
 	
 	return 0;
 }
@@ -175,7 +247,8 @@ void server_init(void) {
 	command_add("join", &command_join);
 	command_add("sitt", &command_sitt);
 	command_add("quit", &command_quit);
-	periodic_add(&periodic);
+	periodic_add(&periodic_close);
+	periodic_add(&periodic_table_update);
 	
 	// Initialize blackjack game
 	blackjack_init();
