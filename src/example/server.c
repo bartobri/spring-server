@@ -176,7 +176,7 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 	// that is called when a table status is changed from player input.
 	// Only update that specific table.
 	
-	serialized_data = malloc(COMMAND_SIZE + 1 + SFW + SFW + SFW + (HAND_CARD_MAX * SFW) + (SEAT_MAX * SFW) + (HAND_MAX * SEAT_MAX * SFW) + (HAND_CARD_MAX * HAND_MAX * SEAT_MAX * SFW) + 1);
+	serialized_data = malloc(COMMAND_SIZE + 1 + SFW + SFW + SFW + (HAND_CARD_MAX * SFW) + (SEAT_MAX * SFW * 2) + (HAND_MAX * SEAT_MAX * SFW) + (HAND_CARD_MAX * HAND_MAX * SEAT_MAX * SFW) + 1);
 	
 	// Write command
 	sprintf(serialized_data, "tbst");
@@ -213,8 +213,14 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 			
 			int sid = blackjack_get_seat_id(t, s);
 			sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, sid);
-			
-			// TODO - occupied?? If occupied, skip all other bullshit and save space.
+
+			// Seat Occupied Status
+			if (blackjack_get_seat_socket(t, s))
+				sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, 1);
+			else
+				sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, 0);
+				
+			// TODO - If occupied, skip all other bullshit and save space.
 			
 			for (h = 0; h < HAND_MAX; ++h) {
 				
