@@ -224,8 +224,7 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 			
 			for (h = 0; h < HAND_MAX; ++h) {
 				
-				int hid = blackjack_get_seat_id(t, s);
-				sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, hid);
+				sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, h + 1);
 				
 				for (c = 0; c < HAND_CARD_MAX; ++c) {
 					int cid = blackjack_get_seat_hand_card_id(t, s, h, c);

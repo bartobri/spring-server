@@ -169,10 +169,40 @@ COMMAND_RETURN command_sitt(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_tbst(COMMAND_ARGS) {
+	int d, s, h, c;
+
 	(void)socket;
 	(void)payload;
 	
-	printf("%s\n", payload);
+	int sfw = *payload++ - '0';
+	int numSeats = payload_next_int(&payload, sfw);
+	int numHands = payload_next_int(&payload, sfw);
+	int numCards = payload_next_int(&payload, sfw);
+	
+	printf("Dealer\n\t");
+	for (d = 0; d < numCards; ++d) {
+		int cardId = payload_next_int(&payload, sfw);
+		printf("%i ", cardId);
+	}
+	printf("\n\n");
+	
+	for (s = 0; s < numSeats; ++s) {
+		int seatId = payload_next_int(&payload, sfw);
+		int occ = payload_next_int(&payload, sfw);
+		printf("Seat %i (%s)\n", seatId, occ ? "occupied" : "unoccupied");
+		for (h = 0; h < numHands; ++h) {
+			int handNum = payload_next_int(&payload, sfw);
+			printf("\t%i:", handNum);
+			for (c = 0; c < numCards; ++c) {
+				int cardId = payload_next_int(&payload, sfw);
+				printf("%i ", cardId);
+			}
+			printf("\n");
+		}
+		printf("\n");
+	}
+	
+	//printf("%s\n", payload);
 
 	return 0;
 }
