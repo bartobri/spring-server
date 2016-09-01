@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -18,11 +19,11 @@
 
 // Static Variables
 static char errmsg[ERRMSG_SIZE];
-static char buffer[BUFFER_SIZE];
+static char *readdata;
 
 void network_init(void) {
 	memset(errmsg, 0, ERRMSG_SIZE);
-	memset(buffer, 0, BUFFER_SIZE);
+	readdata = NULL;
 }
 
 int network_start_server(char *hostname, char *portno) {
@@ -124,21 +125,25 @@ int network_accept(int socket) {
 }
 
 int network_read(int socket) {
-	int r;
-		
-	// Reset the buffer with all integer zeros ('\0')
-	memset(buffer, 0, BUFFER_SIZE);
+	int r = 0;
+	
+	// prepare readdata string
+	readdata = realloc(readdata, 1);
+	readdata[0] = '\0';
 	
 	// Read from socket
-	r = read(socket, buffer, BUFFER_SIZE - 1);
-	
-	// TODO - make this read total data if beyond buffer size.
+	ioctl(socket, FIONREAD, &r);
+	if (r > 0) {
+		readdata = realloc(readdata, r + 1);
+		r = read(socket, readdata, r);
+		readdata[r] = '\0';
+	}
 	
 	return r;
 }
 
 char *network_get_readdata(void) {
-	return buffer;
+	return readdata;
 }
 
 int network_write(int socket, char *data) {

@@ -202,7 +202,7 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 		// reset string length by setting string terminator here
 		serialized_data[seat_dat_pos] = '\0';
 		
-		printf("%s\n\n", serialized_data);
+		//printf("%s\n\n", serialized_data);
 		
 		for (s = 0; s < SEAT_MAX; ++s) {
 			

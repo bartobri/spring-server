@@ -5,7 +5,7 @@
 #define DEFAULT_HOST        ""
 #define COMMAND_LIMIT       10
 #define COMMAND_SIZE        4
-#define PAYLOAD_SIZE        1000
+#define PAYLOAD_SIZE        2000
 #define PERIODIC_SECONDS    5
 #define PERIODIC_LIMIT      10
 #define IDLE_SECONDS        10
