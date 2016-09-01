@@ -7,23 +7,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 
 #include "modules/network.h"
+#include "config.h"
 
-#define BUFFER_SIZE  1024
 #define ERRMSG_SIZE  100
 
 // Static Variables
 static char errmsg[ERRMSG_SIZE];
-static char *readdata;
+static char buffer[PAYLOAD_SIZE + COMMAND_SIZE + 1];
 
 void network_init(void) {
 	memset(errmsg, 0, ERRMSG_SIZE);
-	readdata = NULL;
+	memset(buffer, 0, PAYLOAD_SIZE + COMMAND_SIZE + 1);
 }
 
 int network_start_server(char *hostname, char *portno) {
@@ -125,25 +124,19 @@ int network_accept(int socket) {
 }
 
 int network_read(int socket) {
-	int r = 0;
+	int r;
 	
-	// prepare readdata string
-	readdata = realloc(readdata, 1);
-	readdata[0] = '\0';
-	
+	// Reset the buffer with all integer zeros ('\0')
+	memset(buffer, 0, PAYLOAD_SIZE + COMMAND_SIZE + 1);
+
 	// Read from socket
-	ioctl(socket, FIONREAD, &r);
-	if (r > 0) {
-		readdata = realloc(readdata, r + 1);
-		r = read(socket, readdata, r);
-		readdata[r] = '\0';
-	}
+	r = read(socket, buffer, PAYLOAD_SIZE + COMMAND_SIZE + 1);
 	
 	return r;
 }
 
 char *network_get_readdata(void) {
-	return readdata;
+	return buffer;
 }
 
 int network_write(int socket, char *data) {
