@@ -154,7 +154,7 @@ COMMAND_RETURN command_sitt(COMMAND_ARGS) {
 	(void)socket;
 	(void)payload;
 	
-	if (*payload++ == '0') {
+	if (*payload == '0') {
 		// Display error message
 		printf("\nError: %s\n\n", payload);
 	
@@ -162,7 +162,7 @@ COMMAND_RETURN command_sitt(COMMAND_ARGS) {
 		network_write(socket, "join");
 	} else {
 		// Display success message
-		printf("\n%s\n\n", payload);
+		printf("\nYou are sitting at the table. Please wait...\n\n");
 	}
 
 	return 0;
@@ -192,7 +192,7 @@ COMMAND_RETURN command_tbst(COMMAND_ARGS) {
 		printf("Seat %i (%s)\n", seatId, occ ? "occupied" : "unoccupied");
 		for (h = 0; h < numHands; ++h) {
 			int handNum = payload_next_int(&payload, sfw);
-			printf("\t%i:", handNum);
+			printf("\t%i: ", handNum);
 			for (c = 0; c < numCards; ++c) {
 				int cardId = payload_next_int(&payload, sfw);
 				printf("%i ", cardId);

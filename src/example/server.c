@@ -111,7 +111,7 @@ COMMAND_RETURN command_sitt(COMMAND_ARGS) {
 			sc = 0;
 	}
 	
-	// If error, send error message to client.
+	// If error, send error code/message to client.
 	if (tc == 0) {
 		network_write(socket, "sitt" "0" "Invalid Table Choice");
 		return 0;
@@ -122,10 +122,11 @@ COMMAND_RETURN command_sitt(COMMAND_ARGS) {
 		return 0;
 	}
 	
+	// Send success code
+	network_write(socket, "sitt" "1");
+	
 	// Set seat socket to occupy the seat
 	blackjack_set_seat_socket(t, s, socket);
-	
-	network_write(socket, "sitt" "1" "You are sitting at the table. Please wait...");
 	
 	return 0;
 }
