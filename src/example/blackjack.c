@@ -80,7 +80,9 @@ void blackjack_shuffle_table(int tableIndex) {
 		seedRand = 0;
 	}
 	
-	// TODO - this shuffle algorithm does not mix all decks together. 
+	// TODO - this shuffle algorithm does not mix all decks together.
+	//        change deck array to card array: struct card shoe[max_decks * cards_per_deck]
+	//        then change dealDeckIndex and dealCardIndex to a single index
 	for (d = 0; d < DECK_MAX; ++d) {
 		for (c = 0; c < DECK_CARD_MAX; ++c) {
 
@@ -114,6 +116,30 @@ void blackjack_shuffle_table(int tableIndex) {
 			}
 		}
 	}
+	
+	myBlackjack.tables[tableIndex].dealDeckIndex = 0;
+	myBlackjack.tables[tableIndex].dealCardIndex = 0;
+}
+
+int blackjack_deal_next_card_id(int tableIndex) {
+	int d = myBlackjack.tables[tableIndex].dealDeckIndex;
+	int c = myBlackjack.tables[tableIndex].dealCardIndex;
+	int r = myBlackjack.tables[tableIndex].decks[d].cards[c].id;
+	
+	// Advance deal position
+	if (myBlackjack.tables[tableIndex].dealCardIndex + 1 < DECK_CARD_MAX) {
+		++myBlackjack.tables[tableIndex].dealCardIndex;
+	} else {
+		if (myBlackjack.tables[tableIndex].dealDeckIndex + 1 < DECK_MAX) {
+			myBlackjack.tables[tableIndex].dealCardIndex = 0;
+			++myBlackjack.tables[tableIndex].dealDeckIndex;
+		} else {
+			// OOPS - We reached the end of the cards. This should never happen!
+			// TODO - Make sure we reshuffle before we get here.
+		}
+	}
+	
+	return r;
 }
 
 int blackjack_get_table_id(int tableIndex) {
@@ -138,4 +164,12 @@ int blackjack_get_dealer_card_id(int tableIndex, int cardIndex) {
 
 void blackjack_set_seat_socket(int tableIndex, int seatIndex, int socket) {
 	myBlackjack.tables[tableIndex].seats[seatIndex].socket = socket;
+}
+
+void blackjack_set_seat_hand_card_id(int tableIndex, int seatIndex, int handIndex, int cardIndex, int value) {
+	myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].cards[cardIndex].id = value;
+}
+
+void blackjack_set_table_dealer_card_id(int tableIndex, int cardIndex, int cardId) {
+	myBlackjack.tables[tableIndex].dealerhand[cardIndex].id = cardId;
 }

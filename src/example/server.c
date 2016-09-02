@@ -87,7 +87,7 @@ COMMAND_RETURN command_join(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_sitt(COMMAND_ARGS) {
-	int t, s;
+	int t, s, h, c;
 	int tc, sc;
 	
 	(void)socket;
@@ -127,6 +127,12 @@ COMMAND_RETURN command_sitt(COMMAND_ARGS) {
 	
 	// Set seat socket to occupy the seat
 	blackjack_set_seat_socket(t, s, socket);
+	for (h = 0; h < HAND_MAX; ++h) {
+		for (c = 0; c < HAND_CARD_MAX; ++c) {
+			blackjack_set_seat_hand_card_id(t, s, h, c, 0);
+		}
+	}
+	// TODO - empty all hand and card data
 	
 	return 0;
 }
@@ -162,6 +168,53 @@ PERIODIC_RETURN periodic_close(PERIODIC_ARGS) {
 			// TODO - remove player from blackjack table if seated
 			close(i);
 			socketlist_remove(i);
+		}
+	}
+	
+	return 0;
+}
+
+PERIODIC_RETURN periodic_table_deal(PERIODIC_ARGS) {
+	int t, s;
+	
+	for (t = 0; t < TABLE_MAX; ++t) {
+		
+		// Skip table if no players
+		for (s = 0; s < SEAT_MAX; ++s)
+			if (blackjack_get_seat_socket(t, s))
+				break;
+		if (s == SEAT_MAX)
+			continue;
+		
+		// Check if all players have zero cards
+		// If so, deal them 2 each
+		for (s = 0; s < SEAT_MAX; ++s) {
+			if (!blackjack_get_seat_socket(t, s))
+				continue;
+			if (blackjack_get_seat_hand_card_id(t, s, 0, 0))
+				break;
+		}
+		if (s == SEAT_MAX) {
+
+			// Deal first card
+			for (s = 0; s < SEAT_MAX; ++s) {
+				if (!blackjack_get_seat_socket(t, s))
+					continue;
+				
+				blackjack_set_seat_hand_card_id(t, s, 0, 0, blackjack_deal_next_card_id(t));
+			}
+			
+			blackjack_set_table_dealer_card_id(t, 0, blackjack_deal_next_card_id(t));
+			
+			// Deal second card
+			for (s = 0; s < SEAT_MAX; ++s) {
+				if (!blackjack_get_seat_socket(t, s))
+					continue;
+				
+				blackjack_set_seat_hand_card_id(t, s, 0, 1, blackjack_deal_next_card_id(t));
+			}
+			
+			blackjack_set_table_dealer_card_id(t, 1, blackjack_deal_next_card_id(t));
 		}
 	}
 	
@@ -259,6 +312,7 @@ void server_init(void) {
 	command_add("sitt", &command_sitt);
 	command_add("quit", &command_quit);
 	periodic_add(&periodic_close);
+	periodic_add(&periodic_table_deal);
 	periodic_add(&periodic_table_update);
 	
 	// Initialize blackjack game

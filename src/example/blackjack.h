@@ -15,12 +15,15 @@
 // Function prototypes
 void blackjack_init(void);
 void blackjack_shuffle_table(int);
+int blackjack_deal_next_card_id(int);
 int blackjack_get_table_id(int);
 int blackjack_get_seat_id(int, int);
 int blackjack_get_seat_socket(int, int);
 int blackjack_get_seat_hand_card_id(int, int, int, int);
 int blackjack_get_dealer_card_id(int, int);
 void blackjack_set_seat_socket(int, int, int);
+void blackjack_set_seat_hand_card_id(int, int, int, int, int);
+void blackjack_set_table_dealer_card_id(int, int, int);
 
 // Declare the entire blackjack game structure
 struct card {
@@ -31,6 +34,7 @@ struct card {
 };
 
 struct hand {
+	int stay;
 	struct card cards[HAND_CARD_MAX];
 };
 
@@ -46,6 +50,8 @@ struct seat {
 
 struct table {
 	int id;
+	int dealDeckIndex;
+	int dealCardIndex;
 	struct seat seats[SEAT_MAX];
 	struct deck decks[DECK_MAX];
 	struct card dealerhand[HAND_CARD_MAX];
