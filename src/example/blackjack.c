@@ -173,11 +173,11 @@ int blackjack_get_seat_socket(int tableIndex, int seatIndex) {
 }
 
 int blackjack_get_seat_hand_card_id(int tableIndex, int seatIndex, int handIndex, int cardIndex) {
-	return myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].cards[cardIndex].id;
+	return myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].cards[cardIndex];
 }
 
 int blackjack_get_dealer_card_id(int tableIndex, int cardIndex) {
-	return myBlackjack.tables[tableIndex].dealerhand[cardIndex].id;
+	return myBlackjack.tables[tableIndex].dealerCards[cardIndex];
 }
 
 void blackjack_set_seat_socket(int tableIndex, int seatIndex, int socket) {
@@ -185,7 +185,7 @@ void blackjack_set_seat_socket(int tableIndex, int seatIndex, int socket) {
 }
 
 void blackjack_set_seat_hand_card_id(int tableIndex, int seatIndex, int handIndex, int cardIndex, int value) {
-	myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].cards[cardIndex].id = value;
+	myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].cards[cardIndex] = value;
 }
 
 void blackjack_set_seat_hand_stay(int tableIndex, int seatIndex, int handIndex, int value) {
@@ -193,5 +193,5 @@ void blackjack_set_seat_hand_stay(int tableIndex, int seatIndex, int handIndex, 
 }
 
 void blackjack_set_dealer_card_id(int tableIndex, int cardIndex, int cardId) {
-	myBlackjack.tables[tableIndex].dealerhand[cardIndex].id = cardId;
+	myBlackjack.tables[tableIndex].dealerCards[cardIndex] = cardId;
 }

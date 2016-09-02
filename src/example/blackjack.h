@@ -36,7 +36,7 @@ struct card {
 
 struct hand {
 	int stay;
-	struct card cards[HAND_CARD_MAX];
+	int cards[HAND_CARD_MAX];
 };
 
 struct deck {
@@ -55,7 +55,7 @@ struct table {
 	int dealCardIndex;
 	struct seat seats[SEAT_MAX];
 	struct deck decks[DECK_MAX];
-	struct card dealerhand[HAND_CARD_MAX];
+	int dealerCards[HAND_CARD_MAX];
 };
 
 struct blackjack {
