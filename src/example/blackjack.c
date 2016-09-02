@@ -75,6 +75,12 @@ void blackjack_init(void) {
 			for (h = 0; h < HAND_MAX; ++h)
 				for (c = 0; c < HAND_CARD_MAX; ++c)
 					blackjack_set_seat_hand_card_id(t, s, h, c, 0);
+	
+	// Initialize all player 'stay' state to zero
+	for (t = 0; t < TABLE_MAX; ++t)
+		for (s = 0; s < SEAT_MAX; ++s)
+			for (h = 0; h < HAND_MAX; ++h)
+				blackjack_set_seat_hand_stay(t, s, h, 0);
 
 	// Initalize all dealer cards to zero
 	for (t = 0; t < TABLE_MAX; ++t)
@@ -180,6 +186,10 @@ void blackjack_set_seat_socket(int tableIndex, int seatIndex, int socket) {
 
 void blackjack_set_seat_hand_card_id(int tableIndex, int seatIndex, int handIndex, int cardIndex, int value) {
 	myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].cards[cardIndex].id = value;
+}
+
+void blackjack_set_seat_hand_stay(int tableIndex, int seatIndex, int handIndex, int value) {
+	myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].stay = value;
 }
 
 void blackjack_set_dealer_card_id(int tableIndex, int cardIndex, int cardId) {

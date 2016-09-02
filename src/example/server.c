@@ -209,6 +209,8 @@ PERIODIC_RETURN periodic_table_deal(PERIODIC_ARGS) {
 			}
 			
 			blackjack_set_dealer_card_id(t, 1, blackjack_deal_next_card_id(t));
+			
+			continue;
 		}
 	}
 	
