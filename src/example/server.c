@@ -87,7 +87,7 @@ COMMAND_RETURN command_join(COMMAND_ARGS) {
 }
 
 COMMAND_RETURN command_sitt(COMMAND_ARGS) {
-	int t, s, h, c;
+	int t, s;
 	int tc, sc;
 	
 	(void)socket;
@@ -127,12 +127,6 @@ COMMAND_RETURN command_sitt(COMMAND_ARGS) {
 	
 	// Set seat socket to occupy the seat
 	blackjack_set_seat_socket(t, s, socket);
-	for (h = 0; h < HAND_MAX; ++h) {
-		for (c = 0; c < HAND_CARD_MAX; ++c) {
-			blackjack_set_seat_hand_card_id(t, s, h, c, 0);
-		}
-	}
-	// TODO - empty all hand and card data
 	
 	return 0;
 }

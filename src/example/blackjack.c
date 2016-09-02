@@ -50,24 +50,31 @@ static struct deck masterDeck = {
 // Game functions
 
 void blackjack_init(void) {
-	int i, s;
+	int t, s, h, c;
 	
 	// Initialize tables
-	for (i = 0; i < TABLE_MAX; ++i) {
+	for (t = 0; t < TABLE_MAX; ++t) {
 		
 		// Assign table id
-		myBlackjack.tables[i].id = i+1;
+		myBlackjack.tables[t].id = t+1;
 		
 		// Assign seat ids and set socket asignments to zero
 		for (s = 0; s < SEAT_MAX; ++s) {
-			myBlackjack.tables[i].seats[s].id = s+1;
-			myBlackjack.tables[i].seats[s].socket = 0;
+			myBlackjack.tables[t].seats[s].id = s+1;
+			myBlackjack.tables[t].seats[s].socket = 0;
 		}
 		
 		// Shuffling cards
-		blackjack_shuffle_table(i);
+		blackjack_shuffle_table(t);
 
 	}
+	
+	// Initialize all player cards to zero (empty)
+	for (t = 0; t < TABLE_MAX; ++t)
+		for (s = 0; s < SEAT_MAX; ++s)
+			for (h = 0; h < HAND_MAX; ++h)
+				for (c = 0; c < HAND_CARD_MAX; ++c)
+					blackjack_set_seat_hand_card_id(t, s, h, c, 0);
 }
 
 void blackjack_shuffle_table(int tableIndex) {
