@@ -194,6 +194,19 @@ int blackjack_deal_next_card_id(int tableIndex) {
 	return r;
 }
 
+char *blackjack_get_card_display(int cardId, char *display) {
+	int c;
+
+	for (c = 0; c < DECK_CARD_MAX; ++c) {
+		if (masterDeck[c].id == cardId) {
+			strcpy(display, masterDeck[c].display);
+			break;
+		}
+	}
+
+	return display;
+}
+
 int blackjack_get_table_id(int tableIndex) {
 	return myBlackjack.tables[tableIndex].id;
 }

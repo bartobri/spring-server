@@ -12,6 +12,8 @@
 void blackjack_init(void);
 void blackjack_shuffle_table(int);
 int blackjack_deal_next_card_id(int);
+char *blackjack_get_card_display(int, char *);
+
 int blackjack_get_table_id(int);
 int blackjack_get_seat_id(int, int);
 int blackjack_get_seat_socket(int, int);

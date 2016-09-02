@@ -15,6 +15,7 @@
 #include "config.h"
 
 int payload_next_int(char **, int);
+char *payload_next_string(char **, int, char *);
 int get_user_int(void);
 
 COMMAND_RETURN command_helo(COMMAND_ARGS) {
@@ -181,8 +182,10 @@ COMMAND_RETURN command_tbst(COMMAND_ARGS) {
 	
 	printf("Dealer\n\t");
 	for (d = 0; d < numCards; ++d) {
-		int cardId = payload_next_int(&payload, sfw);
-		printf("%i ", cardId);
+		char *display = malloc(sfw + 1);
+		payload_next_string(&payload, sfw, display);
+		printf("%s", display);
+		free(display);
 	}
 	printf("\n\n");
 	
@@ -194,8 +197,10 @@ COMMAND_RETURN command_tbst(COMMAND_ARGS) {
 			int handNum = payload_next_int(&payload, sfw);
 			printf("\t%i: ", handNum);
 			for (c = 0; c < numCards; ++c) {
-				int cardId = payload_next_int(&payload, sfw);
-				printf("%i ", cardId);
+				char *display = malloc(sfw + 1);
+				payload_next_string(&payload, sfw, display);
+				printf("%s", display);
+				free(display);
 			}
 			printf("\n");
 		}
@@ -232,6 +237,18 @@ int payload_next_int(char **payload, int len) {
 			r += (*(*payload)++ - '0') * pow(10, len);
 	
 	return r;
+}
+
+char *payload_next_string(char **payload, int len, char *string) {
+	int i;
+	
+	for (i = 0; i < len; ++i) {
+		string[i] = *(*payload)++;
+	}
+
+	string[i] = '\0';
+
+	return string;
 }
 
 int get_user_int(void) {

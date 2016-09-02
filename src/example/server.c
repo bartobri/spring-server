@@ -255,10 +255,15 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 		// TODO - Don't show dealer's second card until it is the dealer's turn.
 		for (c = 0; c < HAND_CARD_MAX; ++c) {
 			int cid = blackjack_get_dealer_card_id(t, c);
-			sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, cid);
+			char *display = malloc(SFW + 1);
+			memset(display, 0, SFW + 1);
+			if (cid)
+				blackjack_get_card_display(cid, display);
+			sprintf(serialized_data + strlen(serialized_data), "%*s", SFW, display);
+			free(display);
 		}
 		
-		// TODO - seat ID of current turn
+		// TODO - seat ID of current turn 
 		
 		for (s = 0; s < SEAT_MAX; ++s) {
 			
@@ -279,12 +284,17 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 				
 				for (c = 0; c < HAND_CARD_MAX; ++c) {
 					int cid = blackjack_get_seat_hand_card_id(t, s, h, c);
-					sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, cid);
+					char *display = malloc(SFW + 1);
+					memset(display, 0, SFW + 1);
+					if (cid)
+						blackjack_get_card_display(cid, display);
+					sprintf(serialized_data + strlen(serialized_data), "%*s", SFW, display);
+					free(display);
 				}
 			}
 		}
 		
-		//printf("%s\n\n", serialized_data);
+		//printf("table %i - %s\n\n", t, serialized_data);
 		
 		// Loop over seats again
 		for (s = 0; s < SEAT_MAX; ++s) {
