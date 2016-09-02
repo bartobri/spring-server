@@ -14,8 +14,6 @@
 #include "modules/mainsocket.h"
 #include "config.h"
 
-// #include "example/blackjack_shared.h"
-
 int payload_next_int(char **, int);
 int get_user_int(void);
 

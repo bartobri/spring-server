@@ -7,9 +7,15 @@
 #include <stdlib.h>
 #include <time.h>
 #include "example/blackjack_server.h"
-#include "example/blackjack_shared.h"
 
 // Declare blackjack game structure for server
+struct card {
+	int id;
+	int highValue;
+	int lowValue;
+	char *display;
+};
+
 struct hand {
 	int stay;
 	int cards[HAND_CARD_MAX];
@@ -40,6 +46,40 @@ struct blackjack {
 
 // Define static structures
 static struct blackjack myBlackjack;
+static struct card masterDeck[DECK_CARD_MAX] = {
+	{ 1, 7,  7,  "7-H" },
+	{ 2, 8,  8,  "8-H" },
+	{ 3, 9,  9,  "9-H" },
+	{ 4, 10, 10, "10-H" },
+	{ 5, 10, 10, "J-H" },
+	{ 6, 10, 10, "Q-H" },
+	{ 7, 10, 10, "K-H" },
+	{ 8, 11, 1,  "A-H" },
+	{ 9, 7,  7,  "7-D" },
+	{ 10, 8,  8,  "8-D" },
+	{ 11, 9,  9,  "9-D" },
+	{ 12, 10, 10, "10-D" },
+	{ 13, 10, 10, "J-D" },
+	{ 14, 10, 10, "Q-D" },
+	{ 15, 10, 10, "K-D" },
+	{ 16, 11, 1,  "A-D" },
+	{ 17, 7,  7,  "7-C" },
+	{ 18, 8,  8,  "8-C" },
+	{ 19, 9,  9,  "9-C" },
+	{ 20, 10, 10, "10-C" },
+	{ 21, 10, 10, "J-C" },
+	{ 22, 10, 10, "Q-C" },
+	{ 23, 10, 10, "K-C" },
+	{ 24, 11, 1,  "A-C" },
+	{ 25, 7,  7,  "7-S" },
+	{ 26, 8,  8,  "8-S" },
+	{ 27, 9,  9,  "9-S" },
+	{ 28, 10, 10, "10-S" },
+	{ 29, 10, 10, "J-S" },
+	{ 30, 10, 10, "Q-S" },
+	{ 31, 10, 10, "K-S" },
+	{ 32, 11, 1,  "A-S" },
+};
 
 // Game functions
 
@@ -68,18 +108,18 @@ void blackjack_init(void) {
 		for (s = 0; s < SEAT_MAX; ++s)
 			for (h = 0; h < HAND_MAX; ++h)
 				for (c = 0; c < HAND_CARD_MAX; ++c)
-					blackjack_set_seat_hand_card_id(t, s, h, c, 0);
+					myBlackjack.tables[t].seats[s].hands[h].cards[c] = 0;
 	
 	// Initialize all player 'stay' state to zero
 	for (t = 0; t < TABLE_MAX; ++t)
 		for (s = 0; s < SEAT_MAX; ++s)
 			for (h = 0; h < HAND_MAX; ++h)
-				blackjack_set_seat_hand_stay(t, s, h, 0);
+				myBlackjack.tables[t].seats[s].hands[h].stay = 0;
 
 	// Initalize all dealer cards to zero
 	for (t = 0; t < TABLE_MAX; ++t)
 		for (c = 0; c < HAND_CARD_MAX; ++c)
-			blackjack_set_dealer_card_id(t, c, 0);
+			myBlackjack.tables[t].dealerCards[c] = 0;
 }
 
 void blackjack_shuffle_table(int tableIndex) {

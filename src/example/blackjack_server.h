@@ -1,6 +1,7 @@
 #ifndef BLACKJACK_SERVER_H
 #define BLACKJACK_SERVER_H 1
 
+#define DECK_CARD_MAX  32
 #define HAND_CARD_MAX  7
 #define HAND_MAX       4
 #define DECK_MAX       6
