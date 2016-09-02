@@ -75,6 +75,11 @@ void blackjack_init(void) {
 			for (h = 0; h < HAND_MAX; ++h)
 				for (c = 0; c < HAND_CARD_MAX; ++c)
 					blackjack_set_seat_hand_card_id(t, s, h, c, 0);
+
+	// Initalize all dealer cards to zero
+	for (t = 0; t < TABLE_MAX; ++t)
+		for (c = 0; c < HAND_CARD_MAX; ++c)
+			blackjack_set_dealer_card_id(t, c, 0);
 }
 
 void blackjack_shuffle_table(int tableIndex) {
@@ -177,6 +182,6 @@ void blackjack_set_seat_hand_card_id(int tableIndex, int seatIndex, int handInde
 	myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].cards[cardIndex].id = value;
 }
 
-void blackjack_set_table_dealer_card_id(int tableIndex, int cardIndex, int cardId) {
+void blackjack_set_dealer_card_id(int tableIndex, int cardIndex, int cardId) {
 	myBlackjack.tables[tableIndex].dealerhand[cardIndex].id = cardId;
 }

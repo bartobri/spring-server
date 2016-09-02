@@ -198,7 +198,7 @@ PERIODIC_RETURN periodic_table_deal(PERIODIC_ARGS) {
 				blackjack_set_seat_hand_card_id(t, s, 0, 0, blackjack_deal_next_card_id(t));
 			}
 			
-			blackjack_set_table_dealer_card_id(t, 0, blackjack_deal_next_card_id(t));
+			blackjack_set_dealer_card_id(t, 0, blackjack_deal_next_card_id(t));
 			
 			// Deal second card
 			for (s = 0; s < SEAT_MAX; ++s) {
@@ -208,7 +208,7 @@ PERIODIC_RETURN periodic_table_deal(PERIODIC_ARGS) {
 				blackjack_set_seat_hand_card_id(t, s, 0, 1, blackjack_deal_next_card_id(t));
 			}
 			
-			blackjack_set_table_dealer_card_id(t, 1, blackjack_deal_next_card_id(t));
+			blackjack_set_dealer_card_id(t, 1, blackjack_deal_next_card_id(t));
 		}
 	}
 	
