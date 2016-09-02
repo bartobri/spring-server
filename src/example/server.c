@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <time.h>
 #include <string.h>
 #include <math.h>
@@ -16,7 +17,7 @@
 #include "modules/mainsocket.h"
 #include "config.h"
 
-#include "example/blackjack.h"
+#include "example/blackjack_server.h"
 
 // serialized field width (must be single digit)
 #define SFW 5

@@ -6,46 +6,40 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include "example/blackjack.h"
+#include "example/blackjack_server.h"
+#include "example/blackjack_shared.h"
+
+// Declare blackjack game structure for server
+struct hand {
+	int stay;
+	int cards[HAND_CARD_MAX];
+};
+
+struct deck {
+	struct card cards[DECK_CARD_MAX];
+};
+
+struct seat {
+	int id;
+	int socket;
+	struct hand hands[HAND_MAX];
+};
+
+struct table {
+	int id;
+	int dealDeckIndex;
+	int dealCardIndex;
+	struct seat seats[SEAT_MAX];
+	struct deck decks[DECK_MAX];
+	int dealerCards[HAND_CARD_MAX];
+};
+
+struct blackjack {
+	struct table tables[TABLE_MAX];
+};
 
 // Define static structures
 static struct blackjack myBlackjack;
-static struct deck masterDeck = {
-	{
-		{ 1, 7,  7,  "7-H" },
-		{ 2, 8,  8,  "8-H" },
-		{ 3, 9,  9,  "9-H" },
-		{ 4, 10, 10, "10-H" },
-		{ 5, 10, 10, "J-H" },
-		{ 6, 10, 10, "Q-H" },
-		{ 7, 10, 10, "K-H" },
-		{ 8, 11, 1,  "A-H" },
-		{ 9, 7,  7,  "7-D" },
-		{ 10, 8,  8,  "8-D" },
-		{ 11, 9,  9,  "9-D" },
-		{ 12, 10, 10, "10-D" },
-		{ 13, 10, 10, "J-D" },
-		{ 14, 10, 10, "Q-D" },
-		{ 15, 10, 10, "K-D" },
-		{ 16, 11, 1,  "A-D" },
-		{ 17, 7,  7,  "7-C" },
-		{ 18, 8,  8,  "8-C" },
-		{ 19, 9,  9,  "9-C" },
-		{ 20, 10, 10, "10-C" },
-		{ 21, 10, 10, "J-C" },
-		{ 22, 10, 10, "Q-C" },
-		{ 23, 10, 10, "K-C" },
-		{ 24, 11, 1,  "A-C" },
-		{ 25, 7,  7,  "7-S" },
-		{ 26, 8,  8,  "8-S" },
-		{ 27, 9,  9,  "9-S" },
-		{ 28, 10, 10, "10-S" },
-		{ 29, 10, 10, "J-S" },
-		{ 30, 10, 10, "Q-S" },
-		{ 31, 10, 10, "K-S" },
-		{ 32, 11, 1,  "A-S" },
-	}
-};
 
 // Game functions
 
@@ -110,7 +104,7 @@ void blackjack_shuffle_table(int tableIndex) {
 			while (1) {
 				
 				// Get random card from master deck
-				n = masterDeck.cards[r];
+				n = masterDeck[r];
 			
 				// Check if we already have this card by looking at all
 				// the previous assigned cards and comparing the id member
