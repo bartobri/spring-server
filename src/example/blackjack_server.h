@@ -19,6 +19,8 @@ int blackjack_get_seat_id(int, int);
 int blackjack_get_seat_socket(int, int);
 int blackjack_get_seat_hand_card_id(int, int, int, int);
 int blackjack_get_dealer_card_id(int, int);
+int blackjack_get_card_highvalue(int);
+int blackjack_get_card_lowvalue(int);
 void blackjack_set_seat_socket(int, int, int);
 void blackjack_set_seat_hand_card_id(int, int, int, int, int);
 void blackjack_set_seat_hand_stay(int, int, int, int);

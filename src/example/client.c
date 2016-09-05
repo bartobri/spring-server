@@ -196,12 +196,16 @@ COMMAND_RETURN command_tbst(COMMAND_ARGS) {
 		for (h = 0; h < numHands; ++h) {
 			int handNum = payload_next_int(&payload, sfw);
 			printf("\t%i: ", handNum);
+			int hv = payload_next_int(&payload, sfw);
+			int lv = payload_next_int(&payload, sfw);
 			for (c = 0; c < numCards; ++c) {
 				char *display = malloc(sfw + 1);
 				payload_next_string(&payload, sfw, display);
 				printf("%s", display);
 				free(display);
 			}
+			if (hv && lv)
+				printf("High: %i, low: %i", hv, lv);
 			printf("\n");
 		}
 		printf("\n");

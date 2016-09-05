@@ -227,6 +227,24 @@ int blackjack_get_dealer_card_id(int tableIndex, int cardIndex) {
 	return myBlackjack.tables[tableIndex].dealerCards[cardIndex];
 }
 
+int blackjack_get_card_highvalue(int cardId) {
+	int i;
+	for (i = 0; i < DECK_CARD_MAX; ++i)
+		if (masterDeck[i].id == cardId)
+			return masterDeck[i].highValue;
+
+	return 0;
+}
+
+int blackjack_get_card_lowvalue(int cardId) {
+	int i;
+	for (i = 0; i < DECK_CARD_MAX; ++i)
+		if (masterDeck[i].id == cardId)
+			return masterDeck[i].lowValue;
+
+	return 0;
+}
+
 void blackjack_set_seat_socket(int tableIndex, int seatIndex, int socket) {
 	myBlackjack.tables[tableIndex].seats[seatIndex].socket = socket;
 }

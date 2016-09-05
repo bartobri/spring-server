@@ -227,7 +227,7 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 	// that is called when a table status is changed from player input.
 	// Only update that specific table.
 	
-	serialized_data = malloc(COMMAND_SIZE + 1 + SFW + SFW + SFW + (HAND_CARD_MAX * SFW) + (SEAT_MAX * SFW * 2) + (HAND_MAX * SEAT_MAX * SFW) + (HAND_CARD_MAX * HAND_MAX * SEAT_MAX * SFW) + 1);
+	serialized_data = malloc(COMMAND_SIZE + 1 + SFW + SFW + SFW + (HAND_CARD_MAX * SFW) + (SEAT_MAX * SFW * 2) + (HAND_MAX * SEAT_MAX * SFW * 3) + (HAND_CARD_MAX * HAND_MAX * SEAT_MAX * SFW) + 1);
 	
 	// Write command
 	sprintf(serialized_data, "tbst");
@@ -281,6 +281,18 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 			for (h = 0; h < HAND_MAX; ++h) {
 				
 				sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, h + 1);
+				
+				int highTotal = 0;
+				int lowTotal = 0;
+				for (c = 0; c < HAND_CARD_MAX; ++c) {
+					int cid = blackjack_get_seat_hand_card_id(t, s, h, c);
+					if (cid) {
+						highTotal += blackjack_get_card_highvalue(cid);
+						lowTotal += blackjack_get_card_lowvalue(cid);
+					}
+				}
+				sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, highTotal);
+				sprintf(serialized_data + strlen(serialized_data), "%.*i", SFW, lowTotal);
 				
 				for (c = 0; c < HAND_CARD_MAX; ++c) {
 					int cid = blackjack_get_seat_hand_card_id(t, s, h, c);
