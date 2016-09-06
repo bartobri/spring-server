@@ -195,7 +195,8 @@ COMMAND_RETURN command_tbst(COMMAND_ARGS) {
 		printf("Seat %i (%s)\n", seatId, occ ? "occupied" : "unoccupied");
 		for (h = 0; h < numHands; ++h) {
 			int handNum = payload_next_int(&payload, sfw);
-			printf("\t%i: ", handNum);
+			int waiting = payload_next_int(&payload, sfw);
+			printf("  %s %i: ", waiting ? ">" : " ", handNum);
 			int hv = payload_next_int(&payload, sfw);
 			int lv = payload_next_int(&payload, sfw);
 			for (c = 0; c < numCards; ++c) {
