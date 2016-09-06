@@ -237,6 +237,8 @@ PERIODIC_RETURN periodic_table_deal(PERIODIC_ARGS) {
 					// prompt player
 					network_write(blackjack_get_seat_socket(t, s), "shsd");
 					blackjack_set_seat_hand_waiting(t, s, h, 1);
+					waiting = 1;
+					break;
 				}
 			}
 			
