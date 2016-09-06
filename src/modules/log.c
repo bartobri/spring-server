@@ -35,18 +35,12 @@ int log_open_client(void) {
 
 int log_open(int logType) {
 	int i;
-	char *homeDir                  = getenv("HOME");
+	char *homeDir;
 	char *logFilePath              = LOG_FILE_PATH;
 	char *logFileName;
 	char *logFilePathName;
 	char *logFileFullPathName;
 	struct stat sb;
-	
-	// Die if we don't have a home directory
-	if (homeDir == NULL) {
-		sprintf(errmsg, "Unable to read HOME environmental variable.");
-		return -1;
-	}
 	
 	// Do we use server of client log name?
 	if (logType == SERVER) {
@@ -61,9 +55,22 @@ int log_open(int logType) {
 	logFilePathName = malloc(strlen(logFilePath) + strlen(logFileName) + 1);
 	sprintf(logFilePathName, "%s%s", logFilePath, logFileName);
 	
-	// Build full log file path
-	logFileFullPathName = malloc(strlen(logFilePathName) + strlen(homeDir) + 2);
-	sprintf(logFileFullPathName, "%s/%s", homeDir, logFilePathName);
+	// Do we have a full path or relative path?
+	// If relative, use home dir as base to make full path.
+	if (logFilePathName[0] == '/') {
+		logFileFullPathName = logFilePathName;
+	} else {
+		// Die if we don't have a home directory
+		homeDir = getenv("HOME");
+		if (homeDir == NULL) {
+			sprintf(errmsg, "Unable to read HOME environmental variable.");
+			return -1;
+		}
+
+		// Build full log file path
+		logFileFullPathName = malloc(strlen(logFilePathName) + strlen(homeDir) + 2);
+		sprintf(logFileFullPathName, "%s/%s", homeDir, logFilePathName);
+	}
 	
 	// Open log file, auto-create or die if can't open, die if can't auto-create.
 	if ((logFile = fopen(logFileFullPathName, "a")) == NULL) {
