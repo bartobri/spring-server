@@ -338,10 +338,17 @@ PERIODIC_RETURN periodic_table_update(PERIODIC_ARGS) {
 		
 		//printf("table %i - %s\n\n", t, serialized_data);
 		
-		// Loop over seats again
+		// Loop over seats again. Send update to players who we are not waiting on.
 		for (s = 0; s < SEAT_MAX; ++s) {
 			if ((socket = blackjack_get_seat_socket(t, s)) > 0) {
-				network_write(socket, serialized_data);
+				int waiting = 0;
+				for (h = 0; h < HAND_MAX; ++h) {
+					if (!blackjack_get_seat_hand_card_id(t, s, h, 0))
+						break;
+					waiting += blackjack_get_seat_hand_waiting(t, s, h);
+				}
+				if (!waiting)
+					network_write(socket, serialized_data);
 			}
 		}
 	}
