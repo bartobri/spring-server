@@ -54,19 +54,7 @@ COMMAND_RETURN command_beat(COMMAND_ARGS) {
 }
 
 PERIODIC_RETURN periodic(PERIODIC_ARGS) {
-	int i;
-	
-	// Check time for all sockets and close unresponsive ones
-	while ((i = socketlist_get_next()) > 0) {
-		if (i == mainsocket_get())
-			continue;
-
-		// Close socket if idle time elapsed
-		if (sockettime_elapsed(i)) {
-			close(i);
-			socketlist_remove(i);
-		}
-	}
+	// Periodic code here.
 	
 	return 0;
 }

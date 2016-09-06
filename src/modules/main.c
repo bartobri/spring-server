@@ -181,6 +181,18 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		
+		// Close all sockets whos idle time elapsed (server only)
+		while (IS_SERVER && (i = socketlist_get_next()) > 0) {
+			if (i == mainsocket_get())
+				continue;
+			if (sockettime_elapsed(i)) {
+				close(i);
+				socketlist_remove(i);
+				if (disconnectfunction_exists())
+					disconnectfunction_exec(i);
+			}
+		}
+		
 		// Run periodic function if time elapsed
 		if (nextperiodic_elapsed()) {
 			periodic_exec();
