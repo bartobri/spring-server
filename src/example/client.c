@@ -216,6 +216,15 @@ COMMAND_RETURN command_tbst(COMMAND_ARGS) {
 	return 0;
 }
 
+COMMAND_RETURN command_shsd(COMMAND_ARGS) {
+	(void)socket;
+	(void)payload;
+	
+	printf("Stay, hit, split, double\n");
+	
+	return 0;
+}
+
 PERIODIC_RETURN send_heartbeat(PERIODIC_ARGS) {
 	int r;
 
@@ -230,6 +239,7 @@ void client_init(void) {
 	command_add("aval", &command_aval);
 	command_add("sitt", &command_sitt);
 	command_add("tbst", &command_tbst);
+	command_add("shsd", &command_shsd);
 	periodic_add(&send_heartbeat);
 }
 

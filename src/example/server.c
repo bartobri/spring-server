@@ -170,7 +170,7 @@ PERIODIC_RETURN periodic_close(PERIODIC_ARGS) {
 }
 
 PERIODIC_RETURN periodic_table_deal(PERIODIC_ARGS) {
-	int t, s;
+	int t, s, h;
 	
 	for (t = 0; t < TABLE_MAX; ++t) {
 		
@@ -212,6 +212,36 @@ PERIODIC_RETURN periodic_table_deal(PERIODIC_ARGS) {
 			blackjack_set_dealer_card_id(t, 1, blackjack_deal_next_card_id(t));
 			
 			continue;
+		}
+		
+		// Players have all been dealt 2 cards. Check each seat/hand for
+		// non-stay && non-waiting status
+		for (s = 0; s < SEAT_MAX; ++s) {
+			if (!blackjack_get_seat_socket(t, s))
+				continue;
+			if (!blackjack_get_seat_hand_card_id(t, s, 0, 0))
+				continue;
+			
+			int waiting;
+	
+			for (h = 0; h < HAND_MAX; ++h) {
+				if (!blackjack_get_seat_hand_card_id(t, s, h, 0))
+					break;
+				int stay = blackjack_get_seat_hand_stay(t, s, h);
+				waiting = blackjack_get_seat_hand_waiting(t, s, h);
+				if (stay)
+					continue;
+				else if (waiting)
+					break;
+				else {
+					// prompt player
+					network_write(blackjack_get_seat_socket(t, s), "shsd");
+					blackjack_set_seat_hand_waiting(t, s, h, 1);
+				}
+			}
+			
+			if (waiting)
+				break;
 		}
 	}
 	

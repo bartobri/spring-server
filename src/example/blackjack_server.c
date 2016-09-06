@@ -230,6 +230,14 @@ int blackjack_get_seat_hand_card_id(int tableIndex, int seatIndex, int handIndex
 	return myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].cards[cardIndex];
 }
 
+int blackjack_get_seat_hand_stay(int tableIndex, int seatIndex, int handIndex) {
+	return myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].stay;
+}
+
+int blackjack_get_seat_hand_waiting(int tableIndex, int seatIndex, int handIndex) {
+	return myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].waiting;
+}
+
 int blackjack_get_dealer_card_id(int tableIndex, int cardIndex) {
 	return myBlackjack.tables[tableIndex].dealerCards[cardIndex];
 }
@@ -262,6 +270,10 @@ void blackjack_set_seat_hand_card_id(int tableIndex, int seatIndex, int handInde
 
 void blackjack_set_seat_hand_stay(int tableIndex, int seatIndex, int handIndex, int value) {
 	myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].stay = value;
+}
+
+void blackjack_set_seat_hand_waiting(int tableIndex, int seatIndex, int handIndex, int value) {
+	myBlackjack.tables[tableIndex].seats[seatIndex].hands[handIndex].waiting = value;
 }
 
 void blackjack_set_dealer_card_id(int tableIndex, int cardIndex, int cardId) {
