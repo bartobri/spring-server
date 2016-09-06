@@ -8,13 +8,23 @@
 #include <time.h>
 #include "modules/periodic.h"
 #include "modules/command.h"
+#include "modules/connectfunction.h"
 #include "modules/socketlist.h"
 #include "modules/sockettime.h"
 #include "modules/mainsocket.h"
+#include "modules/network.h"
 
 /*
  * Define functions here
  */
+CONNECTFUNCTION_RETURN send_greeting(CONNECTFUNCTION_ARGS) {
+	(void)socket;
+	
+	network_write(socket, "helo");
+	
+	return 0;
+}
+ 
 COMMAND_RETURN command_quit(COMMAND_ARGS) {
 	
 	// Suppress "unused parameter" warning for payload
@@ -55,6 +65,7 @@ PERIODIC_RETURN periodic(PERIODIC_ARGS) {
  * Load functions here
  */
 void server_init(void) {
+	connectfunction_set(&send_greeting);
 	command_add("beat", &command_beat);
 	command_add("quit", &command_quit);
 	periodic_add(&periodic);

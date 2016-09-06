@@ -13,6 +13,7 @@
 #include "modules/network.h"
 #include "modules/periodic.h"
 #include "modules/command.h"
+#include "modules/connectfunction.h"
 #include "modules/socketlist.h"
 #include "modules/readlist.h"
 #include "modules/sockettime.h"
@@ -137,9 +138,8 @@ int main(int argc, char *argv[]) {
 				
 				log_write("New client connected. Assigned socket %i.", newsockfd);
 				
-				// Send greeting
-				// TODO - make "greeting" command programable like the others.
-				network_write(newsockfd, "helo");
+				if (connectfunction_exists())
+					connectfunction_exec(newsockfd);
 			}
 
 			while ((i = readlist_get_next()) > 0) {
