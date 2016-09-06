@@ -9,6 +9,7 @@
 #include "modules/periodic.h"
 #include "modules/command.h"
 #include "modules/connectfunction.h"
+#include "modules/disconnectfunction.h"
 #include "modules/socketlist.h"
 #include "modules/sockettime.h"
 #include "modules/mainsocket.h"
@@ -21,6 +22,15 @@ CONNECTFUNCTION_RETURN send_greeting(CONNECTFUNCTION_ARGS) {
 	(void)socket;
 	
 	network_write(socket, "helo");
+	
+	return 0;
+}
+
+DISCONNECTFUNCTION_RETURN client_disconnect(DISCONNECTFUNCTION_ARGS) {
+	(void)socket;
+	
+	// custom code that runs when a client disconnects
+	printf("Socket %i disconnected\n", socket);
 	
 	return 0;
 }
@@ -69,4 +79,5 @@ void server_init(void) {
 	command_add("beat", &command_beat);
 	command_add("quit", &command_quit);
 	periodic_add(&periodic);
+	disconnectfunction_set(&client_disconnect);
 }

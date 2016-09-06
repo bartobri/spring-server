@@ -14,6 +14,7 @@
 #include "modules/periodic.h"
 #include "modules/command.h"
 #include "modules/connectfunction.h"
+#include "modules/disconnectfunction.h"
 #include "modules/socketlist.h"
 #include "modules/readlist.h"
 #include "modules/sockettime.h"
@@ -160,6 +161,9 @@ int main(int argc, char *argv[]) {
 					} else {
 						main_shutdown("Server terminated connection.");
 					}
+					
+					if (disconnectfunction_exists())
+						disconnectfunction_exec(i);
 					
 					continue;
 				}
