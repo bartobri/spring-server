@@ -18,6 +18,7 @@ struct card {
 
 struct hand {
 	int stay;
+	int waiting;
 	int cards[HAND_CARD_MAX];
 };
 
@@ -115,6 +116,12 @@ void blackjack_init(void) {
 		for (s = 0; s < SEAT_MAX; ++s)
 			for (h = 0; h < HAND_MAX; ++h)
 				myBlackjack.tables[t].seats[s].hands[h].stay = 0;
+	
+	// Initialize all player 'waiting' state to zero
+	for (t = 0; t < TABLE_MAX; ++t)
+		for (s = 0; s < SEAT_MAX; ++s)
+			for (h = 0; h < HAND_MAX; ++h)
+				myBlackjack.tables[t].seats[s].hands[h].waiting = 0;
 
 	// Initalize all dealer cards to zero
 	for (t = 0; t < TABLE_MAX; ++t)
