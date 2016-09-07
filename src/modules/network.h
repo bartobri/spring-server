@@ -6,7 +6,7 @@ int network_start_server(char *, char *);
 int network_start_client(char *, char *);
 int network_accept(int);
 int network_read(int);
-char *network_get_readdata(void);
+char *network_get_readdata(int);
 int network_write(int, char *);
 char *network_get_errmsg(void);
 

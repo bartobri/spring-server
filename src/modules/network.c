@@ -14,15 +14,19 @@
 #include "modules/network.h"
 #include "config.h"
 
-#define ERRMSG_SIZE  100
+#define ERRMSG_SIZE       100
 
 // Static Variables
 static char errmsg[ERRMSG_SIZE];
-static char buffer[PAYLOAD_SIZE + COMMAND_SIZE + 1];
+static char inputqueue[INPUT_QUEUE_SIZE][COMMAND_SIZE + PAYLOAD_SIZE + 1];
 
 void network_init(void) {
+	int i;
+
 	memset(errmsg, 0, ERRMSG_SIZE);
-	memset(buffer, 0, PAYLOAD_SIZE + COMMAND_SIZE + 1);
+
+	for (i = 0; i < INPUT_QUEUE_SIZE; i++)
+		memset(inputqueue[i], 0, COMMAND_SIZE + PAYLOAD_SIZE + 1);
 }
 
 int network_start_server(char *hostname, char *portno) {
@@ -124,25 +128,67 @@ int network_accept(int socket) {
 }
 
 int network_read(int socket) {
-	int r;
-	
-	// Reset the buffer with all integer zeros ('\0')
-	memset(buffer, 0, PAYLOAD_SIZE + COMMAND_SIZE + 1);
+	int r, i;
+	unsigned int len;
+	int q = 0;
+	char *buffer, *bufferStart;
 
-	// Read from socket
-	r = read(socket, buffer, PAYLOAD_SIZE + COMMAND_SIZE + 1);
+	// Assign buffer size
+	buffer = malloc(2000);
+	
+	// Set the buffer and input queue with all integer zeros ('\0')
+	memset(buffer, 0, 2000);
+	for (i = 0; i < INPUT_QUEUE_SIZE; i++)
+		memset(inputqueue[i], 0, COMMAND_SIZE + PAYLOAD_SIZE + 1);
+	
+	// Store pointer to start of buffer so we can free it later
+	bufferStart = buffer;
+
+	// Read from socket in to buffer
+	r = read(socket, buffer, 2000);
+	
+	if (r > 0) {
+		while (*buffer != '\0') {
+			len = 0;
+			while (*buffer >= '0' && *buffer <= '9')
+				len = (len * 10) + *buffer++ - '0';
+			
+			if (len > 0 && *buffer == '\n' && strlen(++buffer) >= len)
+				if (len <= COMMAND_SIZE + PAYLOAD_SIZE)
+					strncpy(inputqueue[q++], buffer, len);
+				else
+					strncpy(inputqueue[q++], buffer, COMMAND_SIZE + PAYLOAD_SIZE);
+			else
+				break;
+
+			buffer += len;
+		}
+	}
+	
+	free(bufferStart);
 	
 	return r;
 }
 
-char *network_get_readdata(void) {
-	return buffer;
+char *network_get_readdata(int r) {
+	return inputqueue[r];
 }
 
 int network_write(int socket, char *data) {
-	int r;
+	int r, l;
+	char *lstr;
+	
+	l = strlen(data);
+	
+	lstr = malloc(20);
+	sprintf(lstr, "%i\n", l);
+	
+	r = write(socket, lstr, strlen(lstr));
 
-	r = write(socket, data, strlen(data));
+	if (r > 0)
+		r = write(socket, data, l);
+	
+	free(lstr);
 
 	return r;
 }

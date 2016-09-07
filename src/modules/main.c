@@ -39,7 +39,7 @@ void main_shutdown(const char *);
  *
  */
 int main(int argc, char *argv[]) {
-	int o, r, i;
+	int o, r, s, i;
 	int mainsockfd, newsockfd;
 	char *hostname, *portno;
 	
@@ -114,8 +114,8 @@ int main(int argc, char *argv[]) {
 		
 		readlist_init();
 
-		while ((i = socketlist_get_next()) > 0)
-			readlist_add(i);
+		while ((s = socketlist_get_next()) > 0)
+			readlist_add(s);
 		
 		r = readlist_wait();
 		
@@ -143,11 +143,11 @@ int main(int argc, char *argv[]) {
 					connectfunction_exec(newsockfd);
 			}
 
-			while ((i = readlist_get_next()) > 0) {
+			while ((s = readlist_get_next()) > 0) {
 				
-				log_write("Reading data from socket %i.", i);
+				log_write("Reading data from socket %i.", s);
 
-				r = network_read(i);
+				r = network_read(s);
 				
 				if (r < 0)
 					main_shutdown("read() error");
@@ -155,41 +155,48 @@ int main(int argc, char *argv[]) {
 				if (r == 0) {
 
 					if (IS_SERVER) {
-						log_write("Client terminated connection. Closing socket %i.", i);
-						close(i);
-						socketlist_remove(i);
+						log_write("Client terminated connection. Closing socket %i.", s);
+						close(s);
+						socketlist_remove(s);
 					} else {
 						main_shutdown("Server terminated connection.");
 					}
 					
 					if (disconnectfunction_exists())
-						disconnectfunction_exec(i);
+						disconnectfunction_exec(s);
 					
 					continue;
 				}
 				
-				sockettime_set(i);
+				sockettime_set(s);
 				
-				inputcommand_parse(network_get_readdata());
-				inputpayload_parse(network_get_readdata());
+				for (i = 0; i < INPUT_QUEUE_SIZE; i++) {
+
+					if (strlen(network_get_readdata(i)) > 0) {
+
+						inputcommand_parse(network_get_readdata(i));
+						inputpayload_parse(network_get_readdata(i));
 				
-				log_write("Received command %s from socket %i", inputcommand_get(), i);
-				
-				// Validate and execute command
-				if (command_exists(inputcommand_get()))
-					command_exec(inputcommand_get(), inputpayload_get(), i);
+						log_write("Received command %s from socket %i", inputcommand_get(), s);
+						
+						// Validate and execute command
+						if (command_exists(inputcommand_get()))
+							command_exec(inputcommand_get(), inputpayload_get(), s);
+					} else
+						break;
+				}
 			}
 		}
 		
 		// Close all sockets whos idle time elapsed (server only)
-		while (IS_SERVER && (i = socketlist_get_next()) > 0) {
-			if (i == mainsocket_get())
+		while (IS_SERVER && (s = socketlist_get_next()) > 0) {
+			if (s == mainsockfd)
 				continue;
-			if (sockettime_elapsed(i)) {
-				close(i);
-				socketlist_remove(i);
+			if (sockettime_elapsed(s)) {
+				close(s);
+				socketlist_remove(s);
 				if (disconnectfunction_exists())
-					disconnectfunction_exec(i);
+					disconnectfunction_exec(s);
 			}
 		}
 		
