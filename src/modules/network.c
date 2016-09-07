@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <netdb.h>
 
 #include "modules/network.h"
@@ -128,44 +129,50 @@ int network_accept(int socket) {
 }
 
 int network_read(int socket) {
-	int r, i;
 	unsigned int len;
+	int i, r;
 	int q = 0;
-	char *buffer, *bufferStart;
-
-	// Assign buffer size
-	buffer = malloc(2000);
+	char *buffer, *bufferstart;
 	
 	// Set the buffer and input queue with all integer zeros ('\0')
-	memset(buffer, 0, 2000);
 	for (i = 0; i < INPUT_QUEUE_SIZE; i++)
 		memset(inputqueue[i], 0, COMMAND_SIZE + PAYLOAD_SIZE + 1);
-	
-	// Store pointer to start of buffer so we can free it later
-	bufferStart = buffer;
 
-	// Read from socket in to buffer
-	r = read(socket, buffer, 2000);
-	
+	// Get length of data waiting to be read
+	ioctl(socket, FIONREAD, &r);
+
 	if (r > 0) {
-		while (*buffer != '\0') {
-			len = 0;
-			while (*buffer >= '0' && *buffer <= '9')
-				len = (len * 10) + *buffer++ - '0';
-			
-			if (len > 0 && *buffer == '\n' && strlen(++buffer) >= len)
-				if (len <= COMMAND_SIZE + PAYLOAD_SIZE)
-					strncpy(inputqueue[q++], buffer, len);
-				else
-					strncpy(inputqueue[q++], buffer, COMMAND_SIZE + PAYLOAD_SIZE);
-			else
-				break;
-
-			buffer += len;
-		}
-	}
+		// Set input buffer to length (plus 1) of waiting data
+		buffer = malloc(r + 1);
+		
+		// Keep pointer to buffer start so we can free it
+		bufferstart = buffer;
+		
+		// read incoming data in to buffer
+		r = read(socket, buffer, r);
 	
-	free(bufferStart);
+		// Parse out the incoming data and store in inputqueue array
+		if (r > 0) {
+			while (*buffer != '\0') {
+				len = 0;
+				while (*buffer >= '0' && *buffer <= '9')
+					len = (len * 10) + *buffer++ - '0';
+				
+				if (len > 0 && *buffer == '\n' && strlen(++buffer) >= len)
+					if (len <= COMMAND_SIZE + PAYLOAD_SIZE)
+						strncpy(inputqueue[q++], buffer, len);
+					else
+						strncpy(inputqueue[q++], buffer, COMMAND_SIZE + PAYLOAD_SIZE);
+				else
+					break;
+	
+				buffer += len;
+			}
+		}
+		
+		// Free buffer
+		free(bufferstart);
+	}
 	
 	return r;
 }
