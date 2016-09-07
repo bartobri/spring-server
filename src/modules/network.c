@@ -180,13 +180,10 @@ int network_write(int socket, char *data) {
 	
 	l = strlen(data);
 	
-	lstr = malloc(20);
-	sprintf(lstr, "%i\n", l);
+	lstr = malloc(20 + l);
+	sprintf(lstr, "%i\n%s", l, data);
 	
 	r = write(socket, lstr, strlen(lstr));
-
-	if (r > 0)
-		r = write(socket, data, l);
 	
 	free(lstr);
 
