@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
 				sockettime_set(newsockfd);
 				readlist_remove(mainsockfd);
 				
-				log_write("New client connected. Assigned socket %i.", newsockfd);
+				log_write("Client connected from %s. Assigned socket %i.", network_get_ipaddress(), newsockfd);
 				
 				if (connectfunction_exists())
 					connectfunction_exec(newsockfd);

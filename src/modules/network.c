@@ -15,15 +15,18 @@
 #include "modules/network.h"
 #include "config.h"
 
-#define ERRMSG_SIZE       100
+#define IPV4_ADDRESS_LENGTH 15
+#define ERRMSG_SIZE         100
 
 // Static Variables
+static char ipaddress[IPV4_ADDRESS_LENGTH + 1];
 static char errmsg[ERRMSG_SIZE];
 static char inputqueue[INPUT_QUEUE_SIZE][COMMAND_SIZE + PAYLOAD_SIZE + 1];
 
 void network_init(void) {
 	int i;
 
+	memset(ipaddress, 0, IPV4_ADDRESS_LENGTH + 1);
 	memset(errmsg, 0, ERRMSG_SIZE);
 
 	for (i = 0; i < INPUT_QUEUE_SIZE; i++)
@@ -118,13 +121,23 @@ int network_start_client(char *hostname, char *portno) {
 
 int network_accept(int socket) {
 	int newsockfd;
-	struct sockaddr cliaddr;
+	struct sockaddr_in cliaddr;
 	socklen_t clilen;
 	
 	clilen = sizeof(cliaddr);
 	
-	newsockfd = accept(socket, &cliaddr, &clilen);
+	memset(ipaddress, 0, IPV4_ADDRESS_LENGTH + 1);
 	
+	newsockfd = accept(socket, (struct sockaddr *)&cliaddr, &clilen);
+
+	if (newsockfd) {
+		sprintf(ipaddress, "%d.%d.%d.%d",
+			(int)(cliaddr.sin_addr.s_addr&0xFF),
+			(int)((cliaddr.sin_addr.s_addr&0xFF00)>>8),
+			(int)((cliaddr.sin_addr.s_addr&0xFF0000)>>16),
+			(int)((cliaddr.sin_addr.s_addr&0xFF000000)>>24));
+	}
+
 	return newsockfd;
 }
 
@@ -199,4 +212,8 @@ int network_write(int socket, char *data) {
 
 char *network_get_errmsg(void) {
 	return errmsg;
+}
+
+char *network_get_ipaddress(void) {
+	return ipaddress;
 }
