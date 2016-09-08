@@ -15,6 +15,7 @@
 #include "modules/network.h"
 #include "modules/periodic.h"
 #include "modules/socketlist.h"
+#include "modules/termflag.h"
 
 int write_socket(int s, char *command, char *payload) {
 	int r;
@@ -61,5 +62,8 @@ void add_command_function(char *command, comFunctionType functionPtr) {
 	command_add(command, functionPtr);
 }
 
+void terminate(void) {
+	termflag_set();
+}
 
 

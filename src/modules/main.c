@@ -22,6 +22,7 @@
 #include "modules/inputcommand.h"
 #include "modules/inputpayload.h"
 #include "modules/mainsocket.h"
+#include "modules/termflag.h"
 #include "modules/log.h"
 #include "modules/main.h"
 #include "config.h"
@@ -141,6 +142,10 @@ int main(int argc, char *argv[]) {
 				
 				if (connectfunction_exists())
 					connectfunction_exec(newsockfd);
+				
+				// Check if termflag was set in connect function
+				if (termflag_isset())
+					main_shutdown("Terminated.");
 			}
 
 			while ((s = readlist_get_next()) > 0) {
@@ -165,6 +170,10 @@ int main(int argc, char *argv[]) {
 					if (disconnectfunction_exists())
 						disconnectfunction_exec(s);
 					
+					// Check if termflag was set in disconnect function
+					if (termflag_isset())
+						main_shutdown("Terminated.");
+					
 					continue;
 				}
 				
@@ -182,6 +191,10 @@ int main(int argc, char *argv[]) {
 						// Validate and execute command
 						if (command_exists(inputcommand_get()))
 							command_exec(inputcommand_get(), inputpayload_get(), s);
+							
+						// Check if termflag was set in command function
+						if (termflag_isset())
+							main_shutdown("Terminated.");
 					} else
 						break;
 				}
@@ -204,6 +217,10 @@ int main(int argc, char *argv[]) {
 			nextperiodic_reset();
 		}
 		
+		// Check if termflag was set in periodic function
+		if (termflag_isset())
+			main_shutdown("Terminated.");
+		
 	}
 
 	return 0;
@@ -222,6 +239,7 @@ void main_init(void) {
 	inputcommand_init();
 	inputpayload_init();
 	log_init();
+	termflag_init();
 
 	if (IS_SERVER) {
 		server_init();

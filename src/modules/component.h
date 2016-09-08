@@ -19,5 +19,6 @@ void set_connect_function(connectFunctionType);
 void set_disconnect_function(disconnectFunctionType);
 void add_periodic_function(prdFunctionType);
 void add_command_function(char *, comFunctionType);
+void terminate(void);
 
 #endif
