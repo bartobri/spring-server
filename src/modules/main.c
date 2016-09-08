@@ -190,9 +190,7 @@ int main(int argc, char *argv[]) {
 		
 		// Close all sockets whos idle time elapsed (server only)
 		while (IS_SERVER && (s = socketlist_get_next()) > 0) {
-			if (s == mainsockfd)
-				continue;
-			if (sockettime_elapsed(s)) {
+			if (s != mainsockfd && sockettime_elapsed(s)) {
 				close(s);
 				socketlist_remove(s);
 				if (disconnectfunction_exists())
