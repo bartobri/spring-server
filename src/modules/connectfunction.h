@@ -2,7 +2,7 @@
 #define CONNECTFUNCTION_H 1
 
 #define CONNECTFUNCTION_ARGS        int socket
-#define CONNECTFUNCTION_RETURN      int
+#define CONNECTFUNCTION_RETURN      void
 
 typedef CONNECTFUNCTION_RETURN (*connectFunctionType)(CONNECTFUNCTION_ARGS);
 

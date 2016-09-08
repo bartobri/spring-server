@@ -2,7 +2,7 @@
 #define PERIODIC_H 1
 
 #define PERIODIC_ARGS       void
-#define PERIODIC_RETURN     int
+#define PERIODIC_RETURN     void
 
 typedef PERIODIC_RETURN (*prdFunctionType)(PERIODIC_ARGS);
 

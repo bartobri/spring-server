@@ -11,16 +11,10 @@ COMMAND_RETURN command_helo(COMMAND_ARGS) {
 	
 	// Use helo command to display an initial message to the client
 	// or to initiate a process.
-	
-	return 0;
 }
 
 PERIODIC_RETURN send_heartbeat(PERIODIC_ARGS) {
-	int r;
-
-	r = write_socket(main_socket(), "beat", "");
-	
-	return r;
+	write_socket(main_socket(), "beat", "");
 }
 
 void client_init(void) {

@@ -13,8 +13,6 @@ CONNECTFUNCTION_RETURN send_greeting(CONNECTFUNCTION_ARGS) {
 	(void)socket;
 	
 	write_socket(socket, "helo", "");
-	
-	return 0;
 }
 
 DISCONNECTFUNCTION_RETURN client_disconnect(DISCONNECTFUNCTION_ARGS) {
@@ -22,8 +20,6 @@ DISCONNECTFUNCTION_RETURN client_disconnect(DISCONNECTFUNCTION_ARGS) {
 	
 	// custom code that runs when a client disconnects
 	printf("Socket %i disconnected\n", socket);
-	
-	return 0;
 }
  
 COMMAND_RETURN command_quit(COMMAND_ARGS) {
@@ -32,8 +28,6 @@ COMMAND_RETURN command_quit(COMMAND_ARGS) {
 	
 	// Close socket
 	close_socket(socket);
-	
-	return 0;
 }
 
 COMMAND_RETURN command_beat(COMMAND_ARGS) {
@@ -41,14 +35,10 @@ COMMAND_RETURN command_beat(COMMAND_ARGS) {
 	(void)payload;
 
 	printf("Received beat command on socket: %i, payload: %s\n", socket, payload);
-	
-	return 0;
 }
 
 PERIODIC_RETURN periodic(PERIODIC_ARGS) {
 	// Periodic code here.
-	
-	return 0;
 }
 
 /*

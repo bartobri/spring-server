@@ -47,20 +47,16 @@ int command_exists(char *command) {
 	return 0;
 }
 
-int command_exec(char *command, char *payload, int socket) {
-	int i, r;
-	
-	r = 0;
+void command_exec(char *command, char *payload, int socket) {
+	int i;
 
 	for (i = 0; i < COMMAND_LIMIT; ++i) {
 		if (commands[i].command == NULL)
 			break;
 
 		if (strcmp(commands[i].command, command) == 0) {
-			r = commands[i].functionPtr(socket, payload);
+			commands[i].functionPtr(socket, payload);
 			break;
 		}
 	}
-	
-	return r;
 }
