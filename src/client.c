@@ -3,11 +3,7 @@
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License. See LICENSE for more details.
 
-#include "modules/network.h"
-#include "modules/command.h"
-#include "modules/periodic.h"
-#include "modules/socketlist.h"
-#include "modules/mainsocket.h"
+#include "modules/component.h"
 
 COMMAND_RETURN command_helo(COMMAND_ARGS) {
 	(void)socket;
@@ -22,12 +18,12 @@ COMMAND_RETURN command_helo(COMMAND_ARGS) {
 PERIODIC_RETURN send_heartbeat(PERIODIC_ARGS) {
 	int r;
 
-	r = network_write(mainsocket_get(), "beat");
+	r = write_socket(main_socket(), "beat", "");
 	
 	return r;
 }
 
 void client_init(void) {
-	command_add("helo", &command_helo);
-	periodic_add(&send_heartbeat);
+	add_command_function("helo", &command_helo);
+	add_periodic_function(&send_heartbeat);
 }
