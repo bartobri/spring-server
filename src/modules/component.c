@@ -32,6 +32,8 @@ int write_socket(int s, char *command, char *payload) {
 void close_socket(int s) {
 	close(s);
 	socketlist_remove(s);
+	if (disconnectfunction_exists())
+		disconnectfunction_exec(s);
 }
 
 int main_socket(void) {
