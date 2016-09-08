@@ -29,23 +29,17 @@ EXFLAGS = -lm
 .PHONY: all install uninstall clean
 
 EXES = server client
-EXAMPLE = blackjack_server blackjack_client
+EXAMPLE = NULL
 
 all: $(EXES)
 
-example: $(EXAMPLE)
+# example: $(EXAMPLE)
 
 server: $(OBJ_MODS)/termflag.o $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/disconnectfunction.o $(OBJ_MODS)/connectfunction.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ_MODS)/log.o $(OBJ_MODS)/component.o $(OBJ_MODS)/main_server.o $(OBJ)/server.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
 
 client: $(OBJ_MODS)/termflag.o $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/disconnectfunction.o $(OBJ_MODS)/connectfunction.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ_MODS)/log.o $(OBJ_MODS)/component.o $(OBJ_MODS)/main_client.o $(OBJ)/client.o | $(BIN)
 	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
-
-blackjack_server: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ_MODS)/log.o $(OBJ_MODS)/main_server.o $(OBJ_EX)/blackjack_server.o $(OBJ_EX)/server.o | $(BIN)
-	$(CC) $(CFLAGS) $(EXFLAGS) -o $(BIN)/$@ $^
-	
-blackjack_client: $(OBJ_MODS)/mainsocket.o $(OBJ_MODS)/inputpayload.o $(OBJ_MODS)/inputcommand.o $(OBJ_MODS)/nextperiodic.o $(OBJ_MODS)/sockettime.o $(OBJ_MODS)/readlist.o $(OBJ_MODS)/socketlist.o $(OBJ_MODS)/command.o $(OBJ_MODS)/periodic.o $(OBJ_MODS)/network.o $(OBJ_MODS)/log.o $(OBJ_MODS)/main_client.o $(OBJ_EX)/client.o | $(BIN)
-	$(CC) $(CFLAGS) $(EXFLAGS) -o $(BIN)/$@ $^
 	
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
 	$(CC) $(CFLAGS) -o $@ -c $<
