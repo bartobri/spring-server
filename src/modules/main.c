@@ -164,8 +164,7 @@ int main(int argc, char *argv[]) {
 				} else
 					main_shutdown("Server terminated connection.");
 				
-				if (disconnectfunction_exists())
-					disconnectfunction_exec(s);
+				disconnectfunction_exec(s);
 				
 				// Check if termflag was set in disconnect function
 				if (termflag_isset())
@@ -198,8 +197,7 @@ int main(int argc, char *argv[]) {
 			if (s != mainsocket_get() && sockettime_elapsed(s)) {
 				close(s);
 				socketlist_remove(s);
-				if (disconnectfunction_exists())
-					disconnectfunction_exec(s);
+				disconnectfunction_exec(s);
 			}
 		}
 		
@@ -259,6 +257,8 @@ void main_shutdown(const char *errmsg) {
 	while ((i = socketlist_get_next()) > 0) {
 		close(i);
 		socketlist_remove(i);
+		if (i != mainsocket_get())
+			disconnectfunction_exec(i);
 	}
 	
 	log_close();

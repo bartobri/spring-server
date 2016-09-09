@@ -25,5 +25,6 @@ int disconnectfunction_exists(void) {
 }
 
 void disconnectfunction_exec(int socket) {
-	disconnectFunction(socket);
+	if (disconnectFunction != NULL)
+		disconnectFunction(socket);
 }
