@@ -139,8 +139,7 @@ int main(int argc, char *argv[]) {
 			
 			log_write("Client connected from %s. Assigned socket %i.", network_get_ipaddress(), r);
 			
-			if (connectfunction_exists())
-				connectfunction_exec(r);
+			connectfunction_exec(r);
 			
 			// Check if termflag was set in connect function
 			if (termflag_isset())

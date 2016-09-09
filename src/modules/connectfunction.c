@@ -25,5 +25,6 @@ int connectfunction_exists(void) {
 }
 
 void connectfunction_exec(int socket) {
-	connectFunction(socket);
+	if (connectFunction != NULL)
+		connectFunction(socket);
 }
