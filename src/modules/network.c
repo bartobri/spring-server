@@ -191,7 +191,10 @@ int network_read(int socket) {
 }
 
 char *network_get_readdata(int r) {
-	return inputqueue[r];
+	if (r < INPUT_QUEUE_SIZE)
+		return inputqueue[r];
+	else
+		return "";
 }
 
 int network_write(int socket, char *data) {

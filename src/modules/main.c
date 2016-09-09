@@ -123,81 +123,74 @@ int main(int argc, char *argv[]) {
 		if (r < 0)
 			main_shutdown("select() error");
 
-		if (r > 0) {
 
-			if (readlist_check(mainsockfd) && IS_SERVER) {
-				
-				sockettime_set(mainsockfd);
+		if (IS_SERVER && readlist_check(mainsockfd)) {
+			
+			sockettime_set(mainsockfd);
 
-				newsockfd = network_accept(mainsockfd);
+			newsockfd = network_accept(mainsockfd);
 
-				if (newsockfd < 0)
-					main_shutdown("accept() error");
+			if (newsockfd < 0)
+				main_shutdown("accept() error");
 
-				socketlist_add(newsockfd);
-				sockettime_set(newsockfd);
-				readlist_remove(mainsockfd);
+			socketlist_add(newsockfd);
+			sockettime_set(newsockfd);
+			readlist_remove(mainsockfd);
+			
+			log_write("Client connected from %s. Assigned socket %i.", network_get_ipaddress(), newsockfd);
+			
+			if (connectfunction_exists())
+				connectfunction_exec(newsockfd);
+			
+			// Check if termflag was set in connect function
+			if (termflag_isset())
+				main_shutdown("Terminated.");
+		}
+
+		while ((s = readlist_get_next()) > 0) {
+			
+			log_write("Reading data from socket %i.", s);
+
+			r = network_read(s);
+			
+			if (r < 0)
+				main_shutdown("read() error");
+
+			if (r == 0) {
+
+				if (IS_SERVER) {
+					log_write("Client terminated connection. Closing socket %i.", s);
+					close(s);
+					socketlist_remove(s);
+				} else
+					main_shutdown("Server terminated connection.");
 				
-				log_write("Client connected from %s. Assigned socket %i.", network_get_ipaddress(), newsockfd);
+				if (disconnectfunction_exists())
+					disconnectfunction_exec(s);
 				
-				if (connectfunction_exists())
-					connectfunction_exec(newsockfd);
-				
-				// Check if termflag was set in connect function
+				// Check if termflag was set in disconnect function
 				if (termflag_isset())
 					main_shutdown("Terminated.");
+				
+				continue;
 			}
+			
+			sockettime_set(s);
 
-			while ((s = readlist_get_next()) > 0) {
+			for (i = 0; strlen(network_get_readdata(i)) > 0; ++i) {
+
+				inputcommand_parse(network_get_readdata(i));
+				inputpayload_parse(network_get_readdata(i));
+		
+				log_write("Received command %s from socket %i", inputcommand_get(), s);
 				
-				log_write("Reading data from socket %i.", s);
-
-				r = network_read(s);
-				
-				if (r < 0)
-					main_shutdown("read() error");
-
-				if (r == 0) {
-
-					if (IS_SERVER) {
-						log_write("Client terminated connection. Closing socket %i.", s);
-						close(s);
-						socketlist_remove(s);
-					} else {
-						main_shutdown("Server terminated connection.");
-					}
+				// Validate and execute command
+				if (command_exists(inputcommand_get()))
+					command_exec(inputcommand_get(), inputpayload_get(), s);
 					
-					if (disconnectfunction_exists())
-						disconnectfunction_exec(s);
-					
-					// Check if termflag was set in disconnect function
-					if (termflag_isset())
-						main_shutdown("Terminated.");
-					
-					continue;
-				}
-				
-				sockettime_set(s);
-				
-				for (i = 0; i < INPUT_QUEUE_SIZE; i++) {
-
-					if (strlen(network_get_readdata(i)) > 0) {
-
-						inputcommand_parse(network_get_readdata(i));
-						inputpayload_parse(network_get_readdata(i));
-				
-						log_write("Received command %s from socket %i", inputcommand_get(), s);
-						
-						// Validate and execute command
-						if (command_exists(inputcommand_get()))
-							command_exec(inputcommand_get(), inputpayload_get(), s);
-							
-						// Check if termflag was set in command function
-						if (termflag_isset())
-							main_shutdown("Terminated.");
-					} else
-						break;
-				}
+				// Check if termflag was set in command function
+				if (termflag_isset())
+					main_shutdown("Terminated.");
 			}
 		}
 		
