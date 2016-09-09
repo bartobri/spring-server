@@ -41,7 +41,7 @@ void main_shutdown(const char *);
  */
 int main(int argc, char *argv[]) {
 	int o, r, s, i;
-	int mainsockfd, newsockfd;
+	int newsockfd;
 	char *hostname, *portno;
 	
 	// Initialization functions
@@ -95,21 +95,22 @@ int main(int argc, char *argv[]) {
 
 	// Execute network startup proceedure
 	if (IS_SERVER)
-		mainsockfd = network_start_server(hostname, portno);
+		r = network_start_server(hostname, portno);
 	else
-		mainsockfd = network_start_client(hostname, portno);
+		r = network_start_client(hostname, portno);
 	
 	// Check for error at startup
-	if (mainsockfd < 0)
+	if (r < 0)
 		main_shutdown(network_get_errmsg());
 	
 	// Print connection message
 	log_print("%s on port %s", IS_SERVER ? "Listening" : "Connected", portno);
 	
-	// Add main socket
-	mainsocket_set(mainsockfd);
-	socketlist_add(mainsockfd);
-	sockettime_set(mainsockfd);
+	// Set main socket
+	mainsocket_set(r);
+	
+	socketlist_add(mainsocket_get());
+	sockettime_set(mainsocket_get());
 	
 	while (true) {
 		
@@ -124,18 +125,18 @@ int main(int argc, char *argv[]) {
 			main_shutdown("select() error");
 
 
-		if (IS_SERVER && readlist_check(mainsockfd)) {
+		if (IS_SERVER && readlist_check(mainsocket_get())) {
 			
-			sockettime_set(mainsockfd);
+			sockettime_set(mainsocket_get());
 
-			newsockfd = network_accept(mainsockfd);
+			newsockfd = network_accept(mainsocket_get());
 
 			if (newsockfd < 0)
 				main_shutdown("accept() error");
 
 			socketlist_add(newsockfd);
 			sockettime_set(newsockfd);
-			readlist_remove(mainsockfd);
+			readlist_remove(mainsocket_get());
 			
 			log_write("Client connected from %s. Assigned socket %i.", network_get_ipaddress(), newsockfd);
 			
@@ -196,7 +197,7 @@ int main(int argc, char *argv[]) {
 		
 		// Close all sockets whos idle time elapsed (server only)
 		while (IS_SERVER && (s = socketlist_get_next()) > 0) {
-			if (s != mainsockfd && sockettime_elapsed(s)) {
+			if (s != mainsocket_get() && sockettime_elapsed(s)) {
 				close(s);
 				socketlist_remove(s);
 				if (disconnectfunction_exists())
