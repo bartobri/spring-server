@@ -41,7 +41,6 @@ void main_shutdown(const char *);
  */
 int main(int argc, char *argv[]) {
 	int o, r, s, i;
-	int newsockfd;
 	char *hostname, *portno;
 	
 	// Initialization functions
@@ -129,19 +128,19 @@ int main(int argc, char *argv[]) {
 			
 			sockettime_set(mainsocket_get());
 
-			newsockfd = network_accept(mainsocket_get());
+			r = network_accept(mainsocket_get());
 
-			if (newsockfd < 0)
+			if (r < 0)
 				main_shutdown("accept() error");
 
-			socketlist_add(newsockfd);
-			sockettime_set(newsockfd);
+			socketlist_add(r);
+			sockettime_set(r);
 			readlist_remove(mainsocket_get());
 			
-			log_write("Client connected from %s. Assigned socket %i.", network_get_ipaddress(), newsockfd);
+			log_write("Client connected from %s. Assigned socket %i.", network_get_ipaddress(), r);
 			
 			if (connectfunction_exists())
-				connectfunction_exec(newsockfd);
+				connectfunction_exec(r);
 			
 			// Check if termflag was set in connect function
 			if (termflag_isset())
