@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
 
 				if (IS_SERVER) {
 					log_write("Client terminated connection. Closing socket %i.", s);
-					close(s);
+					network_close(s);
 					socketlist_remove(s);
 				} else
 					main_shutdown("Server terminated connection.");
@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
 		// Close all sockets whos idle time elapsed (server only)
 		while (IS_SERVER && (s = socketlist_get_next()) > 0) {
 			if (s != mainsocket_get() && sockettime_elapsed(s)) {
-				close(s);
+				network_close(s);
 				socketlist_remove(s);
 				disconnectfunction_exec(s);
 			}
@@ -255,7 +255,7 @@ void main_shutdown(const char *errmsg) {
 	log_print("Shutting down. Reason: %s", errmsg);
 	
 	while ((i = socketlist_get_next()) > 0) {
-		close(i);
+		network_close(i);
 		socketlist_remove(i);
 		if (i != mainsocket_get())
 			disconnectfunction_exec(i);

@@ -8,6 +8,7 @@ int network_accept(int);
 int network_read(int);
 char *network_get_readdata(int);
 int network_write(int, char *);
+void network_close(int);
 char *network_get_errmsg(void);
 char *network_get_ipaddress(void);
 

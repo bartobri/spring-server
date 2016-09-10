@@ -213,6 +213,10 @@ int network_write(int socket, char *data) {
 	return r;
 }
 
+void network_close(int socket) {
+	close(socket);
+}
+
 char *network_get_errmsg(void) {
 	return errmsg;
 }

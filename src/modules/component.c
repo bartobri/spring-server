@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include "modules/command.h"
 #include "modules/connectfunction.h"
 #include "modules/disconnectfunction.h"
@@ -30,7 +29,7 @@ int write_socket(int s, char *command, char *payload) {
 }
 
 void close_socket(int s) {
-	close(s);
+	network_close(s);
 	socketlist_remove(s);
 	disconnectfunction_exec(s);
 }
