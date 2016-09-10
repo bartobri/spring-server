@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <stdbool.h>
 #include <ctype.h>
 #include <signal.h>
 #include "modules/network.h"
@@ -111,7 +110,7 @@ int main(int argc, char *argv[]) {
 	socketlist_add(mainsocket_get());
 	sockettime_set(mainsocket_get());
 	
-	while (true) {
+	while (1) {
 		
 		readlist_init();
 
