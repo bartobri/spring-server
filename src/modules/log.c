@@ -52,8 +52,13 @@ int log_open(int logType) {
 	}
 	
 	// Combine log file path and name in to one string.
-	logFilePathName = malloc(strlen(logFilePath) + strlen(logFileName) + 1);
-	sprintf(logFilePathName, "%s%s", logFilePath, logFileName);
+	if (logFilePath[(int)strlen(logFilePath) - 1] == '/') {
+		logFilePathName = malloc(strlen(logFilePath) + strlen(logFileName) + 1);
+		sprintf(logFilePathName, "%s%s", logFilePath, logFileName);
+	} else {
+		logFilePathName = malloc(strlen(logFilePath) + strlen(logFileName) + 2);
+		sprintf(logFilePathName, "%s/%s", logFilePath, logFileName);
+	}
 	
 	// Do we have a full path or relative path?
 	// If relative, use home dir as base to make full path.
