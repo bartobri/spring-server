@@ -32,11 +32,10 @@ void main_sigint(int);
 void main_shutdown(const char *);
 
 /*
- * int main(int, char *)
- *
- * DESCR:
- * Main program function. Watches and accepts new conections. 
- *
+ * The main function handles program initialization and network connection,
+ * argument checking, and manages the main program loop. Inside the loop
+ * it coordinates the flow of data between the modules, does error checking,
+ * and logs pertinent info.
  */
 int main(int argc, char *argv[]) {
 	int o, r, s, i;
@@ -54,7 +53,8 @@ int main(int argc, char *argv[]) {
 	// Ensure log was successfully opened
 	if (r < 0)
 		main_shutdown(log_get_errmsg());
-		
+	
+	// Log startup message
 	log_write("Starting Up");
 	
 	// Set SIGINT handler
@@ -89,6 +89,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
+	// Log host and port
 	log_write("host=%s port=%s", hostname, portno);
 
 	// Execute network startup proceedure
@@ -106,38 +107,54 @@ int main(int argc, char *argv[]) {
 	
 	// Set main socket
 	mainsocket_set(r);
-	
+
+	// Add main socket to socket list and track it's time
 	socketlist_add(mainsocket_get());
 	sockettime_set(mainsocket_get());
 	
+	// main program loop
 	while (1) {
 		
+		// Initialize (empty) readlist
 		readlist_init();
 
+		// Copy all active socket numbers to readlist
 		while ((s = socketlist_get_next()) > 0)
 			readlist_add(s);
 		
+		// Wait for incoming data on one of the readlist sockets or
+		// timeout after the number of seconds configured for PERIODIC_SECONDS
 		r = readlist_wait();
 		
+		// Shutdown if we get an error code
 		if (r < 0)
 			main_shutdown("select() error");
 
-
+		// If we get incoming data on the main socket for the server
+		// then we have a new client attempting to connect.
 		if (IS_SERVER && readlist_check(mainsocket_get())) {
 			
+			// Update main socket time
 			sockettime_set(mainsocket_get());
 
+			// Accept new connection
 			r = network_accept(mainsocket_get());
 
+			// Shut down if we get an error code
 			if (r < 0)
 				main_shutdown("accept() error");
 
+			// Add new socket to our socket list
 			socketlist_add(r);
 			sockettime_set(r);
+			
+			// Remove main socket from our list now that we just serviced it
 			readlist_remove(mainsocket_get());
 			
+			// Log socket assignment and IP
 			log_write("Client connected from %s. Assigned socket %i.", network_get_ipaddress(), r);
 			
+			// Execute connect function for new socket/client
 			connectfunction_exec(r);
 			
 			// Check if termflag was set in connect function
@@ -145,17 +162,21 @@ int main(int argc, char *argv[]) {
 				main_shutdown("Terminated.");
 		}
 
+		// Loop over readlist and service each socket
 		while ((s = readlist_get_next()) > 0) {
-			
-			log_write("Reading data from socket %i.", s);
 
+			// Read data from socket
 			r = network_read(s);
 			
+			// Shut down if we get an error code
 			if (r < 0)
 				main_shutdown("read() error");
 
+			// Check if socket terminated the connection
 			if (r == 0) {
 
+				// Log and close socket on the server side. Shut down on the
+				// client side.
 				if (IS_SERVER) {
 					log_write("Client terminated connection. Closing socket %i.", s);
 					network_close(s);
@@ -163,22 +184,28 @@ int main(int argc, char *argv[]) {
 				} else
 					main_shutdown("Server terminated connection.");
 				
+				// Execute disconnect function
 				disconnectfunction_exec(s);
 				
 				// Check if termflag was set in disconnect function
 				if (termflag_isset())
 					main_shutdown("Terminated.");
 				
+				// Force next loop iteration.
 				continue;
 			}
 			
+			// Update socket time
 			sockettime_set(s);
 
+			// Loop over each command/payload pair sent from the socket
 			for (i = 0; strlen(network_get_readdata(i)) > 0; ++i) {
 
+				// Parse out the command and payload from the data
 				inputcommand_parse(network_get_readdata(i));
 				inputpayload_parse(network_get_readdata(i));
-		
+
+				// Log the command we received
 				log_write("Received command %s from socket %i", inputcommand_get(), s);
 				
 				// Validate and execute command
@@ -215,7 +242,11 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-
+/*
+ * The main_init() function initializes all the modules. Each of the
+ * module's init functions simply reserve and scrub memory needed for
+ * static data storage.
+ */
 void main_init(void) {
 	network_init();
 	readlist_init();
@@ -238,21 +269,28 @@ void main_init(void) {
 }
 
 /*
- * void main_sigint(int)
- *
- * DESCR:
- *
+ * The main_sigint() function serves as the SIGINT handler. This function
+ * is called when the user presses CTRL-C. It's job is to simply call the
+ * main_shutdown() function to ensure a proper shutdown.
  */
 void main_sigint(int e) {
 	(void)e;
 	main_shutdown("Caught sigint.");
 }
 
+/*
+ * The main_shutdown() function ensures all open file descriptors are closed
+ * cleanly, and that memory resources are freed. It also calls the disconnect
+ * function for each socket ensuring any customized cleanup tasks are also
+ * completed.
+ */
 void main_shutdown(const char *errmsg) {
 	int i;
 	
+	// Log a shutdown message
 	log_print("Shutting down. Reason: %s", errmsg);
 	
+	// Close each socket. Run the disconnect function for each socket.
 	while ((i = socketlist_get_next()) > 0) {
 		network_close(i);
 		socketlist_remove(i);
@@ -260,6 +298,7 @@ void main_shutdown(const char *errmsg) {
 			disconnectfunction_exec(i);
 	}
 	
+	// Close log file
 	log_close();
 	
 	// Shutdown
