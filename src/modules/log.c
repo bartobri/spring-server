@@ -114,6 +114,9 @@ int log_open(int logType) {
 }
 
 void log_write(char *format, ...) {
+	if (logFile == NULL)
+		return;
+	
 	va_list argList;
 	time_t timeNow;
 	struct tm *timePtr;
@@ -136,6 +139,15 @@ void log_print(char *format, ...) {
 	time_t timeNow;
 	struct tm *timePtr;
 	char timeString[20];
+	
+	va_start(argList, format);
+	vprintf(format, argList);
+	va_end(argList);
+	
+	printf("\n");
+	
+	if (logFile == NULL)
+		return;
 
 	timeNow = time(NULL);
 	timePtr = localtime(&timeNow);
@@ -147,12 +159,6 @@ void log_print(char *format, ...) {
 	va_end(argList);
 	
 	fflush(logFile);
-	
-	va_start(argList, format);
-	vprintf(format, argList);
-	va_end(argList);
-	
-	printf("\n");
 }
 
 void log_close(void) {
