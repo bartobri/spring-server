@@ -8,19 +8,27 @@
 #include "config.h"
 #include "modules/command.h"
 
-// Static Variable Definitions
+// MODULE DESCRIPTION
+
+/*
+ * The command module manages a lookup table containing command-to-function
+ * pairings. It is responsible for initializing the table, adding new
+ * command/function pairs, and executing a function for a given command
+ * string.
+ */
+
+// STATIC VARIABLES
 
 /*
  * commands is a static structure array that serves as a lookup table
- * containing command-to-function pairings. It is traversed to determine
- * what function to execute for a given command.
+ * containing command-to-function pairings.
  */
 static struct {
 	char *command;
 	comFunctionType functionPtr;
 } commands[COMMAND_LIMIT];
 
-// Function Definitions
+// FUNCTION DEFINITIONS
 
 /*
  * The command_init() function initializes all member values in the

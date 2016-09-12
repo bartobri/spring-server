@@ -16,7 +16,7 @@
 #include "modules/socketlist.h"
 #include "modules/termflag.h"
 
-// MODULE PURPOSE
+// MODULE DESCRIPTION
 
 /*
  * This module is meant to act as an abstraction layer that sits above
