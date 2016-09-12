@@ -8,31 +8,25 @@
 #include "config.h"
 #include "modules/command.h"
 
-// MODULE DESCRIPTION
-
 /*
+ * MODULE DESCRIPTION
+ * 
  * The command module manages a lookup table containing command-to-function
  * pairings. It is responsible for initializing the table, adding new
  * command/function pairs, and executing a function for a given command
  * string.
  */
 
-// STATIC VARIABLES
-
 /*
- * commands is a static structure array that serves as a lookup table
- * containing command-to-function pairings.
+ * Static Variables
  */
 static struct {
 	char *command;
 	comFunctionType functionPtr;
 } commands[COMMAND_LIMIT];
 
-// FUNCTION DEFINITIONS
-
 /*
- * The command_init() function initializes all member values in the
- * commands structure array to NULL.
+ * Initializes all member values in the commands structure array to NULL.
  */
 void command_init(void) {
 	int i;
@@ -44,9 +38,8 @@ void command_init(void) {
 }
 
 /*
- * The command_add() function adds a given char and function pointer to
- * the commands structure array in the next available slot determined by
- * a value of NULL.
+ * Add a given char and function pointer to the commands structure array
+ * in the next available slot.
  */
 void command_add(char *command, comFunctionType functionPtr) {
 	int i;
@@ -61,10 +54,9 @@ void command_add(char *command, comFunctionType functionPtr) {
 }
 
 /*
- * The command_exists() function traverses the commands structure array
- * looking to match a member command string with the given command string.
- * A true value is returned if a match is found. A false value is returned
- * if no match is found.
+ * Traverse the commands structure array looking to match a given command
+ * string. A true value is returned if a match is found. A false value is
+ * returned if no match is found.
  */
 int command_exists(char *command) {
 	int i;
@@ -81,10 +73,9 @@ int command_exists(char *command) {
 }
 
 /*
- * The command_exec() function traverses the commands structure array
- * looking to match a member command string with the given command string.
- * If a match is found, the associated function is executed with the
- * given socket and payload as parameters.
+ * Traverse the commands structure array looking to match a given command
+ * string. If a match is found, the associated function is executed with
+ * the socket and payload as parameters.
  */
 void command_exec(char *command, char *payload, int socket) {
 	int i;

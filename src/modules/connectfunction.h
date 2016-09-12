@@ -20,7 +20,7 @@
 typedef CONNECTFUNCTION_RETURN (*connectFunctionType)(CONNECTFUNCTION_ARGS);
 
 /*
- * Function declarations.
+ * Function Declarations.
  */
 void connectfunction_init(void);
 void connectfunction_set(connectFunctionType);

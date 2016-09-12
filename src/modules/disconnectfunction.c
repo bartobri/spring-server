@@ -6,19 +6,17 @@
 #include <stdlib.h>
 #include "modules/disconnectfunction.h"
 
-// MODULE DESCRIPTION
-
 /*
+ * MODULE DESCRIPTION
+ * 
  * The disconnectfunction module manages a pointer to a function referred
  * to as the "disconnect function". This function is executed by the main
- * module every time it detected a terminated connection, or terminates
+ * module every time it detects a terminated connection, or terminates
  * one itself.
  */
 
-// STATIC VARIABLES
-
 /*
- * Function pointer to the disconnect function.
+ * Static Variables
  */
 disconnectFunctionType disconnectFunction;
 

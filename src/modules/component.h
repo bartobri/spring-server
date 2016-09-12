@@ -24,7 +24,7 @@
 #define print_log(...) log_print(__VA_ARGS__)
 
 /*
- * Function declarations.
+ * Function Declarations.
  */
 int write_socket(int, char *, char *);
 void close_socket(int);

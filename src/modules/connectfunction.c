@@ -6,36 +6,18 @@
 #include <stdlib.h>
 #include "modules/connectfunction.h"
 
-// MODULE DESCRIPTION
-
 /*
- * The connectfunction module stores a pointer to a function that is
- * executed for every new connection established by the server or client.
- * For the client, there is only one connection ever established, which
- * is the connection to the server. For the server, there can
- * potentially be thousands of connections over any given period of time.
+ * MODULE DESCRIPTION
  * 
- * The connect function is defined and set inside the server and client
- * module files.
- * 
- * The purpose of the function is to initiate a process with the
- * connecting entity.
- * 
- * In most cases, only the client or the server will have a connect
- * function set. Rarely will they ever both need to have this set. It is
- * also not necessary for either of them to have this set, as it may be
- * more sensible for a periodic function to initiate a process after a
- * particular condition is met.
+ * The connectfunction module manages a pointer to a function referred
+ * to as the "connect function". This function is executed by the main
+ * module every time a new connection established.
  */
 
-// STATIC VARIABLES
-
 /*
- * Function pointer to the connect function.
+ * Static Variables
  */
 static connectFunctionType connectFunction;
-
-// FUNCTION DEFINITIONS
 
 /*
  * Set the connect function pointer to NULL.

@@ -16,16 +16,14 @@
 #include "modules/socketlist.h"
 #include "modules/termflag.h"
 
-// MODULE DESCRIPTION
-
 /*
+ * MODULE DESCRIPTION
+ * 
  * This module is meant to act as an abstraction layer that sits above
  * other modules contained in this project and provides user-friendly
  * access to lower level functionality that greatly simplifies the
  * customization process for the client and server modules.
  */
-
-// FUNCTION DEFINITIONS
 
 /*
  * The write_socket() function writes the command (char *command) and
