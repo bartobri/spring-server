@@ -9,10 +9,9 @@
 /*
  * MODULE DESCRIPTION
  * 
- * The inputcommand modules manages a character array that contains the
+ * The inputcommand module manages a character array that contains the
  * command string from the last time network_read() was executed.
  */
-
 
 /*
  * Static Variables

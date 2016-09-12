@@ -6,21 +6,37 @@
 #include <string.h>
 #include "config.h"
 
-// Static Variables
+/*
+ * MODULE DESCRIPTION
+ * 
+ * The inputpayload module manages a character array that contains the
+ * payload string from the last time network_read() was executed.
+ */
+
+/*
+ * Static Variables
+ */
 static char payload[PAYLOAD_SIZE + 1];
 
+/*
+ * Set the payload character array to all null characters
+ */
 void inputpayload_init(void) {
 	memset(payload, 0, sizeof(PAYLOAD_SIZE + 1));
 }
 
-void inputpayload_set(char *data) {
-	strncpy(payload, data, PAYLOAD_SIZE);
-}
-
+/*
+ * Return the payload character array.
+ */
 char *inputpayload_get(void) {
 	return payload;
 }
 
+/*
+ * Advance the given char pointer (data) by the number of characters equal
+ * to COMMAND_SIZE. Then parse out the next number of characters equal to
+ * PAYLOAD_SIZE and store them in the payload character array.
+ */
 void inputpayload_parse(char *data) {
 	if (strlen(data) > COMMAND_SIZE)
 		strncpy(payload, data + COMMAND_SIZE, PAYLOAD_SIZE);
