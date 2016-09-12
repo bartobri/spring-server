@@ -6,21 +6,37 @@
 #include <string.h>
 #include "config.h"
 
-// Static Variables
+/*
+ * MODULE DESCRIPTION
+ * 
+ * The inputcommand modules manages a character array that contains the
+ * command string from the last time network_read() was executed.
+ */
+
+
+/*
+ * Static Variables
+ */
 static char command[COMMAND_SIZE + 1];
 
+/*
+ * Set the command character array to all null characters
+ */
 void inputcommand_init(void) {
 	memset(command, 0, sizeof(COMMAND_SIZE + 1));
 }
 
-void inputcommand_set(char *data) {
-	strncpy(command, data, COMMAND_SIZE);
-}
-
+/*
+ * Return the command character array.
+ */
 char *inputcommand_get(void) {
 	return command;
 }
 
+/*
+ * Parse out the first number of characters equal to COMMAND_SIZE from
+ * the given data string and store them in the command character array.
+ */
 void inputcommand_parse(char *data) {
 	strncpy(command, data, COMMAND_SIZE);
 }

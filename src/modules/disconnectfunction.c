@@ -18,7 +18,7 @@
 /*
  * Static Variables
  */
-disconnectFunctionType disconnectFunction;
+static disconnectFunctionType disconnectFunction;
 
 /*
  * Set the disconnect function pointer to NULL.

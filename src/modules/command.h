@@ -20,7 +20,7 @@
 typedef COMMAND_RETURN (*comFunctionType)(COMMAND_ARGS);
 
 /*
- * Function declarations.
+ * Function Declarations
  */
 void command_init(void);
 void command_add(char *, comFunctionType);
