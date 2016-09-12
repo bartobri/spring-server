@@ -16,27 +16,51 @@
 #define CLIENT       2
 #define ERRMSG_SIZE  200
 
-// Static Variables
+/*
+ * MODULE DESCRIPTION
+ * 
+ * The log modules manages opening, closing and appending to the log
+ * file.
+ */
+
+/*
+ * Static Variables
+ */
 static FILE *logFile;
 static char errmsg[ERRMSG_SIZE];
 
+/*
+ * Initialize all static variables to NULL.
+ */
 void log_init(void) {
 	memset(errmsg, 0, ERRMSG_SIZE);
 	logFile = NULL;
 }
 
+/*
+ * Open the log file using the SERVER flag.
+ */
 int log_open_server(void) {
 	return log_open(SERVER);
 }
 
+/*
+ * Open the log file using the CLIENT flag.
+ */
 int log_open_client(void) {
 	return log_open(CLIENT);
 }
 
+/*
+ * Open the log file. Use the symbolic constants SERVER or CLIENT for
+ * logType. Returns 0 on success or a negative integer on failure. If an
+ * error occurres, an error message with be stored in the errmsg char
+ * array.
+ */
 int log_open(int logType) {
 	int i;
 	char *homeDir;
-	char *logFilePath              = LOG_FILE_PATH;
+	char *logFilePath = LOG_FILE_PATH;
 	char *logFileName;
 	char *logFilePathName;
 	char *logFileFullPathName;
@@ -113,6 +137,10 @@ int log_open(int logType) {
 	return 0;
 }
 
+/*
+ * Write an entry to the log file. The parameters are the same as the
+ * printf() function. Automatically prepends a timestamp to the entry. 
+ */
 void log_write(char *format, ...) {
 	if (logFile == NULL)
 		return;
@@ -134,6 +162,11 @@ void log_write(char *format, ...) {
 	fflush(logFile);
 }
 
+/*
+ * Write an entry to the log file. The parameters are the same as the
+ * printf() function. Automatically prepends a timestamp to the entry.
+ * This function will also print the entry to STDOUT.
+ */
 void log_print(char *format, ...) {
 	va_list argList;
 	time_t timeNow;
@@ -161,11 +194,17 @@ void log_print(char *format, ...) {
 	fflush(logFile);
 }
 
+/*
+ * Close log file if opened.
+ */
 void log_close(void) {
 	if (logFile != NULL)
 		fclose(logFile);
 }
 
+/*
+ * Return the errmsg string.
+ */
 char *log_get_errmsg(void) {
 	return errmsg;
 }
