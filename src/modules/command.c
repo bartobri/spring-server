@@ -11,12 +11,14 @@
 // Static Variable Definitions
 
 /*
- * commands is a static array of commandTbl structures. It stores
- * command-to-function pairings. This array is traversed to determine
- * what function to execute for a given command. See the declaration in
- * command.h for structure member info
+ * commands is a static structure array that serves as a lookup table
+ * containing command-to-function pairings. It is traversed to determine
+ * what function to execute for a given command.
  */
-static struct commandTbl commands[COMMAND_LIMIT];
+static struct {
+	char *command;
+	comFunctionType functionPtr;
+} commands[COMMAND_LIMIT];
 
 // Function Definitions
 
