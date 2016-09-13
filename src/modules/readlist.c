@@ -5,7 +5,6 @@
 
 #include <sys/select.h>
 #include <time.h>
-#include "config.h"
 #include "modules/readlist.h"
 
 /*
@@ -48,13 +47,13 @@ void readlist_add(int socket) {
  * reduced to contain only those sockets. On timeout, zero is returned.
  * On failure, a negative integer is returned.
  */
-int readlist_wait(void) {
+int readlist_wait(unsigned int t) {
 	int r;
 	struct timeval timeout;
 		
 	// Set select() timeout value.
 	// This needs to be inside the loop so it is reset for each loop interation.
-	timeout.tv_sec  = (unsigned int)PERIODIC_SECONDS;
+	timeout.tv_sec  = t;
 	timeout.tv_usec = 0;
 		
 	// Block until input arrives on one or more active sockets

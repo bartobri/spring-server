@@ -11,7 +11,7 @@
  */
 void readlist_init(void);
 void readlist_add(int);
-int readlist_wait(void);
+int readlist_wait(unsigned int);
 void readlist_remove(int);
 int readlist_check(int);
 int readlist_get_next(void);

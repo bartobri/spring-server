@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
 		
 		// Wait for incoming data on one of the readlist sockets or
 		// timeout after the number of seconds configured for PERIODIC_SECONDS
-		r = readlist_wait();
+		r = readlist_wait(PERIODIC_SECONDS);
 		
 		// Shutdown if we get an error code
 		if (r < 0)
