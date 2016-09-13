@@ -227,8 +227,9 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		
-		// Run periodic function if time elapsed
-		if (nextperiodic_elapsed()) {
+		// Run periodic functions if number of seconds in PERIODIC_SECONDS
+		// has passed since last run.
+		if (nextperiodic_elapsed(PERIODIC_SECONDS)) {
 			periodic_exec();
 			nextperiodic_reset();
 		}

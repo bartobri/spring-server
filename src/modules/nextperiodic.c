@@ -37,8 +37,8 @@ void nextperiodic_reset(void) {
  * elapsed since the last time periodictime was set. Return a true value
  * if it has. Return a false value if it has not.
  */
-int nextperiodic_elapsed(void) {
-	if (periodictime <= time(NULL) - PERIODIC_SECONDS)
+int nextperiodic_elapsed(unsigned int t) {
+	if (periodictime <= time(NULL) - t)
 		return 1;
 	
 	return 0;

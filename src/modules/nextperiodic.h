@@ -11,6 +11,6 @@
  */
 void nextperiodic_init(void);
 void nextperiodic_reset(void);
-int nextperiodic_elapsed(void);
+int nextperiodic_elapsed(unsigned int);
 
 #endif
