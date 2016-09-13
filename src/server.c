@@ -43,6 +43,17 @@ COMMAND_RETURN function_name(COMMAND_ARGS) {
 ***********************************************************************/
 
 // Custom Functions Definitions Here
+CONNECTFUNCTION_RETURN say_hello(CONNECTFUNCTION_ARGS) {
+	(void)socket;
+	
+	write_socket(socket, "helo", "");
+}
+
+DISCONNECTFUNCTION_RETURN print_message(DISCONNECTFUNCTION_ARGS) {
+	(void)socket;
+	
+	print_log("Socket %i disconnected by server. Idle time elapsed\n", socket);
+}
 
 /*
  * The server_init() function is executed when the server starts. This
@@ -59,4 +70,7 @@ void server_init(void) {
 	// set_disconnect_function(&function_name);
 	// add_periodic_function(&function_name);
 	// add_command_function("cmnd", &function_name);
+	
+	set_connect_function(&say_hello);
+	set_disconnect_function(&print_message);
 }
