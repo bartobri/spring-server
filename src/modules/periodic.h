@@ -10,14 +10,14 @@
  * These symbolic constants define the parameters and the return value for
  * functions executed at a timed interval.
  */
-#define PERIODIC_ARGS       void
+#define PERIODIC_PARAMS     void
 #define PERIODIC_RETURN     void
 
 /*
  * Define a data type for a function pointer whos paramaters are
- * PERIODIC_ARGS and return value is PERIODIC_RETURN.
+ * PERIODIC_PARAMS and return value is PERIODIC_RETURN.
  */
-typedef PERIODIC_RETURN (*prdFunctionType)(PERIODIC_ARGS);
+typedef PERIODIC_RETURN (*prdFunctionType)(PERIODIC_PARAMS);
 
 /*
  * Function Declarations

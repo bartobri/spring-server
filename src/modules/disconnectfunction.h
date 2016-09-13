@@ -10,14 +10,14 @@
  * These symbolic constants define the parameters and the return value for
  * the functions executed in response to a disconnection.
  */
-#define DISCONNECTFUNCTION_ARGS        int socket
+#define DISCONNECTFUNCTION_PARAMS      int socket
 #define DISCONNECTFUNCTION_RETURN      void
 
 /*
  * Define a data type for a function pointer whos paramaters are
- * DISCONNECTFUNCTION_ARGS and return value is DISCONNECTFUNCTION_RETURN.
+ * DISCONNECTFUNCTION_PARAMS and return value is DISCONNECTFUNCTION_RETURN.
  */
-typedef DISCONNECTFUNCTION_RETURN (*disconnectFunctionType)(DISCONNECTFUNCTION_ARGS);
+typedef DISCONNECTFUNCTION_RETURN (*disconnectFunctionType)(DISCONNECTFUNCTION_PARAMS);
 
 /*
  * Function declarations.

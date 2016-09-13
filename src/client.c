@@ -14,7 +14,7 @@
 /***********************************************************************
 // Connect Function Template:
 
-CONNECTFUNCTION_RETURN function_name(CONNECTFUNCTION_ARGS) {
+CONNECTFUNCTION_RETURN function_name(CONNECTFUNCTION_PARAMS) {
 	(void)socket;
 	
 	// Code here
@@ -22,7 +22,7 @@ CONNECTFUNCTION_RETURN function_name(CONNECTFUNCTION_ARGS) {
 
 // Disconnect Function Template:
 
-DISCONNECTFUNCTION_RETURN function_name(DISCONNECTFUNCTION_ARGS) {
+DISCONNECTFUNCTION_RETURN function_name(DISCONNECTFUNCTION_PARAMS) {
 	(void)socket;
 	
 	// Code here
@@ -30,13 +30,13 @@ DISCONNECTFUNCTION_RETURN function_name(DISCONNECTFUNCTION_ARGS) {
 
 // Periodic Function Template:
 
-PERIODIC_RETURN function_name(PERIODIC_ARGS) {
+PERIODIC_RETURN function_name(PERIODIC_PARAMS) {
 	// Code here
 }
 
 // Command Function Template:
 
-COMMAND_RETURN function_name(COMMAND_ARGS) {
+COMMAND_RETURN function_name(COMMAND_PARAMS) {
 	(void)socket;
 	(void)payload;
 	
@@ -45,14 +45,14 @@ COMMAND_RETURN function_name(COMMAND_ARGS) {
 ***********************************************************************/
 
 // Custom Functions Definitions Here
-COMMAND_RETURN receive_hello(COMMAND_ARGS) {
+COMMAND_RETURN receive_hello(COMMAND_PARAMS) {
 	(void)socket;
 	(void)payload;
 	
 	printf("Received hello from server\n");
 }
 
-PERIODIC_RETURN send_heartbeat(PERIODIC_ARGS) {
+PERIODIC_RETURN send_heartbeat(PERIODIC_PARAMS) {
 	static int c = 0;
 	
 	if (c++ < 5)

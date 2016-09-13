@@ -10,14 +10,14 @@
  * These symbolic constants define the parameters and the return value for
  * the functions executed in response to a new connection.
  */
-#define CONNECTFUNCTION_ARGS        int socket
+#define CONNECTFUNCTION_PARAMS      int socket
 #define CONNECTFUNCTION_RETURN      void
 
 /*
  * Define a data type for a function pointer whos paramaters are
- * CONNECTFUNCTION_ARGS and return value is CONNECTFUNCTION_RETURN.
+ * CONNECTFUNCTION_PARAMS and return value is CONNECTFUNCTION_RETURN.
  */
-typedef CONNECTFUNCTION_RETURN (*connectFunctionType)(CONNECTFUNCTION_ARGS);
+typedef CONNECTFUNCTION_RETURN (*connectFunctionType)(CONNECTFUNCTION_PARAMS);
 
 /*
  * Function Declarations.

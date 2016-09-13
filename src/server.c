@@ -12,7 +12,7 @@
 /***********************************************************************
 // Connect Function Template:
 
-CONNECTFUNCTION_RETURN function_name(CONNECTFUNCTION_ARGS) {
+CONNECTFUNCTION_RETURN function_name(CONNECTFUNCTION_PARAMS) {
 	(void)socket;
 	
 	// Code here
@@ -20,7 +20,7 @@ CONNECTFUNCTION_RETURN function_name(CONNECTFUNCTION_ARGS) {
 
 // Disconnect Function Template:
 
-DISCONNECTFUNCTION_RETURN function_name(DISCONNECTFUNCTION_ARGS) {
+DISCONNECTFUNCTION_RETURN function_name(DISCONNECTFUNCTION_PARAMS) {
 	(void)socket;
 	
 	// Code here
@@ -28,13 +28,13 @@ DISCONNECTFUNCTION_RETURN function_name(DISCONNECTFUNCTION_ARGS) {
 
 // Periodic Function Template:
 
-PERIODIC_RETURN function_name(PERIODIC_ARGS) {
+PERIODIC_RETURN function_name(PERIODIC_PARAMS) {
 	// Code here
 }
 
 // Command Function Template:
 
-COMMAND_RETURN function_name(COMMAND_ARGS) {
+COMMAND_RETURN function_name(COMMAND_PARAMS) {
 	(void)socket;
 	(void)payload;
 	
@@ -43,16 +43,16 @@ COMMAND_RETURN function_name(COMMAND_ARGS) {
 ***********************************************************************/
 
 // Custom Functions Definitions Here
-CONNECTFUNCTION_RETURN say_hello(CONNECTFUNCTION_ARGS) {
+CONNECTFUNCTION_RETURN say_hello(CONNECTFUNCTION_PARAMS) {
 	(void)socket;
 	
 	write_socket(socket, "helo", "");
 }
 
-DISCONNECTFUNCTION_RETURN print_message(DISCONNECTFUNCTION_ARGS) {
+DISCONNECTFUNCTION_RETURN print_message(DISCONNECTFUNCTION_PARAMS) {
 	(void)socket;
 	
-	print_log("Socket %i disconnected by server. Idle time elapsed\n", socket);
+	print_log("Socket %i disconnected by server. Idle time elapsed.", socket);
 }
 
 /*
