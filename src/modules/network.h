@@ -1,6 +1,14 @@
+// Copyright (c) 2016 Brian Barto
+//
+// This program is free software; you can redistribute it and/or modify it
+// under the terms of the MIT License. See LICENSE for more details.
+
 #ifndef NETWORK_H
 #define NETWORK_H 1
 
+/*
+ * Function Declarations
+ */
 void network_init(void);
 int network_start_server(char *, char *);
 int network_start_client(char *, char *);
