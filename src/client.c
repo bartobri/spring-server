@@ -3,21 +3,60 @@
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License. See LICENSE for more details.
 
+// Required header for custom functions. Do not remove.
 #include "modules/component.h"
 
-COMMAND_RETURN command_helo(COMMAND_ARGS) {
+// Copy and paste the function templates below to start creating your
+// custom functions.
+
+/***********************************************************************
+// Connect Function Template:
+
+CONNECTFUNCTION_RETURN function_name(CONNECTFUNCTION_ARGS) {
+	(void)socket;
+	
+	// Code here
+}
+
+// Disconnect Function Template:
+
+DISCONNECTFUNCTION_RETURN function_name(DISCONNECTFUNCTION_ARGS) {
+	(void)socket;
+	
+	// Code here
+}
+
+// Periodic Function Template:
+
+PERIODIC_RETURN function_name(PERIODIC_ARGS) {
+	// Code here
+}
+
+// Command Function Template:
+
+COMMAND_RETURN function_name(COMMAND_ARGS) {
 	(void)socket;
 	(void)payload;
 	
-	// Use helo command to display an initial message to the client
-	// or to initiate a process.
+	// Code here
 }
+***********************************************************************/
 
-PERIODIC_RETURN send_heartbeat(PERIODIC_ARGS) {
-	write_socket(main_socket(), "beat", "");
-}
+// Custom Functions Definitions Here
 
+/*
+ * The client_init() function is executed when the client starts. This
+ * function should be used to load all your custom functions. Further,
+ * any other initialization tasks needed for your custom application can
+ * be added to this function e.g. connecting to a database.
+ */
 void client_init(void) {
-	add_command_function("helo", &command_helo);
-	add_periodic_function(&send_heartbeat);
+	
+	// Load your custom functions here.
+	//
+	// e.g.
+	// set_connect_function(&function_name);
+	// set_disconnect_function(&function_name);
+	// add_periodic_function(&function_name);
+	// add_command_function("cmnd", &function_name);
 }

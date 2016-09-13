@@ -3,51 +3,60 @@
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License. See LICENSE for more details.
 
-#include <stdio.h>
+// Required header for custom functions. Do not remove.
 #include "modules/component.h"
 
-/*
- * Define functions here
- */
-CONNECTFUNCTION_RETURN send_greeting(CONNECTFUNCTION_ARGS) {
+// Copy and paste the function templates below to start creating your
+// custom functions.
+
+/***********************************************************************
+// Connect Function Template:
+
+CONNECTFUNCTION_RETURN function_name(CONNECTFUNCTION_ARGS) {
 	(void)socket;
 	
-	write_socket(socket, "helo", "");
+	// Code here
 }
 
-DISCONNECTFUNCTION_RETURN client_disconnect(DISCONNECTFUNCTION_ARGS) {
+// Disconnect Function Template:
+
+DISCONNECTFUNCTION_RETURN function_name(DISCONNECTFUNCTION_ARGS) {
 	(void)socket;
 	
-	// custom code that runs when a client disconnects
-	printf("Socket %i disconnected\n", socket);
+	// Code here
 }
- 
-COMMAND_RETURN command_quit(COMMAND_ARGS) {
+
+// Periodic Function Template:
+
+PERIODIC_RETURN function_name(PERIODIC_ARGS) {
+	// Code here
+}
+
+// Command Function Template:
+
+COMMAND_RETURN function_name(COMMAND_ARGS) {
 	(void)socket;
 	(void)payload;
 	
-	// Close socket
-	close_socket(socket);
+	// Code here
 }
+***********************************************************************/
 
-COMMAND_RETURN command_beat(COMMAND_ARGS) {
-	(void)socket;
-	(void)payload;
-
-	printf("Received beat command on socket: %i, payload: %s\n", socket, payload);
-}
-
-PERIODIC_RETURN periodic(PERIODIC_ARGS) {
-	// Periodic code here.
-}
+// Custom Functions Definitions Here
 
 /*
- * Load functions here
+ * The server_init() function is executed when the server starts. This
+ * function should be used to load all your custom functions. Further,
+ * any other initialization tasks needed for your custom application can
+ * be added to this function e.g. connecting to a database.
  */
 void server_init(void) {
-	set_connect_function(&send_greeting);
-	add_command_function("beat", &command_beat);
-	add_command_function("quit", &command_quit);
-	add_periodic_function(&periodic);
-	set_disconnect_function(&client_disconnect);
+	
+	// Load your custom functions here.
+	//
+	// e.g.
+	// set_connect_function(&function_name);
+	// set_disconnect_function(&function_name);
+	// add_periodic_function(&function_name);
+	// add_command_function("cmnd", &function_name);
 }
