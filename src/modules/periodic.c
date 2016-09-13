@@ -7,9 +7,23 @@
 #include "config.h"
 #include "modules/periodic.h"
 
-// Static variables
+/*
+ * MODULE DESCRIPTION
+ * 
+ * The periodic module manages an array of function pointers referred to
+ * as "periodic functions". It is responsible for initializing the array,
+ * adding new functions to the array, and executing all functions
+ * contained in the array.
+ */
+
+/*
+ * Static Variables
+ */
 prdFunctionType functions[PERIODIC_LIMIT];
 
+/*
+ * Initialize the functions array with all NULL values.
+ */
 void periodic_init(void) {
 	int i;
 	
@@ -18,6 +32,10 @@ void periodic_init(void) {
 		functions[i] = NULL;
 }
 
+/*
+ * Add a function pointer to the next available slot in the functions
+ * array.
+ */
 void periodic_add(prdFunctionType functionPtr) {
 	int i;
 
@@ -29,6 +47,9 @@ void periodic_add(prdFunctionType functionPtr) {
 	}
 }
 
+/*
+ * Execute all function pointers contained in the functions array.
+ */
 void periodic_exec(void) {
 	int i;
 	
