@@ -7,11 +7,24 @@
 #include <sys/select.h>
 #include "config.h"
 
+/*
+ * MODULE DESCRIPTION
+ * 
+ * The sockettime module stores and provides access to a list of sockets
+ * file descriptors and the timestamp of the last time data was received.
+ */
+
+/*
+ * Static Variables
+ */
 static struct {
 	int socket;
 	int timestamp;
 } times[FD_SETSIZE];
 
+/*
+ * Initialize all static variable values to zero.
+ */
 void sockettime_init(void) {
 	int i;
 	
@@ -22,6 +35,10 @@ void sockettime_init(void) {
 	}
 }
 
+/*
+ * Set the timestamp for the given socket number to the current time. If
+ * the socket does not exists on the list, it is added.
+ */
 void sockettime_set(int socket) {
 	int i;
 	
@@ -38,6 +55,10 @@ void sockettime_set(int socket) {
 	}
 }
 
+/*
+ * Return the timestamp for the given socket number. If the socket is
+ * not found, zero is returned.
+ */
 int sockettime_get(int socket) {
 	int i;
 	
@@ -52,6 +73,11 @@ int sockettime_get(int socket) {
 	return 0;
 }
 
+/*
+ * Return a true value if the number of seconds configured for IDLE_SECONDS
+ * has passed since the last time the given socket timestamp was updated.
+ * Return a false value if not.
+ */
 int sockettime_elapsed(int socket) {
 	int i;
 	
