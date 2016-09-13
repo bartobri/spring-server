@@ -8,19 +8,46 @@
 #include "config.h"
 #include "modules/readlist.h"
 
-// Static vars
+/*
+ * MODULE DESCRIPTION
+ * 
+ * The readlist module maintains a list of socket file descriptors for
+ * the specific purpose of determining which have data to be read. 
+ * Initially the main loop adds all active sockets to this list. Then
+ * after readlist_wait() is called, the list is reduced to only those
+ * with data available. Functions are provided to access access/modify
+ * this list pre and post readlist_wait().
+ */
+ 
+/*
+ * Static Variables
+ */
 static fd_set read_fd_set;
 static int list_position;
 
+/*
+ * Set all static variable values to zero.
+ */
 void readlist_init(void) {
 	FD_ZERO(&read_fd_set);
 	list_position = 0;
 }
 
+/*
+ * Add the given socket to the readlist.
+ */
 void readlist_add(int socket) {
 	FD_SET(socket, &read_fd_set);
 }
 
+/*
+ * Wait for data to arrive at one of the sockets in the readlist. A
+ * timeout value is used that is equal to the number of seconds configured
+ * for PERIODIC_SECONDS. On success, the total number of file descriptors
+ * that have data available for reading is returned, and the realist is
+ * reduced to contain only those sockets. On timeout, zero is returned.
+ * On failure, a negative integer is returned.
+ */
 int readlist_wait(void) {
 	int r;
 	struct timeval timeout;
@@ -36,10 +63,16 @@ int readlist_wait(void) {
 	return r;
 }
 
+/*
+ * Remove the given socket from the readlist.
+ */
 void readlist_remove(int socket) {
 	FD_CLR(socket, &read_fd_set);
 }
 
+/*
+ * Check if the given socket exists in the readlist.
+ */
 int readlist_check(int socket) {
 	if (FD_ISSET(socket, &read_fd_set))
 		return 1;
@@ -47,6 +80,10 @@ int readlist_check(int socket) {
 	return 0;
 }
 
+/*
+ * Return the next socket value from the readlist. Return a negative
+ * value when the end of the list is reached.
+ */
 int readlist_get_next(void) {
 
 	while (++list_position < FD_SETSIZE)
@@ -58,6 +95,9 @@ int readlist_get_next(void) {
 	return -1;
 }
 
+/*
+ * Reset the list position used for traversing the readlist.
+ */
 void readlist_reset_next(void) {
 	list_position = 0;
 }
