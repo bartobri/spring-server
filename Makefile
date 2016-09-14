@@ -24,8 +24,6 @@ CFLAGS = -Wextra -Wall -iquote$(SRC)
 SERVERFLAGS = -DIS_SERVER=1 -DIS_CLIENT=0
 CLIENTFLAGS = -DIS_SERVER=0 -DIS_CLIENT=1
 
-EXFLAGS = -lm
-
 .PHONY: all install uninstall clean
 
 EXES = server client
