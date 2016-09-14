@@ -34,8 +34,9 @@ char *inputpayload_get(void) {
 
 /*
  * Advance the given char pointer (data) by the number of characters equal
- * to COMMAND_SIZE. Then parse out the next number of characters equal to
- * PAYLOAD_SIZE and store them in the payload character array.
+ * to the length of the command. Then parse out the next number of
+ * characters equal to PAYLOAD_SIZE and store them in the payload
+ * character array.
  */
 void inputpayload_parse(char *data) {
 	unsigned int cmdlen = 0;

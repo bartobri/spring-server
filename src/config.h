@@ -47,16 +47,17 @@
 #define COMMAND_LIMIT 30
 
 /*
- * The COMMAND_SIZE configuration tells the client and server the number
- * of characters contained in the commands that they use to communicate with
- * eachother. Since the entirety of the data is transmitted as a single
- * string over the network, this is used to separate the command from the
- * payload. All commands will be required to conform to this length.
- * If you use a command that is longer than this setting, the receiving
- * program will truncate it and the remaining portion will be
- * considered part of the payload.
+ * The MAX_COMMAND_SIZE configuration tells the client and server the
+ * maximum number of characters that a command string may contain. If you
+ * send a command string with a length that is greater than this setting,
+ * the software will try to handle it appropriately, but you risk
+ * truncating a portion of the payload data as a result. It is better to
+ * simply increase this configuration as needed. Though this software can
+ * handle up to 99 command string characters, it is suggested you keep it
+ * at a reasonable limit of 10 or less for optimal memory consumption.
+ * Never exceed a 99 or you risk potential memory fault errors.
  */
-#define COMMAND_SIZE 4
+#define MAX_COMMAND_SIZE 4
 
 /*
  * The PAYLOAD_SIZE configuration sets the maximum number of characters
