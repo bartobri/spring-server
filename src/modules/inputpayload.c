@@ -38,8 +38,15 @@ char *inputpayload_get(void) {
  * PAYLOAD_SIZE and store them in the payload character array.
  */
 void inputpayload_parse(char *data) {
-	if (strlen(data) > COMMAND_SIZE)
-		strncpy(payload, data + COMMAND_SIZE, PAYLOAD_SIZE);
-	else
-		memset(payload, 0, sizeof(PAYLOAD_SIZE + 1));
+	unsigned int cmdlen = 0;
+	
+	memset(payload, 0, sizeof(PAYLOAD_SIZE + 1));
+	
+	while (*data >= '0' && *data <= '9')
+		cmdlen = (cmdlen * 10) + *data++ - '0';
+		
+	++data;
+
+	if (strlen(data) > cmdlen)
+		strncpy(payload, data + cmdlen, PAYLOAD_SIZE);
 }

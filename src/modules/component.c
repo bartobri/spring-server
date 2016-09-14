@@ -30,13 +30,19 @@
  * payload (char *payload) data to the socket (int s).
  */
 int write_socket(int s, char *command, char *payload) {
-	int r;
+	int r, l;
+	char *lstr;
 	char *str;
 	
-	str = malloc(strlen(command) + strlen(payload) + 1);
-	sprintf(str, "%s%s", command, payload);
+	l = strlen(command);
+	lstr = malloc(20);
+	sprintf(lstr, "%i", l);
+	
+	str = malloc(strlen(lstr) + 1 + strlen(command) + strlen(payload) + 1);
+	sprintf(str, "%s:%s%s", lstr, command, payload);
 	r = network_write(s, str);
 	free(str);
+	free(lstr);
 	
 	return r;
 }

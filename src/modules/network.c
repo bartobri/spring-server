@@ -16,6 +16,7 @@
 
 #define IPV4_ADDRESS_LENGTH 15
 #define ERRMSG_SIZE         100
+#define MAX_READ_SIZE       COMMAND_SIZE + PAYLOAD_SIZE + 3
 
 /*
  * MODULE DESCRIPTION
@@ -36,7 +37,7 @@
  */
 static char ipaddress[IPV4_ADDRESS_LENGTH + 1];
 static char errmsg[ERRMSG_SIZE];
-static char inputqueue[INPUT_QUEUE_SIZE][COMMAND_SIZE + PAYLOAD_SIZE + 1];
+static char inputqueue[INPUT_QUEUE_SIZE][MAX_READ_SIZE + 1];
 
 /*
  * Initialize the static variables. Set all values to NULL (zero).
@@ -48,7 +49,7 @@ void network_init(void) {
 	memset(errmsg, 0, ERRMSG_SIZE);
 
 	for (i = 0; i < INPUT_QUEUE_SIZE; i++)
-		memset(inputqueue[i], 0, COMMAND_SIZE + PAYLOAD_SIZE + 1);
+		memset(inputqueue[i], 0, MAX_READ_SIZE + 1);
 }
 
 /*
@@ -200,7 +201,7 @@ int network_read(int socket) {
 	
 	// Set the buffer and input queue with all integer zeros ('\0')
 	for (i = 0; i < INPUT_QUEUE_SIZE; i++)
-		memset(inputqueue[i], 0, COMMAND_SIZE + PAYLOAD_SIZE + 1);
+		memset(inputqueue[i], 0, MAX_READ_SIZE + 1);
 
 	// Get length of data waiting to be read
 	ioctl(socket, FIONREAD, &r);
@@ -222,11 +223,11 @@ int network_read(int socket) {
 				while (*buffer >= '0' && *buffer <= '9')
 					len = (len * 10) + *buffer++ - '0';
 				
-				if (len > 0 && *buffer == '\n' && strlen(++buffer) >= len)
-					if (len <= COMMAND_SIZE + PAYLOAD_SIZE)
+				if (len > 0 && *buffer == ':' && strlen(++buffer) >= len)
+					if (len <= MAX_READ_SIZE)
 						strncpy(inputqueue[q++], buffer, len);
 					else
-						strncpy(inputqueue[q++], buffer, COMMAND_SIZE + PAYLOAD_SIZE);
+						strncpy(inputqueue[q++], buffer, MAX_READ_SIZE);
 				else
 					break;
 	
@@ -263,14 +264,18 @@ char *network_get_readdata(int r) {
 int network_write(int socket, char *data) {
 	int r, l;
 	char *lstr;
+	char *str;
 	
 	l = strlen(data);
-	
 	lstr = malloc(20 + l);
-	sprintf(lstr, "%i\n%s", l, data);
+	sprintf(lstr, "%i", l);
 	
-	r = write(socket, lstr, strlen(lstr));
+	str = malloc(strlen(lstr) + 1 + strlen(data) + 1);
+	sprintf(str, "%s:%s", lstr, data);
 	
+	r = write(socket, str, strlen(str));
+	
+	free(str);
 	free(lstr);
 
 	return r;

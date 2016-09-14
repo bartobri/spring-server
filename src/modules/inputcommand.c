@@ -37,5 +37,14 @@ char *inputcommand_get(void) {
  * the given data string and store them in the command character array.
  */
 void inputcommand_parse(char *data) {
-	strncpy(command, data, COMMAND_SIZE);
+	int len = 0;
+	
+	memset(command, 0, sizeof(COMMAND_SIZE + 1));
+	
+	while (*data >= '0' && *data <= '9')
+		len = (len * 10) + *data++ - '0';
+	
+	++data;
+
+	strncpy(command, data, len);
 }
