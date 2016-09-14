@@ -16,13 +16,13 @@
 /*
  * Static Variables
  */
-static char payload[PAYLOAD_SIZE + 1];
+static char payload[MAX_PAYLOAD_SIZE + 1];
 
 /*
  * Set the payload character array to all null characters
  */
 void inputpayload_init(void) {
-	memset(payload, 0, sizeof(PAYLOAD_SIZE + 1));
+	memset(payload, 0, sizeof(MAX_PAYLOAD_SIZE + 1));
 }
 
 /*
@@ -35,13 +35,13 @@ char *inputpayload_get(void) {
 /*
  * Advance the given char pointer (data) by the number of characters equal
  * to the length of the command. Then parse out the next number of
- * characters equal to PAYLOAD_SIZE and store them in the payload
+ * characters equal to MAX_PAYLOAD_SIZE and store them in the payload
  * character array.
  */
 void inputpayload_parse(char *data) {
 	unsigned int cmdlen = 0;
 	
-	memset(payload, 0, sizeof(PAYLOAD_SIZE + 1));
+	memset(payload, 0, sizeof(MAX_PAYLOAD_SIZE + 1));
 	
 	while (*data >= '0' && *data <= '9')
 		cmdlen = (cmdlen * 10) + *data++ - '0';
@@ -49,5 +49,5 @@ void inputpayload_parse(char *data) {
 	++data;
 
 	if (strlen(data) > cmdlen)
-		strncpy(payload, data + cmdlen, PAYLOAD_SIZE);
+		strncpy(payload, data + cmdlen, MAX_PAYLOAD_SIZE);
 }

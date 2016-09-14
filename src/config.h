@@ -60,12 +60,12 @@
 #define MAX_COMMAND_SIZE 4
 
 /*
- * The PAYLOAD_SIZE configuration sets the maximum number of characters
+ * The MAX_PAYLOAD_SIZE configuration sets the maximum number of characters
  * that can be contained in the payload portion of a transmission. If you
  * need to send a length of data longer than this value, increase as
  * necessary. Physical memory limitations may apply.
  */
-#define PAYLOAD_SIZE 2000
+#define MAX_PAYLOAD_SIZE 2000
 
 /*
  * The PERIODIC_SECONDS configuration sets the interval, in seconds, at
