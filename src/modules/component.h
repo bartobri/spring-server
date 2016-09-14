@@ -16,6 +16,14 @@
 #include "modules/log.h"
 
 /*
+ * Macros to simpify the custom function definitions.
+ */
+#define CONNECT_FUNCTION(n)    CONNECTFUNCTION_RETURN n(CONNECTFUNCTION_PARAMS)
+#define DISCONNECT_FUNCTION(n) DISCONNECTFUNCTION_RETURN n(DISCONNECTFUNCTION_PARAMS)
+#define PERIODIC_FUNCTION(n)   PERIODIC_RETURN n(PERIODIC_PARAMS)
+#define COMMAND_FUNCTION(n)    COMMAND_RETURN n(COMMAND_PARAMS)
+
+/*
  * Using a macro to wrap log_write() and log_print() since they are
  * variadic functions, which makes creating a regular function wrapper
  * slightly more difficult.

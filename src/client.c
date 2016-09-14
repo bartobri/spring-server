@@ -12,47 +12,40 @@
 // custom functions.
 
 /***********************************************************************
-// Connect Function Template:
 
-CONNECTFUNCTION_RETURN function_name(CONNECTFUNCTION_PARAMS) {
+CONNECT_FUNCTION(function_name) {
 	(void)socket;
 	
 	// Code here
 }
 
-// Disconnect Function Template:
-
-DISCONNECTFUNCTION_RETURN function_name(DISCONNECTFUNCTION_PARAMS) {
+DISCONNECT_FUNCTION(function_name) {
 	(void)socket;
 	
 	// Code here
 }
 
-// Periodic Function Template:
-
-PERIODIC_RETURN function_name(PERIODIC_PARAMS) {
+PERIODIC_FUNCTION(function_name) {
 	// Code here
 }
 
-// Command Function Template:
-
-COMMAND_RETURN function_name(COMMAND_PARAMS) {
+COMMAND_FUNCTION(function_name) {
 	(void)socket;
 	(void)payload;
 	
 	// Code here
 }
+
 ***********************************************************************/
 
-// Custom Functions Definitions Here
-COMMAND_RETURN receive_hello(COMMAND_PARAMS) {
+COMMAND_FUNCTION(receive_hello) {
 	(void)socket;
 	(void)payload;
 	
 	printf("Received hello from server\n");
 }
 
-PERIODIC_RETURN send_heartbeat(PERIODIC_PARAMS) {
+PERIODIC_FUNCTION(send_heartbeat) {
 	static int c = 0;
 	
 	if (c++ < 5)

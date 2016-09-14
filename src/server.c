@@ -10,46 +10,39 @@
 // custom functions.
 
 /***********************************************************************
-// Connect Function Template:
 
-CONNECTFUNCTION_RETURN function_name(CONNECTFUNCTION_PARAMS) {
+CONNECT_FUNCTION(function_name) {
 	(void)socket;
 	
 	// Code here
 }
 
-// Disconnect Function Template:
-
-DISCONNECTFUNCTION_RETURN function_name(DISCONNECTFUNCTION_PARAMS) {
+DISCONNECT_FUNCTION(function_name) {
 	(void)socket;
 	
 	// Code here
 }
 
-// Periodic Function Template:
-
-PERIODIC_RETURN function_name(PERIODIC_PARAMS) {
+PERIODIC_FUNCTION(function_name) {
 	// Code here
 }
 
-// Command Function Template:
-
-COMMAND_RETURN function_name(COMMAND_PARAMS) {
+COMMAND_FUNCTION(function_name) {
 	(void)socket;
 	(void)payload;
 	
 	// Code here
 }
+
 ***********************************************************************/
 
-// Custom Functions Definitions Here
-CONNECTFUNCTION_RETURN say_hello(CONNECTFUNCTION_PARAMS) {
+CONNECT_FUNCTION(say_hello) {
 	(void)socket;
 	
 	write_socket(socket, "helo", "");
 }
 
-DISCONNECTFUNCTION_RETURN print_message(DISCONNECTFUNCTION_PARAMS) {
+DISCONNECT_FUNCTION(print_message) {
 	(void)socket;
 	
 	print_log("Socket %i disconnected by server. Idle time elapsed.", socket);
