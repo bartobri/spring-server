@@ -95,45 +95,27 @@ The resulting binaries will be located in the spring-server/bin directory.
 Usage
 -----
 
-Without any customizations, the client and server programs don't do much
-beyond simply connecting to each other. Since the client isn't customized
-to send any data, the server will disconnect the client after about 10-15
-seconds due to inactivity (this is configurable).
-
-After running 'make' to build the client and server programs...
-
-Run the server:
-
 ```
-bin/server
+$ bin/server                # Run with default bindings and port
+$ bin/server -h localhost   # Specify the hostname or IP of the interface to bind to
+$ bin/server -p 8880        # Specify the port number to listen on
+
+$ bin/client -h localhost            # Specify hostname to connect to
+$ bin/client -h localhost -p 8880    # Specify host and port number to connect to
 ```
 
-By default, the server binds to all available network interfaces. To
-override this and bind to an interface with a specific IP address, use the
-`-h` command line argument.
+If you don't specify a hostname or port number, the server and client
+will use the DEFAULT_HOST and DEFAULT_PORT settings contained in the config.h
+header file. If DEFAULT_HOST is set to a null string, the server will
+bind to all available network interfaces, while the client will require
+the use of the `-h` command line argument to set the hostname or IP address
+that it should connect to.
 
-```
-bin/server -h <ip-addresss-or-hostname>
-```
-
-By default, the client requires the use of the `-h` command line argument
-to specify an IP address or hostname to connect to.
-
-Connect the client to a running server:
-
-```
-bin/client -h <ip-addresss-or-hostname>
-```
-
-You can also override the default port number by using the `-p` command
-line argument:
-
-```
-bin/server -p <port-number>
-```
-```
-bin/client -h <ip-addresss-or-hostname> -p <port-number>
-```
+Note that if you run these programs without any customizations, the client
+and server programs can successfully connect but will not echange data or
+perform and tasks. Since the client hasn't been customized to send any data,
+the server will disconnect the client after about 10-15 seconds due to
+inactivity (this is configurable).
 
 Customizing
 -----------
