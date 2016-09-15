@@ -1,21 +1,31 @@
-##### NOTE: This project has become something much larger than planned. The documentation below is outdated. This warning will be removed when it is updated.
-
 Spring Server
 =============
+
+**Table of Contents**
+
+1. [About](#about)
+2. [Download and Build](#download-and-build)
+3. [Usage](#usage)
+4. [Customizing](#customizing)
+5. [Example](#example)
+6. [License](#license)
+
+About
+-----
 
 The goal of this project is to provide a simple and robust framework that
 enables the swift creation of client-server applications. The framework
 abstracts away the usual networking overhead by providing a pair of
 client/server programs pre-written to manage all network-related
-tasks. This allows the programmmer to primarily focus on customization.
+tasks. This allows the programmer to primarily focus on customization.
 
-What is privided:
+**What is provided:**
 
 * Two programs: 'client' and 'server'
 
-What can they do:
+**What can they do:**
 
-* Connect with eachother over a TCP/IP network socket.
+* Connect to each other over a TCP/IP network socket.
 
 * Easily exchange data, evaluate, and react.
 
@@ -29,7 +39,7 @@ What can they do:
 
 At the core of these programs is the ability to execute your custom
 written functions. Custom functions allow you to make the client and
-server do vitrually anything within your ability to program. The framework
+server do virtually anything within your ability to program. The framework
 provides tools for you to automatically execute a function in response
 to one of 4 events:
 
@@ -39,14 +49,14 @@ to one of 4 events:
 
 * In response to the receipt of data.
 
-* When a disconnection occurres.
+* When a disconnection occurs.
 
 Tools provided by the framework allow you to send data from within your
 functions, analyse data received, log info to a text file, or terminate
 a connection. A tool to loop over all active connections is also provided,
-mostly for the server component, since the clent only ever has one connection.
+mostly for the server component, since the client only ever has one connection.
 
-Potential projects that may wish to use this repository as a spring board
+Potential projects that may wish to use this repository as a springboard
 point range from a card game, to an infrastructure monitoring solution,
 to a Napster clone.
 
@@ -85,13 +95,20 @@ The resulting binaries will be located in the spring-server/bin directory.
 Usage
 -----
 
+Without any customizations, the client and server programs don't do much
+beyond simply connecting to each other. Since the client isn't customized
+to send data or a heartbeat at some periodic interval, the server will
+disconnect the client after about 10-15 seconds due to inactivity.
+
+After running 'make' to build the client and server programs...
+
 To run the server:
 
 ```
 bin/server
 ```
 
-To run the client:
+To connect the client to a running server:
 
 ```
 bin/client -h <hostname>
@@ -99,6 +116,11 @@ bin/client -h <hostname>
 
 Customizing
 -----------
+
+##### TODO
+
+Example
+-------
 
 ##### TODO
 
