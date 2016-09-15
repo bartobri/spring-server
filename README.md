@@ -97,21 +97,42 @@ Usage
 
 Without any customizations, the client and server programs don't do much
 beyond simply connecting to each other. Since the client isn't customized
-to send data or a heartbeat at some periodic interval, the server will
-disconnect the client after about 10-15 seconds due to inactivity.
+to send any data, the server will disconnect the client after about 10-15
+seconds due to inactivity (this is configurable).
 
 After running 'make' to build the client and server programs...
 
-To run the server:
+Run the server:
 
 ```
 bin/server
 ```
 
-To connect the client to a running server:
+By default, the server binds to all available network interfaces. To
+override this and bind to an interface with a specific IP address, use the
+`-h` command line argument.
 
 ```
-bin/client -h <hostname>
+bin/server -h <ip-addresss-or-hostname>
+```
+
+By default, the client requires the use of the `-h` command line argument
+to specify an IP address or hostname to connect to.
+
+Connect the client to a running server:
+
+```
+bin/client -h <ip-addresss-or-hostname>
+```
+
+You can also override the default port number by using the `-p` command
+line argument:
+
+```
+bin/server -p <port-number>
+```
+```
+bin/client -h <ip-addresss-or-hostname> -p <port-number>
 ```
 
 Customizing
