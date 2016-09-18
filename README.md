@@ -15,41 +15,30 @@ About
 
 The goal of this project is to provide a simple and robust framework that
 enables the swift creation of client-server applications. The framework
-abstracts away the usual networking overhead by providing a pair of
-client/server programs pre-written to manage all network-related
-tasks. This allows the programmer to primarily focus on customization.
+provides a pair of client/server programs pre-written to manage all
+network-related tasks allowing the programmer to primarily focus on
+customization. 
 
-**What is provided:**
+Out of the box, the client and server can easily connect to each other
+over a TCP/IP network socket. The server can manage up to 1028 concurrent
+client connections, and auto-detect/disconnect inactive clients.
 
-* Two programs: 'client' and 'server'
+Tools provided with this framework allow you to write custom functions
+and tell the client or server how and when to execute them. Other tools
+are provided that easily allow you to exchange data between the client
+and server, analyse and react to the data on the receiving end, log info
+to a text file, terminate a connection, and more, from within your custom
+functions.
 
-**What can they do:**
-
-* Connect to each other over a TCP/IP network socket.
-
-* Easily exchange data, evaluate, and react.
-
-* Execute custom-written functions.
-
-* Log data to a text file.
-
-* Server: Manage up to 1028 concurrent client connections.
-
-* Server: Detect and disconnect inactive clients.
-
-Tools provided by the framework allow you to send data from within your
-functions, analyse data received, log info to a text file, or terminate
-a connection. A tool to loop over all active connections is also provided,
-mostly for the server component, since the client only ever has one connection.
+With this framework, creating client/server applications that exchange
+data and carry out custom tasks is trivial.
 
 Potential projects that may wish to use this repository as a springboard
-point range from a card game, to an infrastructure monitoring solution,
+range from an online card game, to an infrastructure monitoring solution,
 to a Napster clone.
 
-Since this project is coded in C, knowledge of C is required.
-
-See 'Customizing' for information about how to customize these programs
-for your specific needs.
+Since this project is coded in C, knowledge of C is required to create
+custom functions.
 
 Download and Build
 ------------------
