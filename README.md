@@ -268,8 +268,33 @@ print_log(char *format_string, ...);
 Example
 -------
 
-##### TODO
+An example is provided that demonstrates the creation and triggering of one
+of each of the four classes of custom functions. The customized client
+and server examples are located in the example directory.
 
+```
+spring-server/src/example
+```
+
+You can compile and run them from the spring-server directory:
+
+```
+// Make the example client and server
+$ make example
+
+// Run the example server and client
+$ bin/example_server
+$ bin/example_client -h localhost
+```
+
+This is the process flow that they will execute:
+
+1. The server component has a connect function defined and loaded, called "say_hello". When the client connects, this function is executed and sends the command "helo" to the connecting client via the provided socket file descriptor.
+2. The client component has a command function defined and loaded, called "receive_hello". It has associated the command "helo" with this function inside the client_init() code block. When the server sends the "helo" command to the client, the client matches this command and executes the receive_hello function. It prints a message to stdout acknowledging the receipt of the command.
+3. The client component has a periodic function defined and loaded. This is executed at the interval defined in config.h for PERIODIC_SECONDS, which is 5 seconds by default. The function sends the "beat" command to the server for the first 5 intervals, and stops sending it every interval thereafter.
+4. The server component receives the beat command from the client, but does not have any command functions associated with that command string, so not command is executed as a response. But the server still acknowledges the receipt of data from the client by not auto-disconnecting it during the time it is receiving periodic beat commands.
+5. Once the client stops sending beat commands to the server, the server waits for a period of time defined in config.h for IDLE_SECONDS and then disconnects the client due to inactivity.
+6. The server component has a disconnect function defined and loaded. When it disconnects the client, It executes this function. This function uses print_log() to add an entry to the logfile and print it to stdout.
 
 License
 -------
