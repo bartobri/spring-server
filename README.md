@@ -31,25 +31,11 @@ tasks. This allows the programmer to primarily focus on customization.
 
 * Execute custom-written functions.
 
-* Log info to a text file.
+* Log data to a text file.
 
 * Server: Manage up to 1028 concurrent client connections.
 
 * Server: Detect and disconnect inactive clients.
-
-At the core of these programs is the ability to execute your custom
-written functions. Custom functions allow you to make the client and
-server do virtually anything within your ability to program. The framework
-provides tools for you to automatically execute a function in response
-to one of 4 events:
-
-* When a successful connection is established.
-
-* At a (configurable) timed interval.
-
-* In response to the receipt of data.
-
-* When a disconnection occurs.
 
 Tools provided by the framework allow you to send data from within your
 functions, analyse data received, log info to a text file, or terminate
@@ -120,7 +106,157 @@ inactivity (this is configurable).
 Customizing
 -----------
 
-##### TODO
+There are only 3 files that you ever need to modify in order to customize the client and server components.
+
+1. **config.h** - Contains global settings used by both the client and server.
+2. **server.c** - Contains custom function definitions for the server.
+3. **client.c** - Contains custom function definitions for the client.
+
+##### Defining Custom Functions
+
+There are 4 classes of custom functions. Each class of function is
+executed differently.
+
+1. **Connect Function** - Executed when a new connection is made.
+2. **Disconnect Function** - Executed when a connection is terminated.
+3. **Periodic Function** - Executed at a timed interval (configured in config.h).
+4. **Command Function** - Executed in response to a command sent from the client or server.
+
+Because the client and server components expect the functions to be defined
+with specific function parameters and return values, each function type
+has it's own macro to simplify the process. below is how each of the four
+function classes should be defined using the macros.
+
+```
+CONNECT_FUNCTION(function_name) {
+	(void)socket;
+	
+	// Code here
+}
+
+DISCONNECT_FUNCTION(function_name) {
+	(void)socket;
+	
+	// Code here
+}
+
+PERIODIC_FUNCTION(function_name) {
+	// Code here
+}
+
+COMMAND_FUNCTION(function_name) {
+	(void)socket;
+	(void)payload;
+	
+	// Code here
+}
+```
+
+These macros expand into a traditional function definition with the
+expected function parameters and return values. Be sure to replace
+"function_name" with a unique function name.
+
+Connect and Disconnect functions are passed the integer value for the
+socket that connected or disconnected, defined as `int socket`.
+
+Command functions are passed the integer value of the socket that sent
+the command, and a string pointer optionally containing a data payload.
+They are defined as `int socket` and `char *payload`.
+
+Periodic functions are not passed any parameters.
+
+All functions have a return value of `void`.
+
+##### Executing Custom Functions
+
+Once functions are defined using the templates above, you must tell the
+client and server components when to execute them. This is done inside the
+server_init() and client_init() functions which are defined inside the
+client.c and server.c files respectively, which should be just below where
+you defined your custom functions.
+
+```
+set_connect_function(&function_name);
+set_disconnect_function(&function_name);
+add_periodic_function(&function_name);
+add_command_function("cmnd", &function_name);
+
+```
+
+Only one connect and disconnect function can be set.
+
+Multiple periodic functions can be set. The are executed in the order of which
+they were added inside the server/client init function. The max allowed
+is configured in config.h (see PERIODIC_LIMIT).
+
+Multiple command functions can also be set, but each function must be
+paired with a unique command string when it is set. The command string
+tells the client or server to execute the function associated with the
+given command string when it received the command from over the network.
+
+Commands are sent from the client or server using a tool provided with
+this framework. More on this in the next section.
+
+##### Function Tools
+
+Several tools are provided with this framework to make it simple to
+exchange data, and perform other common tasks, from within your custom
+functions.
+
+```
+write_socket(int socket, char *command, char *payload);
+```
+
+Write the command and payload strings to the given socket. This will
+initiate the function associated with the command on the receiving side.
+The function will be passed the payload string for analysis, logging, etc.
+
+```
+void close_socket(int socket);
+```
+
+Close the given socket and terminate the connection. Note that this will
+execute a disconnect function if one is defined.
+
+```
+int main_socket(void);
+```
+
+Return the integer value for the main socket. For the client, this returns
+the socket for the server connection. For the server, this returns the
+socket that is used to listen for new connections.
+
+```
+int next_socket(void);
+```
+
+Used for looping over all connected sockets. This is mainly provided for
+the server component, so it can loop over the socket list for all connected
+clients.
+
+```
+void reset_next_socket(void);
+```
+
+Used to set the next_socket() loop position to the start of the socket list.
+
+```
+void terminate(void);
+```
+
+Terminate the program. This causes the program to exit.
+
+```
+write_log(char *format_string, ...);
+```
+
+Write an entry to the log file. Uses printf formatting and parameters.
+
+```
+print_log(char *format_string, ...);
+```
+
+Same as write_log() but also prints the formatted string to stdout.
 
 Example
 -------
