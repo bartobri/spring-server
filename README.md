@@ -106,7 +106,8 @@ inactivity (this is configurable).
 Customizing
 -----------
 
-There are only 3 files that you ever need to modify in order to customize the client and server components.
+There are only 3 files that you ever need to modify in order to customize
+the client and server components to do virtually anything you want them to do.
 
 1. **config.h** - Contains global settings used by both the client and server.
 2. **server.c** - Contains custom function definitions for the server.
@@ -114,7 +115,7 @@ There are only 3 files that you ever need to modify in order to customize the cl
 
 ##### Defining Custom Functions
 
-There are 4 classes of custom functions. Each class of function is
+There are 4 classes of custom functions. Each function class is
 executed differently.
 
 1. **Connect Function** - Executed when a new connection is made.
@@ -123,9 +124,9 @@ executed differently.
 4. **Command Function** - Executed in response to a command sent from the client or server.
 
 Because the client and server components expect the functions to be defined
-with specific function parameters and return values, each function type
-has it's own macro to simplify the process. below is how each of the four
-function classes should be defined using the macros.
+with specific parameters and return values, each function type
+has it's own macro to simplify the process. Below is how each of the four
+function classes should be defined using these macros.
 
 ```
 CONNECT_FUNCTION(function_name) {
@@ -153,7 +154,7 @@ COMMAND_FUNCTION(function_name) {
 ```
 
 These macros expand into a traditional function definition with the
-expected function parameters and return values. Be sure to replace
+expected parameters and return values. Be sure to replace
 "function_name" with a unique function name.
 
 Connect and Disconnect functions are passed the integer value for the
@@ -176,26 +177,28 @@ client.c and server.c files respectively, which should be just below where
 you defined your custom functions.
 
 ```
-set_connect_function(&function_name);
-set_disconnect_function(&function_name);
-add_periodic_function(&function_name);
-add_command_function("cmnd", &function_name);
+void server_init(void) {
+    set_connect_function(&function_name);
+    set_disconnect_function(&function_name);
+    add_periodic_function(&function_name);
+    add_command_function("cmnd", &function_name);
+}
 
 ```
 
 Only one connect and disconnect function can be set.
 
-Multiple periodic functions can be set. The are executed in the order of which
+Multiple periodic functions can be set. They are executed in the order of which
 they were added inside the server/client init function. The max allowed
 is configured in config.h (see PERIODIC_LIMIT).
 
 Multiple command functions can also be set, but each function must be
 paired with a unique command string when it is set. The command string
-tells the client or server to execute the function associated with the
-given command string when it received the command from over the network.
+tells the client or server to execute the function when it receives the
+command when reading data from a network socket.
 
 Commands are sent from the client or server using a tool provided with
-this framework. More on this in the next section.
+this framework. More on tools in the next section.
 
 ##### Function Tools
 
@@ -204,59 +207,63 @@ exchange data, and perform other common tasks, from within your custom
 functions.
 
 ```
-write_socket(int socket, char *command, char *payload);
-```
+/*
+ * The write_socket() function writes the command (char *command) and
+ * payload (char *payload) data to the socket (int s).
+ */
+int write_socket(int s, char *command, char *payload);
 
-Write the command and payload strings to the given socket. This will
-initiate the function associated with the command on the receiving side.
-The function will be passed the payload string for analysis, logging, etc.
+/*
+ * The close_socket() function closes the network socket (int s) and
+ * ensures that necessary cleanup tasks are executed.
+ */
+void close_socket(int s);
 
-```
-void close_socket(int socket);
-```
-
-Close the given socket and terminate the connection. Note that this will
-execute a disconnect function if one is defined.
-
-```
+/*
+ * The main_socket() function returns the integer value for the main
+ * socket file descriptor. For the client, the main socket is that which
+ * communicates to the server. For the server, the main socket is that
+ * which listens for new client connections.
+ */
 int main_socket(void);
-```
 
-Return the integer value for the main socket. For the client, this returns
-the socket for the server connection. For the server, this returns the
-socket that is used to listen for new connections.
-
-```
+/*
+ * The next_socket() function provides a iteration tool for traversing the
+ * list of all active socket connections. Each call to next_socket()
+ * returns the integer value for the next socket file descriptor in the
+ * list. When the iteration reaches the end of the list, a negative
+ * integer value is returned.
+ */
 int next_socket(void);
-```
 
-Used for looping over all connected sockets. This is mainly provided for
-the server component, so it can loop over the socket list for all connected
-clients.
-
-```
+/*
+ * The reset_next_socket() function sets an internally maintained list
+ * position pointer to the start of the socket list. This function
+ * should be called whenever you want the next_socket() function to
+ * return the first socket in the socket list, such as the start of a
+ * full socket list traversal.
+ */
 void reset_next_socket(void);
-```
 
-Used to set the next_socket() loop position to the start of the socket list.
-
-```
+/*
+ * The terminate() function tells the current client or server program
+ * to terminate execution after the current function has returned
+ * execution to the calling function.
+ */
 void terminate(void);
-```
 
-Terminate the program. This causes the program to exit.
-
-```
+/*
+ * The write_log() function write an entry to the log file. Uses printf
+ * formatting and parameters.
+ */
 write_log(char *format_string, ...);
-```
 
-Write an entry to the log file. Uses printf formatting and parameters.
-
-```
+/*
+ * The print_log() function is the same as write_log() but also prints
+ * the formatted string to stdout.
+ */
 print_log(char *format_string, ...);
 ```
-
-Same as write_log() but also prints the formatted string to stdout.
 
 Example
 -------
