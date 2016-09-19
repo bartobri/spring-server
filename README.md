@@ -15,26 +15,20 @@ About
 -----
 
 The goal of this project is to provide a simple and robust framework that
-enables the swift creation of client-server applications. The framework
-provides a pair of client/server programs pre-written to manage all
-network-related tasks allowing the programmer to primarily focus on
-customization. 
+enables the swift creation of client-server applications.
 
-Out of the box, the client and server connect to each other
-over a TCP/IP network socket. Theyt both provide hooks and tools to
-execute your custom-written functions and exchange data between the two.
-The server can manage up to 1028 concurrent client connections, and
-automatically detects and disconnects inactive clients.
+Two executables, `client` and `server`, are provided with this project. They
+come pre-equipped to easily connect and exchange data over a TCP/IP
+network socket.
 
-With this framework, creating client/server applications that can execute
-tasks and exchange the resulting data is trivial.
+The `server` component can independently manage up to 1028 concurrent client
+connections. It can automatically detect and disconnect inactive clients.
 
-Potential projects that may wish to use this repository
-range from an online card game, to an infrastructure monitoring solution,
-to a Napster clone.
+Both the `client` and `server` components provide hooks to execute
+custom-written functions. They also provide tools to send, receive, or log
+data from within those functions.
 
-Since this project is coded in C, knowledge of C is required for
-customization.
+Knowledge of C is required to write custom functions.
 
 Demo
 ----
