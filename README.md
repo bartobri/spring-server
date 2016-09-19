@@ -4,11 +4,12 @@ Spring Server
 **Table of Contents**
 
 1. [About](#about)
-2. [Download and Build](#download-and-build)
-3. [Usage](#usage)
-4. [Customizing](#customizing)
-5. [Example](#example)
-6. [License](#license)
+2. [Demo](#demo)
+3. [Download and Build](#download-and-build)
+4. [Usage](#usage)
+5. [Customizing](#customizing)
+6. [Example](#example)
+7. [License](#license)
 
 About
 -----
@@ -34,6 +35,11 @@ to a Napster clone.
 
 Since this project is coded in C, knowledge of C is required for
 customization.
+
+Demo
+----
+
+Coming...
 
 Download and Build
 ------------------
