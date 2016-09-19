@@ -19,26 +19,21 @@ provides a pair of client/server programs pre-written to manage all
 network-related tasks allowing the programmer to primarily focus on
 customization. 
 
-Out of the box, the client and server can easily connect to each other
-over a TCP/IP network socket. The server can manage up to 1028 concurrent
-client connections, and auto-detect/disconnect inactive clients.
+Out of the box, the client and server connect to each other
+over a TCP/IP network socket. Theyt both provide hooks and tools to
+execute your custom-written functions and exchange data between the two.
+The server can manage up to 1028 concurrent client connections, and
+automatically detects and disconnects inactive clients.
 
-Tools provided with this framework allow you to write custom functions
-and tell the client or server how and when to execute them. Other tools
-are provided that easily allow you to exchange data between the client
-and server, analyse and react to the data on the receiving end, log info
-to a text file, terminate a connection, and more, from within your custom
-functions.
+With this framework, creating client/server applications that can execute
+tasks and exchange the resulting data is trivial.
 
-With this framework, creating client/server applications that exchange
-data and carry out custom tasks is trivial.
-
-Potential projects that may wish to use this repository as a springboard
+Potential projects that may wish to use this repository
 range from an online card game, to an infrastructure monitoring solution,
 to a Napster clone.
 
-Since this project is coded in C, knowledge of C is required to create
-custom functions.
+Since this project is coded in C, knowledge of C is required for
+customization.
 
 Download and Build
 ------------------
@@ -65,7 +60,7 @@ cd spring-server
 make
 ```
 
-The resulting binaries will be located in the spring-server/bin directory.
+The resulting binaries will be located in the `spring-server/bin/` directory.
 
 Usage
 -----
@@ -87,10 +82,9 @@ the use of the `-h` command line argument to set the hostname or IP address
 that it should connect to.
 
 Note that if you run these programs without any customizations, the client
-and server programs can successfully connect but will not echange data or
-perform and tasks. Since the client hasn't been customized to send any data,
-the server will disconnect the client after about 10-15 seconds due to
-inactivity (this is configurable).
+and server programs can successfully connect but will not exchange data or
+perform tasks. Since no data is being exchanged, the server will disconnect
+the client after about 10-15 seconds due to inactivity (this is configurable).
 
 Customizing
 -----------
@@ -102,6 +96,9 @@ the client and server components to do virtually anything you want them to do.
 2. **server.c** - Contains custom function definitions for the server.
 3. **client.c** - Contains custom function definitions for the client.
 
+95% of customizing will be through the creation of custom functions for
+the client and server to execute.
+
 ##### Defining Custom Functions
 
 There are 4 classes of custom functions. Each function class is
@@ -112,10 +109,10 @@ executed differently.
 3. **Periodic Function** - Executed at a timed interval (configured in config.h).
 4. **Command Function** - Executed in response to a command sent from the client or server.
 
-Because the client and server components expect the functions to be defined
-with specific parameters and return values, each function type
-has it's own macro to simplify the process. Below is how each of the four
-function classes should be defined using these macros.
+Custom functions should be defined with specific parameters and return
+values. Each function type has it's own macro to help with this. Below
+is how each of the four function classes should be defined using these
+macros.
 
 ```
 CONNECT_FUNCTION(function_name) {
@@ -150,8 +147,9 @@ Connect and Disconnect functions are passed the integer value for the
 socket that connected or disconnected, defined as `int socket`.
 
 Command functions are passed the integer value of the socket that sent
-the command, and a string pointer optionally containing a data payload.
-They are defined as `int socket` and `char *payload`.
+the command, and a string pointer optionally containing a string of
+characters referred to as the payload. They are defined as `int socket`
+and `char *payload`.
 
 Periodic functions are not passed any parameters.
 
@@ -159,11 +157,11 @@ All functions have a return value of `void`.
 
 ##### Executing Custom Functions
 
-Once functions are defined using the templates above, you must tell the
-client and server components when to execute them. This is done inside the
-server_init() and client_init() functions which are defined inside the
-client.c and server.c files respectively, which should be just below where
-you defined your custom functions.
+Once functions are defined inside the server.c and client.c files using
+the templates above, you must specify when they are to be executed. This
+is done inside the server_init() and client_init() functions which are
+defined inside the client.c and server.c files respectively, which should
+be just below where you defined your custom functions.
 
 ```
 void server_init(void) {
@@ -259,7 +257,7 @@ Example
 
 An example is provided that demonstrates the creation and triggering of one
 of each of the four classes of custom functions. The customized client
-and server examples are located in the example directory.
+and server examples are located in the following directory.
 
 ```
 spring-server/src/example
@@ -278,12 +276,12 @@ $ bin/example_client -h localhost
 
 This is the process flow that they will execute:
 
-1. The server component has a connect function defined and loaded, called "say_hello". When the client connects, this function is executed and sends the command "helo" to the connecting client via the provided socket file descriptor.
-2. The client component has a command function defined and loaded, called "receive_hello". It has associated the command "helo" with this function inside the client_init() code block. When the server sends the "helo" command to the client, the client matches this command and executes the receive_hello function. It prints a message to stdout acknowledging the receipt of the command.
+1. The server component has a connect function defined and loaded, called "say_hello". When the client connects, this function is executed and sends the command "hello" to the new client.
+2. The client component has a command function defined and loaded, called "receive_hello". It has associated the command "hello" with this function inside the client_init() code block. When the server sends the "hello" command to the client, the client executes the receive_hello function. Inside the function, it prints a message to stdout acknowledging the receipt of the command.
 3. The client component has a periodic function defined and loaded. This is executed at the interval defined in config.h for PERIODIC_SECONDS, which is 5 seconds by default. The function sends the "beat" command to the server for the first 5 intervals, and stops sending it every interval thereafter.
-4. The server component receives the beat command from the client, but does not have any command functions associated with that command string, so not command is executed as a response. But the server still acknowledges the receipt of data from the client by not auto-disconnecting it during the time it is receiving periodic beat commands.
-5. Once the client stops sending beat commands to the server, the server waits for a period of time defined in config.h for IDLE_SECONDS and then disconnects the client due to inactivity.
-6. The server component has a disconnect function defined and loaded. When it disconnects the client, It executes this function. This function uses print_log() to add an entry to the logfile and print it to stdout.
+4. The server component receives the "beat" command from the client, but does not have any command functions associated with it, so no function is executed as a response. But the server still acknowledges the receipt of data from the client by not auto-disconnecting it during the time it is receiving the periodic "beat" commands.
+5. Once the client stops sending "beat" commands to the server, the server waits for a period of time defined in config.h for IDLE_SECONDS and then disconnects the client due to inactivity.
+6. The server component has a disconnect function defined and loaded. When it disconnects the client, it executes this function. This function uses print_log() to add an entry to the logfile and print it to stdout.
 
 License
 -------
