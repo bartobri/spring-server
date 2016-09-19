@@ -28,7 +28,10 @@ Both the `client` and `server` components provide hooks to execute
 custom-written functions. They also provide tools to send, receive, or log
 data from within those functions.
 
-Knowledge of C is required to write custom functions.
+Through the development of custom-written functions, the `client` and
+`server` can carry out virtually any task that can be written in C.
+
+Knowledge of C is required.
 
 Demo
 ----
