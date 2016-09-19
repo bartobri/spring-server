@@ -39,13 +39,13 @@ COMMAND_FUNCTION(function_name) {
 CONNECT_FUNCTION(say_hello) {
 	(void)socket;
 	
-	write_socket(socket, "helo", "");
+	write_socket(socket, "hello", "");
 }
 
 DISCONNECT_FUNCTION(print_message) {
 	(void)socket;
 	
-	print_log("Socket %i disconnected by server. Idle time elapsed.", socket);
+	print_log("Socket %i disconnected.", socket);
 }
 
 /*

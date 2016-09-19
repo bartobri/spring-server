@@ -57,7 +57,7 @@
  * at a reasonable limit of 10 or less for optimal memory consumption.
  * Never exceed a 99 or you risk potential memory fault errors.
  */
-#define MAX_COMMAND_SIZE 4
+#define MAX_COMMAND_SIZE 5
 
 /*
  * The MAX_PAYLOAD_SIZE configuration sets the maximum number of characters

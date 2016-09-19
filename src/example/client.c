@@ -68,6 +68,6 @@ void client_init(void) {
 	// add_periodic_function(&function_name);
 	// add_command_function("cmnd", &function_name);
 	
-	add_command_function("helo", &receive_hello);
+	add_command_function("hello", &receive_hello);
 	add_periodic_function(&send_heartbeat);
 }
