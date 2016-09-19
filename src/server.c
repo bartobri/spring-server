@@ -45,7 +45,7 @@ CONNECT_FUNCTION(say_hello) {
 DISCONNECT_FUNCTION(print_message) {
 	(void)socket;
 	
-	print_log("Socket %i disconnected by server. Idle time elapsed.", socket);
+	print_log("Socket %i disconnected.", socket);
 }
 
 /*
