@@ -4,7 +4,7 @@ Spring Server
 **Table of Contents**
 
 1. [About](#about)
-2. [Demo](#demo)
+2. [Demo Videos](#demo-videos)
 3. [Download and Build](#download-and-build)
 4. [Usage](#usage)
 5. [Customizing](#customizing)
@@ -33,10 +33,14 @@ Through the development of custom-written functions, the `client` and
 
 Knowledge of C is required.
 
-Demo
-----
+Demo Videos
+-----------
 
-Coming...
+##### Custom Function Demo (13:54)
+
+How to customize the client and server with custom functions:
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=mYfXCqQFgjM" target="_blank"><img src="http://img.youtube.com/vi/mYfXCqQFgjM/0.jpg" alt="Custom Functions" width="240" height="180" border="10" /></a>
 
 Download and Build
 ------------------
