@@ -36,9 +36,8 @@ Knowledge of C is required.
 Demo Videos
 -----------
 
-##### Custom Function Demo (13:54)
-
-How to customize the client and server with custom functions:
+**Custom Function Demo (13:54)** - How to customize the client and server
+with custom functions.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=mYfXCqQFgjM" target="_blank"><img src="http://img.youtube.com/vi/mYfXCqQFgjM/0.jpg" alt="Custom Functions" width="240" height="180" border="10" /></a>
 
