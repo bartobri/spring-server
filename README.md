@@ -50,7 +50,7 @@ Download and Build
 ------------------
 
 **NOTE** - This install procedure has only been confirmed on a handful of
-Linux variants, but likely worked for most all of them. OSX is untested,
+Linux variants, but likely works for most all of them. OSX is untested,
 but if you are using a Mac, be sure to have the developer tools installed.
 
 In order to download and build this program, you will need to have git,
