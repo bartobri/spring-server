@@ -112,6 +112,10 @@ int main(int argc, char *argv[]) {
 	socketlist_add(mainsocket_get());
 	sockettime_set(mainsocket_get());
 	
+	// Execute connect function for the client
+	if (IS_CLIENT)
+		connectfunction_exec(mainsocket_get());
+	
 	// main program loop
 	while (1) {
 		
