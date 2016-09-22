@@ -36,6 +36,11 @@ Knowledge of C is required.
 Demo Videos
 -----------
 
+**Quick Demo (2:26)** - Creating a client-server application in 2 minutes
+flat.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=0lxpawV8e8c" target="_blank"><img src="http://img.youtube.com/vi/0lxpawV8e8c/0.jpg" alt="Quick Demo" width="240" height="180" border="10" /></a>
+
 **Custom Function Demo (13:54)** - How to customize the client and server
 with custom functions.
 
