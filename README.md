@@ -211,7 +211,9 @@ functions.
 ```
 /*
  * The write_socket() function writes the command (char *command) and
- * payload (char *payload) data to the socket (int s).
+ * payload (char *payload) data to the socket (int s). If a write failure
+ * occurs, it returns a negative integer. Otherwise, it returns the
+ * number of bytes written.
  */
 int write_socket(int s, char *command, char *payload);
 
@@ -258,13 +260,13 @@ void terminate(void);
  * The write_log() function write an entry to the log file. Uses printf
  * formatting and parameters.
  */
-write_log(char *format_string, ...);
+void write_log(char *format_string, ...);
 
 /*
  * The print_log() function is the same as write_log() but also prints
  * the formatted string to stdout.
  */
-print_log(char *format_string, ...);
+void print_log(char *format_string, ...);
 ```
 
 Example

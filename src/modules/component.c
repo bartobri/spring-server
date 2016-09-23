@@ -27,7 +27,9 @@
 
 /*
  * The write_socket() function writes the command (char *command) and
- * payload (char *payload) data to the socket (int s).
+ * payload (char *payload) data to the socket (int s). If a write failure
+ * occurs, it returns a negative integer. Otherwise, it returns the
+ * number of bytes written.
  */
 int write_socket(int s, char *command, char *payload) {
 	int r, l;
