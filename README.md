@@ -46,6 +46,12 @@ with custom functions.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=mYfXCqQFgjM" target="_blank"><img src="http://img.youtube.com/vi/mYfXCqQFgjM/0.jpg" alt="Custom Functions" width="240" height="180" border="10" /></a>
 
+**Function Tools Demo (18:50)** - How to interact with sockets to exchange
+data between the client and server, write to the log file, and a few
+other helpful commands.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=oH4CKChhsEw" target="_blank"><img src="http://img.youtube.com/vi/oH4CKChhsEw/0.jpg" alt="Custom Functions" width="240" height="180" border="10" /></a>
+
 Download and Build
 ------------------
 
