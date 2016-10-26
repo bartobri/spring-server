@@ -22,7 +22,7 @@ static char payload[MAX_PAYLOAD_SIZE + 1];
  * Set the payload character array to all null characters
  */
 void inputpayload_init(void) {
-	memset(payload, 0, sizeof(MAX_PAYLOAD_SIZE + 1));
+	memset(payload, 0, sizeof(payload));
 }
 
 /*
@@ -41,7 +41,7 @@ char *inputpayload_get(void) {
 void inputpayload_parse(char *data) {
 	unsigned int cmdlen = 0;
 	
-	memset(payload, 0, sizeof(MAX_PAYLOAD_SIZE + 1));
+	memset(payload, 0, sizeof(payload));
 	
 	while (*data >= '0' && *data <= '9')
 		cmdlen = (cmdlen * 10) + *data++ - '0';

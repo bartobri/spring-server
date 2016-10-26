@@ -22,7 +22,7 @@ static char command[MAX_COMMAND_SIZE + 1];
  * Set the command character array to all null characters
  */
 void inputcommand_init(void) {
-	memset(command, 0, sizeof(MAX_COMMAND_SIZE + 1));
+	memset(command, 0, sizeof(command));
 }
 
 /*
@@ -40,7 +40,7 @@ char *inputcommand_get(void) {
 void inputcommand_parse(char *data) {
 	int len = 0;
 	
-	memset(command, 0, sizeof(MAX_COMMAND_SIZE + 1));
+	memset(command, 0, sizeof(command));
 	
 	while (*data >= '0' && *data <= '9')
 		len = (len * 10) + *data++ - '0';
