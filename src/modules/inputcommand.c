@@ -46,6 +46,9 @@ void inputcommand_parse(char *data) {
 		len = (len * 10) + *data++ - '0';
 	
 	++data;
+	
+	if (len > MAX_COMMAND_SIZE)
+		len = MAX_COMMAND_SIZE;
 
 	strncpy(command, data, len);
 }
