@@ -26,6 +26,9 @@
 #include "modules/main.h"
 #include "config.h"
 
+// Version Number
+#define VERSION "0.1.0"
+
 // Function prototypes
 void main_init(void);
 void main_sigint(int);
@@ -72,7 +75,7 @@ int main(int argc, char *argv[]) {
 		hostname = DEFAULT_HOST;
 
 	// Check arguments
-	while ((o = getopt(argc, argv, "h:p:")) != -1) {
+	while ((o = getopt(argc, argv, "h:p:v")) != -1) {
 		switch (o) {
 			case 'p':
 				portno = optarg;
@@ -80,6 +83,9 @@ int main(int argc, char *argv[]) {
 			case 'h':
 				hostname = optarg;
 				break;
+			case 'v':
+				printf("spring server version " VERSION "\n");
+				return 0;
 			case '?':
 				if (isprint(optopt))
 					log_print("Unknown option '-%c'.", optopt);
