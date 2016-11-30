@@ -19,7 +19,7 @@
 /*
  * MODULE DESCRIPTION
  * 
- * The log modules manages opening, closing and appending to the log
+ * The log module manages opening, closing and appending to the log
  * file.
  */
 
