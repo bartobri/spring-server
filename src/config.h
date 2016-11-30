@@ -93,7 +93,7 @@
  * In order to prevent a functioning client from being disconnected during
  * long periods of time when it not required to communicate with the server,
  * it is suggested to set up a periodic function that sends a heartbeat
- * to the server. In this case, be sure to set this value is not set lower
+ * to the server. In this case, be sure that this value is not set lower
  * than the PERIODIC_SECONDS value.
  */
 #define IDLE_SECONDS 10
@@ -129,13 +129,13 @@
 /*
  * The INPUT_QUEUE_SIZE configuration sets the input queue size.
  * 
- * Sometimes it is necessary to send multiple back-to-back command/payload
- * transmissions from a single client or server. In this case, the
+ * Sometimes it is necessary to send multiple back-to-back data transmissions
+ * from the client or server in a single instance. In this case, the
  * receiving operating system may concatenate them together as one long
  * string of data before the client or server application has a chance to
  * read it from the socket file descriptor. When this happens, the client
- * or server will deconstruct the data in to multiple command/payload pairs
- * and treat them separately as intended. Prior to processing them, it
+ * or server will deconstruct the data into multiple command/payload pairs
+ * and treat them separately as intended. During this deconstruction, it
  * places them in an "input queue". This configuration sets the maximum
  * number of command/payload pairs it can parse from the socket file
  * descriptor in a single instance.
