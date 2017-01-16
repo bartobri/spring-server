@@ -1,5 +1,5 @@
 # Installation directories following GNU conventions
-prefix = /usr/local
+prefix ?= /usr/local
 exec_prefix = $(prefix)
 bindir = $(exec_prefix)/bin
 sbindir = $(exec_prefix)/sbin
@@ -18,8 +18,8 @@ SRC_MODS=src/modules
 OBJ_EX=obj/example
 SRC_EX=src/example
 
-CC = gcc
-CFLAGS = -Wextra -Wall -iquote$(SRC)
+CC ?= gcc
+CFLAGS ?= -Wextra -Wall -iquote$(SRC)
 
 SERVERFLAGS = -DIS_SERVER=1 -DIS_CLIENT=0
 CLIENTFLAGS = -DIS_SERVER=0 -DIS_CLIENT=1
