@@ -266,7 +266,7 @@ void reset_next_socket(void);
 void terminate(void);
 
 /*
- * The write_log() function write an entry to the log file. Uses printf
+ * The write_log() function writes an entry to the log file. Uses printf
  * formatting and parameters.
  */
 void write_log(char *format_string, ...);
